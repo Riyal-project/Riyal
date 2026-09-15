@@ -24,6 +24,19 @@ supabase link --project-ref <your-project-ref>
 supabase db push
 ```
 
+## Free trials
+
+Apply `supabase/migrations/0013_subscription_free_trials.sql` in the
+Supabase SQL editor before using the updated subscription forms. It adds
+the nullable `trial_start_date` and `trial_duration` fields; existing
+subscriptions retain their billing details. Trials use seven calendar
+days or one calendar month (clamped to the last day of the next month).
+
+Trial-ending reminders appear in the app's notification inbox five days
+before the end date, respecting the global reminder switch and the item's
+notification switch. The inbox refreshes when the app resumes and while
+its notification button is mounted. These are in-app reminders.
+
 ## Auth
 
 The app requires a real Supabase Auth account (email/password) to reach

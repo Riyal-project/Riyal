@@ -28,6 +28,11 @@ class SubscriptionCategories {
     Icons.local_shipping_outlined,
   );
   static const other = TrackedCategory('other', Icons.more_horiz_rounded);
+  static const freeTrial = TrackedCategory(
+    'free_trial',
+    Icons.hourglass_top_rounded,
+  );
+  static const filterValues = [...values, freeTrial];
 
   static const values = [
     entertainment,

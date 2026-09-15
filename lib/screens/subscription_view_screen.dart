@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/free_trial_fields.dart';
 
 import '../data/bank_transaction_matcher.dart';
 import '../data/item_payment_history.dart';
@@ -27,8 +28,7 @@ class SubscriptionViewScreen extends StatefulWidget {
   final String subscriptionId;
 
   @override
-  State<SubscriptionViewScreen> createState() =>
-      _SubscriptionViewScreenState();
+  State<SubscriptionViewScreen> createState() => _SubscriptionViewScreenState();
 }
 
 class _SubscriptionViewScreenState extends State<SubscriptionViewScreen> {
@@ -81,7 +81,7 @@ class _SubscriptionViewScreenState extends State<SubscriptionViewScreen> {
   ) {
     final changes = priceChanges(history);
     final totalPaid = history.isEmpty
-        ? subscription.amount
+        ? (subscription.hasFreeTrial ? 0.0 : subscription.amount)
         : history.fold<double>(0, (sum, t) => sum + t.amount);
     final reviewAnswer = _reviewAnswerFor(subscription);
     final showYearlyNudge =
@@ -134,13 +134,21 @@ class _SubscriptionViewScreenState extends State<SubscriptionViewScreen> {
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              StatusBadge(status: subscription.status),
+                              if (subscription.hasFreeTrial &&
+                                  subscription.status == ItemStatus.trial)
+                                const FreeTrialBadge()
+                              else
+                                StatusBadge(status: subscription.status),
                             ],
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 22),
+                    if (subscription.hasFreeTrial) ...[
+                      _SectionLabel(Strings.t('trial_amount')),
+                      const SizedBox(height: 8),
+                    ],
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
@@ -169,7 +177,10 @@ class _SubscriptionViewScreenState extends State<SubscriptionViewScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      Strings.renewsIn(subscription.renewsInDays),
+                      subscription.hasFreeTrial
+                          ? '${Strings.t(subscription.isInFreeTrial ? 'trial_end_date' : 'trial_ended')}'
+                                ' · ${trialDateLabel(subscription.trialEndDate!)}'
+                          : Strings.renewsIn(subscription.renewsInDays),
                       style: const TextStyle(
                         color: AppColors.gold,
                         fontSize: 12.5,
@@ -253,7 +264,11 @@ class _SubscriptionViewScreenState extends State<SubscriptionViewScreen> {
                     const SizedBox(height: 8),
                     TrendChart(
                       values: history.isEmpty
-                          ? [subscription.amount]
+                          ? [
+                              subscription.hasFreeTrial
+                                  ? 0.0
+                                  : subscription.amount,
+                            ]
                           : history.reversed.map((t) => t.amount).toList(),
                     ),
                     const SizedBox(height: 22),
@@ -284,11 +299,13 @@ class _SubscriptionViewScreenState extends State<SubscriptionViewScreen> {
   _ReviewAnswerDisplay? _reviewAnswerFor(Subscription subscription) {
     final snapshot = MonthlyReviewStore.instance.currentSnapshot;
     if (snapshot == null) return null;
-    final id =
-        'subscription:${subscription.name.trim().toLowerCase()}';
+    final id = 'subscription:${subscription.name.trim().toLowerCase()}';
     for (final answer in snapshot.answers) {
       if (answer.item.id == id) {
-        return _ReviewAnswerDisplay(need: answer.need, activity: answer.activity);
+        return _ReviewAnswerDisplay(
+          need: answer.need,
+          activity: answer.activity,
+        );
       }
     }
     return null;
@@ -297,8 +314,7 @@ class _SubscriptionViewScreenState extends State<SubscriptionViewScreen> {
   bool _hasAnnualPlanRecommendation(Subscription subscription) {
     final snapshot = MonthlyReviewStore.instance.currentSnapshot;
     if (snapshot == null) return false;
-    final id =
-        'subscription:${subscription.name.trim().toLowerCase()}';
+    final id = 'subscription:${subscription.name.trim().toLowerCase()}';
     return snapshot.recommendations.any(
       (r) => r.item.id == id && r.type == RecommendationType.annualPlan,
     );
@@ -321,7 +337,7 @@ class _SubscriptionViewScreenState extends State<SubscriptionViewScreen> {
 
   void _togglePause(Subscription subscription) {
     final next = subscription.status == ItemStatus.paused
-        ? ItemStatus.active
+        ? (subscription.isInFreeTrial ? ItemStatus.trial : ItemStatus.active)
         : ItemStatus.paused;
     SubscriptionsStore.instance.update(subscription.copyWith(status: next));
   }
@@ -677,9 +693,7 @@ class _ActionButtons extends StatelessWidget {
                   ),
                 ),
                 icon: Icon(
-                  isPaused
-                      ? Icons.play_arrow_rounded
-                      : Icons.pause_rounded,
+                  isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded,
                   size: 18,
                 ),
                 label: Text(
@@ -714,7 +728,9 @@ class _ActionButtons extends StatelessWidget {
           width: double.infinity,
           child: TextButton.icon(
             onPressed: onDelete,
-            style: TextButton.styleFrom(foregroundColor: AppColors.textTertiary),
+            style: TextButton.styleFrom(
+              foregroundColor: AppColors.textTertiary,
+            ),
             icon: const Icon(Icons.delete_outline_rounded, size: 18),
             label: Text(Strings.t('delete_action')),
           ),
@@ -729,11 +745,15 @@ class _EditSubscriptionSheet extends StatefulWidget {
   final Subscription subscription;
 
   @override
-  State<_EditSubscriptionSheet> createState() =>
-      _EditSubscriptionSheetState();
+  State<_EditSubscriptionSheet> createState() => _EditSubscriptionSheetState();
 }
 
 class _EditSubscriptionSheetState extends State<_EditSubscriptionSheet> {
+  late bool _freeTrial = widget.subscription.hasFreeTrial;
+  late FreeTrialDuration _trialDuration =
+      widget.subscription.trialDuration ?? FreeTrialDuration.week;
+  late DateTime _trialStartDate =
+      widget.subscription.trialStartDate ?? DateTime.now();
   late final TextEditingController _amountController = TextEditingController(
     text: widget.subscription.amount.toStringAsFixed(0),
   );
@@ -768,7 +788,9 @@ class _EditSubscriptionSheetState extends State<_EditSubscriptionSheet> {
   }
 
   void _save() {
-    final amount = double.tryParse(_amountController.text) ?? widget.subscription.amount;
+    final amount =
+        double.tryParse(_amountController.text) ?? widget.subscription.amount;
+    if (!amount.isFinite || amount < 0) return;
     final purpose = _purposeController.text.trim();
     Navigator.of(context).pop(
       widget.subscription.copyWith(
@@ -779,6 +801,17 @@ class _EditSubscriptionSheetState extends State<_EditSubscriptionSheet> {
         clearPurposeTag: purpose.isEmpty,
         reminderDate: _reminderDate,
         clearReminderDate: _reminderDate == null,
+        trialStartDate: _freeTrial ? _trialStartDate : null,
+        trialDuration: _freeTrial ? _trialDuration : null,
+        clearFreeTrial: !_freeTrial,
+        nextBillingDate: _freeTrial
+            ? freeTrialEndDate(_trialStartDate, _trialDuration)
+            : null,
+        status:
+            widget.subscription.status == ItemStatus.cancelled ||
+                widget.subscription.status == ItemStatus.paused
+            ? widget.subscription.status
+            : (_freeTrial ? ItemStatus.trial : ItemStatus.active),
       ),
     );
   }
@@ -818,7 +851,20 @@ class _EditSubscriptionSheetState extends State<_EditSubscriptionSheet> {
                 ),
               ),
               const SizedBox(height: 20),
-              _SectionLabel(Strings.t('amount_sar')),
+              FreeTrialFields(
+                enabled: _freeTrial,
+                duration: _trialDuration,
+                startDate: _trialStartDate,
+                onEnabledChanged: (value) => setState(() => _freeTrial = value),
+                onDurationChanged: (value) =>
+                    setState(() => _trialDuration = value),
+                onStartDateChanged: (value) {
+                  if (mounted) setState(() => _trialStartDate = value);
+                },
+              ),
+              _SectionLabel(
+                Strings.t(_freeTrial ? 'trial_amount' : 'amount_sar'),
+              ),
               const SizedBox(height: 8),
               TextField(
                 controller: _amountController,
@@ -836,7 +882,9 @@ class _EditSubscriptionSheetState extends State<_EditSubscriptionSheet> {
                 ),
               ),
               const SizedBox(height: 18),
-              _SectionLabel(Strings.t('billing_cycle')),
+              _SectionLabel(
+                Strings.t(_freeTrial ? 'trial_cycle' : 'billing_cycle'),
+              ),
               const SizedBox(height: 8),
               Row(
                 children: [
@@ -844,7 +892,8 @@ class _EditSubscriptionSheetState extends State<_EditSubscriptionSheet> {
                     child: _CycleOption(
                       label: Strings.t('monthly'),
                       isSelected: _cycle == BillingCycle.monthly,
-                      onTap: () => setState(() => _cycle = BillingCycle.monthly),
+                      onTap: () =>
+                          setState(() => _cycle = BillingCycle.monthly),
                     ),
                   ),
                   const SizedBox(width: 12),

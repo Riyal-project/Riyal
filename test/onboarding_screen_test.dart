@@ -13,23 +13,33 @@ void main() {
     expect(find.text('مرحبًا بك في ريال'), findsOneWidget);
 
     await tester.tap(find.text('English'));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
     expect(find.text('Every commitment in one place'), findsOneWidget);
 
     await tester.tap(find.text('Next'));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
     expect(find.text('Know before every payment'), findsOneWidget);
 
     await tester.tap(find.text('Next'));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
     expect(find.text('Review what you need and save'), findsOneWidget);
 
     await tester.tap(find.text('Next'));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
     expect(find.text('Understand your spending with Riyal'), findsOneWidget);
 
     await tester.tap(find.text('Start with Riyal'));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
     expect(find.byType(LoginScreen), findsOneWidget);
   });
 }

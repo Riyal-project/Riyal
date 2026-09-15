@@ -26,6 +26,7 @@ enum PaymentNoticeKind {
   monthlyReview,
   utilityAnomaly,
   autoAdded,
+  freeTrialEnding,
 }
 
 class PaymentNotice {
@@ -77,8 +78,8 @@ class NotificationsStore {
   /// bill that crosses the threshold again does.
   final Map<String, double> _lastAnomalyAmount = {};
 
-  void refresh({bool seed = false}) {
-    final now = DateTime.now();
+  void refresh({bool seed = false, DateTime? at}) {
+    final now = at ?? DateTime.now();
     final additions = <PaymentNotice>[];
     void visit(
       Object identity,
@@ -88,6 +89,7 @@ class NotificationsStore {
       DateTime due, {
       required bool notificationsEnabled,
       required bool isActive,
+      DateTime? trialEnd,
     }) {
       if (!notificationsEnabled) return;
       final date = DateTime(due.year, due.month, due.day);
@@ -111,8 +113,9 @@ class NotificationsStore {
             title: category == 'Subscriptions'
                 ? Strings.t('notice_new_subscription')
                 : Strings.t('notice_new_commitment'),
-            message:
-                '$name · $categoryDisplay\nSAR ${amount.toStringAsFixed(2)} · Next payment $formattedDate',
+            message: trialEnd != null
+                ? '${Strings.f('trial_added_message', name)} ${trialEnd.day}/${trialEnd.month}/${trialEnd.year}'
+                : '$name · $categoryDisplay\nSAR ${amount.toStringAsFixed(2)} · Next payment $formattedDate',
             createdAt: seed
                 ? now.subtract(Duration(days: 7, seconds: _seen.length))
                 : now,
@@ -123,7 +126,8 @@ class NotificationsStore {
       // Calendar subtraction avoids truncating 5 days to 4 due to time of day.
       final leadDays = AppSettings.instance.reminderDays;
       final reminderDate = DateTime(date.year, date.month, date.day - leadDays);
-      if (isActive &&
+      if (trialEnd == null &&
+          isActive &&
           AppSettings.instance.paymentReminders &&
           !reminderDate.isAfter(now) &&
           (_reminded[identity] ??= {}).add(date)) {
@@ -151,8 +155,42 @@ class NotificationsStore {
         item.amount,
         item.nextBillingDate,
         notificationsEnabled: item.notificationsEnabled,
-        isActive: item.status == ItemStatus.active,
+        isActive:
+            item.status == ItemStatus.active || item.status == ItemStatus.trial,
+        trialEnd:
+            item.hasFreeTrial &&
+                !item.nextBillingDate.isAfter(item.trialEndDate!)
+            ? item.trialEndDate
+            : null,
       );
+      final end = item.trialEndDate;
+      final reminderDate = item.trialReminderDate;
+      if (end != null &&
+          reminderDate != null &&
+          item.notificationsEnabled &&
+          AppSettings.instance.paymentReminders &&
+          (item.status == ItemStatus.active ||
+              item.status == ItemStatus.trial) &&
+          !reminderDate.isAfter(now) &&
+          !DateTime(now.year, now.month, now.day).isAfter(end)) {
+        final noticeId = 'free-trial:${item.id}:${end.toIso8601String()}';
+        if (!notices.value.any((notice) => notice.id == noticeId)) {
+          additions.add(
+            PaymentNotice(
+              id: noticeId,
+              title: Strings.t('trial_ending_title'),
+              message:
+                  '${Strings.f('trial_ending_message', item.name)} '
+                  '${end.day}/${end.month}/${end.year}\n'
+                  '${Strings.t('trial_ending_note')}',
+              createdAt: reminderDate,
+              reminder: true,
+              kind: PaymentNoticeKind.freeTrialEnding,
+              itemId: item.id,
+            ),
+          );
+        }
+      }
     }
     for (final item in UtilitiesStore.instance.items.value) {
       visit(
@@ -247,7 +285,9 @@ class NotificationsStore {
       }
 
       final detected = RecurringDetectionEngine.detect(allTransactions)
-          .where((d) => d.occurrences >= RecurringDetectionEngine.autoAddOccurrences)
+          .where(
+            (d) => d.occurrences >= RecurringDetectionEngine.autoAddOccurrences,
+          )
           .toList();
       if (detected.isEmpty) return;
 
@@ -256,8 +296,7 @@ class NotificationsStore {
           s.name.toUpperCase(),
         for (final i in UtilitiesStore.instance.items.value)
           i.name.toUpperCase(),
-        for (final i in PeopleStore.instance.items.value)
-          i.name.toUpperCase(),
+        for (final i in PeopleStore.instance.items.value) i.name.toUpperCase(),
       };
 
       final additions = <PaymentNotice>[];

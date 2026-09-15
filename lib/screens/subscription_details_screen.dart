@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/coin_back_button.dart';
 
 import '../data/id_generator.dart';
+import '../data/item_status.dart';
 import '../data/subscription.dart';
 import '../data/subscription_category.dart';
 import '../data/subscriptions_store.dart';
@@ -10,6 +11,7 @@ import '../l10n/strings.dart';
 import '../theme/app_theme.dart';
 import '../widgets/category_filter_bar.dart';
 import '../widgets/logo_image.dart';
+import '../widgets/free_trial_fields.dart';
 
 class SubscriptionDetailsScreen extends StatefulWidget {
   const SubscriptionDetailsScreen({
@@ -18,12 +20,14 @@ class SubscriptionDetailsScreen extends StatefulWidget {
     this.logoAsset,
     this.initialAmount,
     this.initialCategory,
+    this.initialFreeTrial = false,
   });
 
   final String name;
   final String? logoAsset;
   final double? initialAmount;
   final TrackedCategory? initialCategory;
+  final bool initialFreeTrial;
 
   @override
   State<SubscriptionDetailsScreen> createState() =>
@@ -37,6 +41,9 @@ class _SubscriptionDetailsScreenState extends State<SubscriptionDetailsScreen> {
         : '',
   );
   BillingCycle _cycle = BillingCycle.monthly;
+  late bool _freeTrial = widget.initialFreeTrial;
+  FreeTrialDuration _trialDuration = FreeTrialDuration.week;
+  DateTime _trialStartDate = DateTime.now();
   DateTime _nextBillingDate = DateTime.now().add(const Duration(days: 30));
   late TrackedCategory _category =
       widget.initialCategory ?? SubscriptionCategories.other;
@@ -58,7 +65,15 @@ class _SubscriptionDetailsScreenState extends State<SubscriptionDetailsScreen> {
   }
 
   void _save() {
-    final amount = double.tryParse(_amountController.text) ?? 0;
+    final amount = _amountController.text.trim().isEmpty
+        ? 0.0
+        : double.tryParse(_amountController.text);
+    if (amount == null || !amount.isFinite || amount < 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(Strings.t('invalid_subscription_amount'))),
+      );
+      return;
+    }
     SubscriptionsStore.instance.add(
       Subscription(
         id: IdGenerator.uuidV4(),
@@ -66,8 +81,13 @@ class _SubscriptionDetailsScreenState extends State<SubscriptionDetailsScreen> {
         logoAsset: widget.logoAsset,
         amount: amount,
         cycle: _cycle,
-        nextBillingDate: _nextBillingDate,
+        nextBillingDate: _freeTrial
+            ? freeTrialEndDate(_trialStartDate, _trialDuration)
+            : _nextBillingDate,
         category: _category,
+        status: _freeTrial ? ItemStatus.trial : ItemStatus.active,
+        trialStartDate: _freeTrial ? _trialStartDate : null,
+        trialDuration: _freeTrial ? _trialDuration : null,
       ),
     );
     // MainShell (with the Subscriptions tab already selected) is always the
@@ -122,8 +142,20 @@ class _SubscriptionDetailsScreenState extends State<SubscriptionDetailsScreen> {
                       ],
                     ),
                     const SizedBox(height: 28),
+                    FreeTrialFields(
+                      enabled: _freeTrial,
+                      duration: _trialDuration,
+                      startDate: _trialStartDate,
+                      onEnabledChanged: (value) =>
+                          setState(() => _freeTrial = value),
+                      onDurationChanged: (value) =>
+                          setState(() => _trialDuration = value),
+                      onStartDateChanged: (value) {
+                        if (mounted) setState(() => _trialStartDate = value);
+                      },
+                    ),
                     Text(
-                      Strings.t('amount_sar'),
+                      Strings.t(_freeTrial ? 'trial_amount' : 'amount_sar'),
                       style: const TextStyle(
                         color: AppColors.textSecondary,
                         fontSize: 13,
@@ -154,7 +186,7 @@ class _SubscriptionDetailsScreenState extends State<SubscriptionDetailsScreen> {
                     ),
                     const SizedBox(height: 22),
                     Text(
-                      Strings.t('billing_cycle'),
+                      Strings.t(_freeTrial ? 'trial_cycle' : 'billing_cycle'),
                       style: const TextStyle(
                         color: AppColors.textSecondary,
                         fontSize: 13,
@@ -198,46 +230,48 @@ class _SubscriptionDetailsScreenState extends State<SubscriptionDetailsScreen> {
                       onChanged: (c) =>
                           setState(() => _category = c ?? _category),
                     ),
-                    const SizedBox(height: 22),
-                    Text(
-                      Strings.t('next_billing_date'),
-                      style: const TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 13,
+                    if (!_freeTrial) ...[
+                      const SizedBox(height: 22),
+                      Text(
+                        Strings.t('next_billing_date'),
+                        style: const TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 13,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    GestureDetector(
-                      onTap: _pickDate,
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 16,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.surface,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.calendar_today_rounded,
-                              color: AppColors.gold,
-                              size: 18,
-                            ),
-                            const SizedBox(width: 12),
-                            Text(
-                              '${_nextBillingDate.year}-${_nextBillingDate.month.toString().padLeft(2, '0')}-${_nextBillingDate.day.toString().padLeft(2, '0')}',
-                              style: const TextStyle(
-                                color: AppColors.textPrimary,
-                                fontSize: 15,
+                      const SizedBox(height: 8),
+                      GestureDetector(
+                        onTap: _pickDate,
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 16,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.surface,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.calendar_today_rounded,
+                                color: AppColors.gold,
+                                size: 18,
                               ),
-                            ),
-                          ],
+                              const SizedBox(width: 12),
+                              Text(
+                                '${_nextBillingDate.year}-${_nextBillingDate.month.toString().padLeft(2, '0')}-${_nextBillingDate.day.toString().padLeft(2, '0')}',
+                                style: const TextStyle(
+                                  color: AppColors.textPrimary,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ],
                 ),
               ),

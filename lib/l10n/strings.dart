@@ -165,6 +165,24 @@ class Strings {
   static String _slug(String s) => s.toLowerCase().replaceAll(' ', '_');
 
   static const _en = <String, String>{
+    'free_trial': 'Free Trial',
+    'category_free_trial': 'Free Trial',
+    'trial_duration': 'Free trial duration',
+    'trial_week': 'One week',
+    'trial_month': 'One month',
+    'trial_start_date': 'Trial start date',
+    'trial_end_date': 'Trial ends',
+    'trial_amount': 'Renewal amount after trial (SAR)',
+    'trial_renewal_amount': 'After trial: %s',
+    'trial_ending_note': 'Reminder: five days before your trial ends.',
+    'trial_cycle': 'Billing cycle after trial',
+    'trial_reminder_hint':
+        'A notification will appear five days before your trial ends.',
+    'trial_ending_title': 'Your free trial is ending soon',
+    'trial_ending_message': '%s · Your free trial ends on',
+    'trial_added_message': '%s · Free trial ends on',
+    'trial_ended': 'Free trial ended',
+    'invalid_subscription_amount': 'Enter a valid amount of zero or more.',
     // Bottom nav
     'nav_home': 'Home',
     'nav_subscriptions': 'Subscriptions',
@@ -540,6 +558,23 @@ class Strings {
   };
 
   static const _ar = <String, String>{
+    'free_trial': 'تجربة مجانية',
+    'category_free_trial': 'تجربة مجانية',
+    'trial_duration': 'مدة التجربة المجانية',
+    'trial_week': 'أسبوع',
+    'trial_month': 'شهر',
+    'trial_start_date': 'تاريخ بداية التجربة',
+    'trial_end_date': 'تنتهي التجربة',
+    'trial_amount': 'مبلغ التجديد بعد التجربة (ر.س)',
+    'trial_renewal_amount': 'بعد التجربة: %s',
+    'trial_ending_note': 'تذكير: قبل نهاية التجربة بخمسة أيام.',
+    'trial_cycle': 'دورة الدفع بعد التجربة',
+    'trial_reminder_hint': 'سيظهر تنبيه قبل نهاية التجربة بخمسة أيام.',
+    'trial_ending_title': 'تجربتك المجانية تنتهي قريبًا',
+    'trial_ending_message': '%s · تنتهي تجربتك المجانية بتاريخ',
+    'trial_added_message': '%s · تنتهي التجربة المجانية بتاريخ',
+    'trial_ended': 'انتهت التجربة المجانية',
+    'invalid_subscription_amount': 'أدخل مبلغًا صحيحًا يساوي صفرًا أو أكثر.',
     'nav_home': 'الرئيسية',
     'nav_subscriptions': 'الاشتراكات',
     'nav_utilities': 'المرافق',

@@ -13,6 +13,7 @@ import '../widgets/circle_icon_button.dart';
 import '../widgets/inline_search_field.dart';
 import '../widgets/item_filter_sheet.dart';
 import '../widgets/logo_image.dart';
+import '../widgets/free_trial_fields.dart';
 import 'add_subscription_sheet.dart';
 import 'analytics_screen.dart';
 import 'subscription_view_screen.dart';
@@ -88,7 +89,7 @@ class _SubscriptionsBodyState extends State<SubscriptionsBody> {
                 if (_tab == _PageTab.subscriptions) ...[
                   const SizedBox(height: 16),
                   MultiCategoryChipsRow(
-                    categories: SubscriptionCategories.values,
+                    categories: SubscriptionCategories.filterValues,
                     state: _filter,
                     onChanged: (f) => setState(() => _filter = f),
                   ),
@@ -136,7 +137,16 @@ class _SubscriptionsList extends StatelessWidget {
     return ValueListenableBuilder<List<Subscription>>(
       valueListenable: SubscriptionsStore.instance.subscriptions,
       builder: (context, allSubs, _) {
-        var subs = allSubs.where((s) => filter.matches(s.category)).toList();
+        var subs = allSubs
+            .where(
+              (s) =>
+                  filter.matches(s.category) ||
+                  (filter.categories.contains(
+                        SubscriptionCategories.freeTrial,
+                      ) &&
+                      s.hasFreeTrial),
+            )
+            .toList();
         if (!filter.showCancelled) {
           subs = subs.where((s) => s.status != ItemStatus.cancelled).toList();
         }
@@ -252,8 +262,26 @@ class _SubscriptionTile extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 2),
+                  if (s.hasFreeTrial) ...[
+                    const FreeTrialBadge(),
+                    const SizedBox(height: 4),
+                    Text(
+                      Strings.f(
+                        'trial_renewal_amount',
+                        '⃁${s.amount.toStringAsFixed(0)} · ${Strings.t(s.cycle == BillingCycle.monthly ? 'monthly' : 'yearly')}',
+                      ),
+                      style: const TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 11,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                  ],
                   Text(
-                    Strings.renewsIn(s.renewsInDays),
+                    s.hasFreeTrial
+                        ? '${Strings.t(s.isInFreeTrial ? 'trial_end_date' : 'trial_ended')}'
+                              ' · ${trialDateLabel(s.trialEndDate!)}'
+                        : Strings.renewsIn(s.renewsInDays),
                     style: const TextStyle(
                       color: AppColors.textSecondary,
                       fontSize: 12.5,
@@ -263,7 +291,7 @@ class _SubscriptionTile extends StatelessWidget {
               ),
             ),
             Text(
-              '⃁${s.amount.toStringAsFixed(0)}',
+              '⃁${(s.isInFreeTrial ? 0 : s.amount).toStringAsFixed(0)}',
               style: AppTypography.amount(
                 color: AppColors.textPrimary,
                 fontSize: 14,

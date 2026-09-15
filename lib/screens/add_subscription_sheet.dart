@@ -62,6 +62,21 @@ class _AddSubscriptionSheet extends StatelessWidget {
               ),
               const SizedBox(height: 18),
               _SourceOption(
+                icon: Icons.hourglass_top_rounded,
+                title: Strings.t('free_trial'),
+                subtitle: Strings.t('trial_reminder_hint'),
+                onTap: () {
+                  final navigator = Navigator.of(context);
+                  navigator.pop();
+                  navigator.push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => const SelectAppScreen(freeTrial: true),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 12),
+              _SourceOption(
                 icon: Icons.receipt_long_rounded,
                 title: Strings.t('from_previous_transaction'),
                 subtitle: Strings.t('pick_from_recent_charges'),

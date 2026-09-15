@@ -81,6 +81,11 @@ class SubscriptionsStore {
                 .split('T')
                 .first,
             'notifications_enabled': subscription.notificationsEnabled,
+            'trial_start_date': subscription.trialStartDate
+                ?.toIso8601String()
+                .split('T')
+                .first,
+            'trial_duration': subscription.trialDuration?.name,
           })
           .eq('id', subscription.id);
     } catch (error) {
@@ -89,9 +94,7 @@ class SubscriptionsStore {
   }
 
   Future<void> remove(String id) async {
-    subscriptions.value = subscriptions.value
-        .where((s) => s.id != id)
-        .toList();
+    subscriptions.value = subscriptions.value.where((s) => s.id != id).toList();
     try {
       await supabase.from('subscriptions').delete().eq('id', id);
     } catch (error) {
@@ -119,6 +122,11 @@ class SubscriptionsStore {
           .split('T')
           .first,
       'notifications_enabled': subscription.notificationsEnabled,
+      'trial_start_date': subscription.trialStartDate
+          ?.toIso8601String()
+          .split('T')
+          .first,
+      'trial_duration': subscription.trialDuration?.name,
     });
   }
 
@@ -136,6 +144,12 @@ class SubscriptionsStore {
         ? DateTime.parse(row['reminder_date'] as String)
         : null,
     notificationsEnabled: row['notifications_enabled'] as bool? ?? true,
+    trialStartDate: row['trial_start_date'] == null
+        ? null
+        : DateTime.parse(row['trial_start_date'] as String),
+    trialDuration: row['trial_duration'] == null
+        ? null
+        : FreeTrialDuration.values.byName(row['trial_duration'] as String),
   );
 
   TrackedCategory _categoryFromKey(String key) =>

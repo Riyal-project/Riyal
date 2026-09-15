@@ -11,7 +11,9 @@ import '../widgets/logo_image.dart';
 import 'subscription_details_screen.dart';
 
 class SelectAppScreen extends StatefulWidget {
-  const SelectAppScreen({super.key});
+  const SelectAppScreen({super.key, this.freeTrial = false});
+
+  final bool freeTrial;
 
   @override
   State<SelectAppScreen> createState() => _SelectAppScreenState();
@@ -109,6 +111,7 @@ class _SelectAppScreenState extends State<SelectAppScreen> {
                                     name: app.name,
                                     logoAsset: app.logoAsset,
                                     initialCategory: app.category,
+                                    initialFreeTrial: widget.freeTrial,
                                   ),
                                 ),
                               );

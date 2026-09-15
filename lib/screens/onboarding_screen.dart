@@ -195,6 +195,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             slide: _slides[index],
             arabic: _arabic,
             pageIndex: index,
+            active: index == _page,
           ),
         ),
       ),
@@ -405,16 +406,73 @@ class _LanguageButton extends StatelessWidget {
   );
 }
 
-class _SlidePage extends StatelessWidget {
+class _SlidePage extends StatefulWidget {
   const _SlidePage({
     required this.slide,
     required this.arabic,
     required this.pageIndex,
+    required this.active,
   });
 
   final _OnboardingSlide slide;
   final bool arabic;
   final int pageIndex;
+  final bool active;
+
+  @override
+  State<_SlidePage> createState() => _SlidePageState();
+}
+
+class _SlidePageState extends State<_SlidePage>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _textController = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 850),
+  );
+
+  _OnboardingSlide get slide => widget.slide;
+  bool get arabic => widget.arabic;
+  int get pageIndex => widget.pageIndex;
+  bool get active => widget.active;
+
+  @override
+  void initState() {
+    super.initState();
+    if (active) _textController.forward();
+  }
+
+  @override
+  void didUpdateWidget(covariant _SlidePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (active && !oldWidget.active) {
+      _textController.forward(from: 0);
+    } else if (!active) {
+      _textController.stop();
+    }
+  }
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
+
+  Widget _enterText({required Widget child, double delay = 0}) {
+    final animation = _textController.drive(
+      CurveTween(curve: Interval(delay, 1, curve: Curves.easeOutCubic)),
+    );
+    return FadeTransition(
+      opacity: animation,
+      child: AnimatedBuilder(
+        animation: animation,
+        child: child,
+        builder: (context, child) => Transform.translate(
+          offset: Offset(0, 14 * (1 - animation.value)),
+          child: child,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
@@ -434,26 +492,32 @@ class _SlidePage extends StatelessWidget {
                   icon: slide.icon,
                   accent: slide.accent,
                   pageIndex: pageIndex,
+                  active: active,
                 ),
                 const SizedBox(height: 34),
-                Text(
-                  arabic ? slide.arTitle : slide.enTitle,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: AppColors.textPrimary,
-                    fontSize: 29,
-                    height: 1.2,
-                    fontWeight: FontWeight.w800,
+                _enterText(
+                  child: Text(
+                    arabic ? slide.arTitle : slide.enTitle,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 29,
+                      height: 1.2,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
-                Text(
-                  arabic ? slide.arBody : slide.enBody,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 16,
-                    height: 1.65,
+                _enterText(
+                  delay: 0.18,
+                  child: Text(
+                    arabic ? slide.arBody : slide.enBody,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 16,
+                      height: 1.65,
+                    ),
                   ),
                 ),
               ],
@@ -465,79 +529,287 @@ class _SlidePage extends StatelessWidget {
   );
 }
 
-class _SlideVisual extends StatelessWidget {
+class _SlideVisual extends StatefulWidget {
   const _SlideVisual({
     required this.icon,
     required this.accent,
     required this.pageIndex,
+    required this.active,
   });
 
   final IconData icon;
   final Color accent;
   final int pageIndex;
+  final bool active;
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-    width: 230,
-    height: 230,
-    child: Stack(
-      alignment: Alignment.center,
-      children: [
-        Container(
-          width: 210,
-          height: 210,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: accent.withValues(alpha: 0.2)),
-          ),
-        ),
-        Transform.rotate(
-          angle: pageIndex.isEven ? -0.18 : 0.18,
-          child: Container(
-            width: 168,
-            height: 168,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: accent.withValues(alpha: 0.32)),
-            ),
-          ),
-        ),
-        SizedBox(
+  State<_SlideVisual> createState() => _SlideVisualState();
+}
+
+class _SlideVisualState extends State<_SlideVisual>
+    with TickerProviderStateMixin {
+  late final AnimationController _entranceController = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 3200),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.active) _entranceController.forward();
+  }
+
+  @override
+  void didUpdateWidget(covariant _SlideVisual oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.active && !oldWidget.active) {
+      _entranceController.forward(from: 0);
+    } else if (!widget.active) {
+      _entranceController.stop();
+    }
+  }
+
+  late final AnimationController _orbitController = AnimationController(
+    vsync: this,
+    duration: const Duration(seconds: 12),
+  )..repeat();
+
+  @override
+  void dispose() {
+    _orbitController.dispose();
+    _entranceController.dispose();
+    super.dispose();
+  }
+
+  Widget _orbitingDot({
+    required double radius,
+    required double phase,
+    required bool clockwise,
+    required Widget child,
+  }) => AnimatedBuilder(
+    animation: _orbitController,
+    child: child,
+    builder: (context, child) {
+      final angle =
+          phase + _orbitController.value * math.pi * 2 * (clockwise ? 1 : -1);
+      return Transform.translate(
+        offset: Offset(radius * math.cos(angle), radius * math.sin(angle)),
+        child: child,
+      );
+    },
+  );
+
+  Widget _animatedCoin() => AnimatedBuilder(
+    animation: _entranceController,
+    builder: (context, _) {
+      final progress = _entranceController.value;
+      final flip = Curves.easeInOutCubic.transform(
+        (progress / 0.32).clamp(0.0, 1.0),
+      );
+      final action = ((progress - 0.38) / 0.62).clamp(0.0, 1.0);
+      final ringing = widget.pageIndex == 1
+          ? math.sin(action * math.pi * 12) * math.sin(action * math.pi) * 0.22
+          : 0.0;
+      return Transform(
+        alignment: Alignment.center,
+        transform: Matrix4.identity()
+          ..setEntry(3, 2, 0.0015)
+          ..rotateY(flip * math.pi * 2),
+        child: SizedBox(
           width: 128,
           height: 128,
           child: CustomPaint(
             painter: const NavCoinPainter(),
-            child: Icon(icon, color: AppColors.surface, size: 52),
-          ),
-        ),
-        Positioned(
-          top: 20 + (pageIndex * 3),
-          right: 25,
-          child: Container(
-            width: 14,
-            height: 14,
-            decoration: BoxDecoration(color: accent, shape: BoxShape.circle),
-          ),
-        ),
-        Positioned(
-          left: 26,
-          bottom: 28 + (pageIndex * 2),
-          child: Container(
-            width: 9,
-            height: 9,
-            decoration: BoxDecoration(
-              color: AppColors.gold,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.gold.withValues(alpha: 0.35),
-                  blurRadius: 10,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Transform.rotate(
+                  angle: ringing,
+                  child: Icon(widget.icon, color: AppColors.surface, size: 52),
                 ),
+                if (widget.pageIndex == 0 || widget.pageIndex == 2)
+                  for (var i = 0; i < 3; i++)
+                    _deposit(action, i, wallet: widget.pageIndex == 0),
+                if (widget.pageIndex == 3)
+                  for (var i = 0; i < 3; i++) _sparkle(action, i),
               ],
             ),
           ),
         ),
-      ],
-    ),
+      );
+    },
   );
+
+  Widget _deposit(double action, int index, {required bool wallet}) {
+    final fall = ((action - index * 0.2) / 0.45).clamp(0.0, 1.0);
+    final opacity = math.sin(fall * math.pi);
+    return Transform.translate(
+      offset: Offset(
+        (index - 1) * 9.0 * (1 - fall),
+        -49 + Curves.easeInQuad.transform(fall) * (wallet ? 53 : 36),
+      ),
+      child: Opacity(
+        opacity: opacity.clamp(0.0, 1.0),
+        child: Transform.rotate(
+          angle: wallet ? (1 - fall) * 0.3 : fall * math.pi,
+          child: wallet
+              ? Container(
+                  width: 25,
+                  height: 14,
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(3),
+                    border: Border.all(color: AppColors.goldDark),
+                  ),
+                  child: const Icon(
+                    Icons.payments_outlined,
+                    size: 12,
+                    color: AppColors.gold,
+                  ),
+                )
+              : SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CustomPaint(painter: const NavCoinPainter()),
+                ),
+        ),
+      ),
+    );
+  }
+
+  Widget _sparkle(double action, int index) {
+    final pulse = ((action - index * 0.18) / 0.55).clamp(0.0, 1.0);
+    final intensity = math.sin(pulse * math.pi);
+    return Opacity(
+      opacity: intensity.clamp(0.0, 1.0),
+      child: ClipPath(
+        clipper: _GraphStarClipper(index),
+        child: Icon(
+          widget.icon,
+          size: 52,
+          color: Colors.white,
+          shadows: const [Shadow(color: AppColors.gold, blurRadius: 5)],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final accent = widget.accent;
+    final pageIndex = widget.pageIndex;
+    return SizedBox(
+      width: 230,
+      height: 230,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          AnimatedBuilder(
+            animation: _entranceController,
+            builder: (context, _) {
+              final progress = (_entranceController.value / 0.32).clamp(
+                0.0,
+                1.0,
+              );
+              final pulse = math.sin(progress * math.pi);
+              return IgnorePointer(
+                child: Container(
+                  width: 188 + pulse * 16,
+                  height: 188 + pulse * 16,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        accent.withValues(alpha: pulse * 0.23),
+                        accent.withValues(alpha: pulse * 0.1),
+                        accent.withValues(alpha: 0),
+                      ],
+                      stops: const [0, 0.55, 1],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          Container(
+            width: 210,
+            height: 210,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: accent.withValues(alpha: 0.2)),
+            ),
+          ),
+          Transform.rotate(
+            angle: pageIndex.isEven ? -0.18 : 0.18,
+            child: Container(
+              width: 168,
+              height: 168,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: accent.withValues(alpha: 0.32)),
+              ),
+            ),
+          ),
+          _animatedCoin(),
+          _orbitingDot(
+            radius: 105,
+            phase: -math.pi / 4 + pageIndex * 0.15,
+            clockwise: true,
+            child: Container(
+              width: 14,
+              height: 14,
+              decoration: BoxDecoration(color: accent, shape: BoxShape.circle),
+            ),
+          ),
+          _orbitingDot(
+            radius: 84,
+            phase: math.pi * 3 / 4 + pageIndex * 0.15,
+            clockwise: false,
+            child: Container(
+              width: 9,
+              height: 9,
+              decoration: BoxDecoration(
+                color: AppColors.gold,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.gold.withValues(alpha: 0.35),
+                    blurRadius: 10,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Clip the existing graph glyph to each star, keeping the graph line unchanged.
+class _GraphStarClipper extends CustomClipper<Path> {
+  const _GraphStarClipper(this.index);
+
+  final int index;
+
+  @override
+  Path getClip(Size size) {
+    const regions = [
+      Rect.fromLTRB(1, 3, 9, 11),
+      Rect.fromLTRB(9, 8, 15, 14),
+      Rect.fromLTRB(15, 3, 23, 11),
+    ];
+    final region = regions[index];
+    return Path()..addRect(
+      Rect.fromLTRB(
+        region.left / 24 * size.width,
+        region.top / 24 * size.height,
+        region.right / 24 * size.width,
+        region.bottom / 24 * size.height,
+      ),
+    );
+  }
+
+  @override
+  bool shouldReclip(_GraphStarClipper oldClipper) => index != oldClipper.index;
 }
