@@ -463,9 +463,9 @@ class Strings {
     'no_accounts_yet': 'No bank accounts connected yet.\nTap + to connect one.',
     'disconnect': 'Disconnect',
     'connected_bank': 'Connected bank',
-    'suggested_subscriptions': 'Suggested from your bank',
+    'suggested_subscriptions': 'Needs your confirmation',
     'suggested_subscriptions_sub':
-        'Recurring charges we spotted in your transactions.',
+        'Charges we\'re not confident enough about yet to add automatically.',
     'add_suggestion': 'Add',
     'occurrences_count': '%s charges seen',
 
@@ -816,8 +816,9 @@ class Strings {
     'no_accounts_yet': 'لا توجد حسابات بنكية متصلة بعد.\nاضغط + لربط حساب.',
     'disconnect': 'قطع الاتصال',
     'connected_bank': 'بنك متصل',
-    'suggested_subscriptions': 'مقترحة من حسابك البنكي',
-    'suggested_subscriptions_sub': 'مدفوعات متكررة رصدناها في معاملاتك.',
+    'suggested_subscriptions': 'بحاجة إلى تأكيدك',
+    'suggested_subscriptions_sub':
+        'مدفوعات لسنا واثقين بها بما يكفي لإضافتها تلقائيًا.',
     'add_suggestion': 'إضافة',
     'occurrences_count': 'شوهدت %s مرات',
 

@@ -17,8 +17,18 @@ class MainShell extends StatefulWidget {
 
 class _MainShellState extends State<MainShell> {
   int _index = 0;
+  final _homeKey = GlobalKey<HomeBodyState>();
 
-  void _goToTab(int index) => setState(() => _index = index);
+  void _goToTab(int index) {
+    // Re-tapping Home while already there resets its Overview/Analytics/
+    // Accounts sub-tab back to Overview, instead of leaving whichever one
+    // was last selected (IndexedStack keeps HomeBody's state alive).
+    if (index == 0 && _index == 0) {
+      _homeKey.currentState?.resetToOverview();
+      return;
+    }
+    setState(() => _index = index);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +38,7 @@ class _MainShellState extends State<MainShell> {
       body: IndexedStack(
         index: _index,
         children: [
-          const HomeBody(),
+          HomeBody(key: _homeKey),
           const SubscriptionsBody(),
           const UtilitiesBody(),
           const PeopleBody(),

@@ -61,4 +61,26 @@ void main() {
   test('the auto-add threshold is 4 occurrences', () {
     expect(RecurringDetectionEngine.autoAddOccurrences, 4);
   });
+
+  test(
+    'matches a catalog entry spelled with "+" against a merchant that '
+    'spells it out as the word "PLUS" (regression: Disney+ was wrongly '
+    'falling through to People over this)',
+    () {
+      final result = classifyForAutoAdd(_detected('DISNEY PLUS'));
+      expect(result.domain, AutoAddDomain.subscription);
+      expect(result.category, SubscriptionCategories.entertainment);
+    },
+  );
+
+  test('matches other "+"-named catalog entries the same way', () {
+    expect(
+      classifyForAutoAdd(_detected('APPLE TV PLUS SUBSCRIPTION')).domain,
+      AutoAddDomain.subscription,
+    );
+    expect(
+      classifyForAutoAdd(_detected('ICLOUD PLUS')).domain,
+      AutoAddDomain.subscription,
+    );
+  });
 }
