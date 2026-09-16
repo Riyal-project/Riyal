@@ -45,6 +45,17 @@ VoidCallback? noticeTapHandler(
           ),
         );
       };
+    case PaymentNoticeKind.subscriptionPriceIncrease:
+      final itemId = notice.itemId;
+      if (itemId == null) return null;
+      return () {
+        beforeNavigate?.call();
+        navigator.push(
+          MaterialPageRoute<void>(
+            builder: (_) => SubscriptionViewScreen(subscriptionId: itemId),
+          ),
+        );
+      };
     case PaymentNoticeKind.utilityAnomaly:
       final itemId = notice.itemId;
       if (itemId == null) return null;
@@ -129,8 +140,10 @@ class NoticeTile extends StatelessWidget {
             switch (notice.kind) {
               PaymentNoticeKind.monthlyReview => Icons.assignment_outlined,
               PaymentNoticeKind.utilityAnomaly => Icons.warning_amber_rounded,
-              PaymentNoticeKind.autoAdded => Icons.auto_awesome_rounded,
+              PaymentNoticeKind.autoAdded => Icons.check_circle_rounded,
               PaymentNoticeKind.freeTrialEnding => Icons.hourglass_top_rounded,
+              PaymentNoticeKind.subscriptionPriceIncrease =>
+                Icons.trending_up_rounded,
               PaymentNoticeKind.budgetWarning => Icons.warning_amber_rounded,
               PaymentNoticeKind.itemAdded ||
               PaymentNoticeKind.paymentReminder =>

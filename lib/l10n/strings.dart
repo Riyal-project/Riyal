@@ -132,6 +132,18 @@ class Strings {
     _ => category,
   };
 
+  static String subscriptionPriceIncreaseMessage({
+    required String name,
+    required double previousAmount,
+    required double newAmount,
+  }) {
+    final previous = previousAmount.toStringAsFixed(2);
+    final current = newAmount.toStringAsFixed(2);
+    return _isArabic
+        ? 'ارتفع سعر اشتراك $name من $previous ر.س إلى $current ر.س.'
+        : '$name increased from SAR $previous to SAR $current.';
+  }
+
   /// "We noticed Netflix charges you 49 SAR monthly — added to your
   /// Subscriptions." — used when a recurring bank charge crosses the
   /// auto-add occurrence threshold and is matched against the
@@ -165,6 +177,7 @@ class Strings {
   static String _slug(String s) => s.toLowerCase().replaceAll(' ', '_');
 
   static const _en = <String, String>{
+    'notice_subscription_price_increase': 'Subscription price increased',
     'total_spend_this_month': 'Total spend this month',
     'compared_with_last_month': '%s vs. last month',
     'budget_setup_title': 'Your monthly budgets',
@@ -578,6 +591,7 @@ class Strings {
   };
 
   static const _ar = <String, String>{
+    'notice_subscription_price_increase': 'ارتفع سعر الاشتراك',
     'total_spend_this_month': 'إجمالي الإنفاق هذا الشهر',
     'compared_with_last_month': '%s مقارنة بالشهر الماضي',
     'budget_setup_title': 'ميزانياتك الشهرية',
