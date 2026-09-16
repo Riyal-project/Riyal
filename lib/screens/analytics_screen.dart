@@ -115,7 +115,6 @@ class _AnalyticsContentState extends State<AnalyticsContent> {
       'Year' => 12.0,
       _ => 1.0,
     };
-    final periodName = _period.toLowerCase();
     final total = items.fold(0.0, (sum, item) => sum + item.amount) * factor;
     final monthlyHistory = List.generate(
       6,
@@ -131,7 +130,6 @@ class _AnalyticsContentState extends State<AnalyticsContent> {
                   : [0.55, 0.64, 0.73, 0.81, 0.92, 1.0])
               .map((weight) => total * weight)
               .toList();
-    final change = (total - history[4]) / history[4] * 100;
     final highest = items.reduce((a, b) => a.amount >= b.amount ? a : b);
     final highestNames = items
         .where((i) => i.amount == highest.amount)
@@ -234,43 +232,10 @@ class _AnalyticsContentState extends State<AnalyticsContent> {
                 ),
               ],
               const SizedBox(height: 22),
-              _card(
-                ar
-                    ? 'إجمالي الإنفاق ${_period == 'Year' ? 'هذه السنة' : 'هذا ${periodDisplay(_period)}'}'
-                    : 'Total spend this $periodName',
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _money(total),
-                      style: AppTypography.amount(
-                        fontSize: 36,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Wrap(
-                      spacing: 18,
-                      runSpacing: 10,
-                      children: [
-                        Text(
-                          ar
-                              ? '${change >= 0 ? '+' : ''}${change.toStringAsFixed(1)}٪ عن آخر ${periodDisplay(_period)}'
-                              : '${change >= 0 ? '+' : ''}${change.toStringAsFixed(1)}% vs. last $periodName',
-                          style: const TextStyle(color: AppColors.gold),
-                        ),
-                        Text(
-                          '${items.length} ${Strings.t('active_items')}',
-                          style: const TextStyle(
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                watermark: WatermarkCorner.topEnd,
+              BudgetProgressCard(
+                domain: _category == null
+                    ? null
+                    : BudgetDomainKey.fromCategory(_category!),
               ),
               const SizedBox(height: 16),
               _card(
@@ -299,11 +264,17 @@ class _AnalyticsContentState extends State<AnalyticsContent> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: labels
                           .map(
-                            (m) => Text(
-                              m,
-                              style: const TextStyle(
-                                color: AppColors.textSecondary,
-                                fontSize: 12,
+                            (m) => Expanded(
+                              child: Text(
+                                m,
+                                textAlign: TextAlign.center,
+                                maxLines: 1,
+                                overflow: TextOverflow.fade,
+                                softWrap: false,
+                                style: const TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontSize: 12,
+                                ),
                               ),
                             ),
                           )
@@ -403,12 +374,6 @@ class _AnalyticsContentState extends State<AnalyticsContent> {
                           );
                   },
                 ),
-              ),
-              const SizedBox(height: 16),
-              BudgetProgressCard(
-                domain: _category == null
-                    ? null
-                    : BudgetDomainKey.fromCategory(_category!),
               ),
               const SizedBox(height: 16),
               _card(

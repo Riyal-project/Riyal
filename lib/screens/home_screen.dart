@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../widgets/budget_progress_card.dart';
-
 import '../data/bank_transaction_matcher.dart';
+import '../data/analytics_data.dart';
 import '../data/home_data.dart';
 import '../data/mock_bank_transaction.dart';
 import '../data/monthly_review.dart';
@@ -477,7 +476,57 @@ class _SpendingCard extends StatelessWidget {
   const _SpendingCard();
 
   @override
-  Widget build(BuildContext context) => const BudgetProgressCard();
+  Widget build(BuildContext context) {
+    final total = overview.fold<double>(0, (sum, item) => sum + item.amount);
+    final previous = analyticsHistory.values.fold<double>(
+      0,
+      (sum, values) => sum + values[values.length - 2],
+    );
+    final change = previous == 0 ? 0 : (total - previous) / previous * 100;
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppColors.cardBorder),
+      ),
+      child: Stack(
+        children: [
+          const CardLogoWatermark(corner: WatermarkCorner.topEnd),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                Strings.t('total_spend_this_month'),
+                style: const TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                '⃁${total.toStringAsFixed(0)}',
+                style: AppTypography.amount(
+                  color: AppColors.textPrimary,
+                  fontSize: 32,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                Strings.f(
+                  'compared_with_last_month',
+                  '${change >= 0 ? '+' : ''}${change.toStringAsFixed(1)}%',
+                ),
+                style: const TextStyle(color: AppColors.gold, fontSize: 13),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _SectionHeader extends StatelessWidget {

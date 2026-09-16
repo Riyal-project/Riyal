@@ -165,6 +165,8 @@ class Strings {
   static String _slug(String s) => s.toLowerCase().replaceAll(' ', '_');
 
   static const _en = <String, String>{
+    'total_spend_this_month': 'Total spend this month',
+    'compared_with_last_month': '%s vs. last month',
     'budget_setup_title': 'Your monthly budgets',
     'budget_setup_intro':
         'How much would you like to budget for each category?',
@@ -576,6 +578,8 @@ class Strings {
   };
 
   static const _ar = <String, String>{
+    'total_spend_this_month': 'إجمالي الإنفاق هذا الشهر',
+    'compared_with_last_month': '%s مقارنة بالشهر الماضي',
     'budget_setup_title': 'ميزانياتك الشهرية',
     'budget_setup_intro': 'كم الميزانية اللي تبي تخصصها لكل قسم؟',
     'budget_setup_note':

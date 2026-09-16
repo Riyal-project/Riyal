@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../data/budget_store.dart';
 import '../l10n/strings.dart';
 import '../theme/app_theme.dart';
+import '../widgets/coin_back_button.dart';
 
 class BudgetSetupScreen extends StatefulWidget {
   const BudgetSetupScreen({super.key, this.afterSetup});
@@ -65,10 +66,6 @@ class _BudgetSetupScreenState extends State<BudgetSetupScreen> {
     canPop: widget.afterSetup == null,
     child: Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        automaticallyImplyLeading: widget.afterSetup == null,
-        title: Text(Strings.t('budget_setup_title')),
-      ),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -78,6 +75,12 @@ class _BudgetSetupScreenState extends State<BudgetSetupScreen> {
               child: ListView(
                 padding: const EdgeInsets.all(24),
                 children: [
+                  if (widget.afterSetup == null)
+                    const Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: CoinBackButton(),
+                    ),
+                  if (widget.afterSetup == null) const SizedBox(height: 8),
                   const Icon(
                     Icons.account_balance_wallet_outlined,
                     color: AppColors.gold,
