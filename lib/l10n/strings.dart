@@ -177,6 +177,10 @@ class Strings {
   static String _slug(String s) => s.toLowerCase().replaceAll(' ', '_');
 
   static const _en = <String, String>{
+    'connect_bank_optional_subtitle':
+        'Connect a bank now, or skip and add one later from Accounts.',
+    'skip_bank_now': 'Skip now',
+    'skip_bank_manual_hint': 'Add manually from scratch',
     'notice_subscription_price_increase': 'Subscription price increased',
     'total_spend_this_month': 'Total spend this month',
     'compared_with_last_month': '%s vs. last month',
@@ -591,6 +595,10 @@ class Strings {
   };
 
   static const _ar = <String, String>{
+    'connect_bank_optional_subtitle':
+        'اربط حسابًا بنكيًا الآن، أو تخطَّ وأضفه لاحقًا من صفحة الحسابات.',
+    'skip_bank_now': 'تخطي الآن',
+    'skip_bank_manual_hint': 'أضفه يدويًا من البداية',
     'notice_subscription_price_increase': 'ارتفع سعر الاشتراك',
     'total_spend_this_month': 'إجمالي الإنفاق هذا الشهر',
     'compared_with_last_month': '%s مقارنة بالشهر الماضي',

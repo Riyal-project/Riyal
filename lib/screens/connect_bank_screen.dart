@@ -17,10 +17,9 @@ enum _ConnectStep { chooseBank, bankLogin, connecting, success }
 /// success sequence backed entirely by local mock data (see
 /// lib/data/mock_bank_connection_service.dart).
 ///
-/// When [forced] is true (the new-user gate right after sign-up/sign-in
-/// with zero connected banks), the screen can't be dismissed until a bank
-/// is connected, and success replaces the whole stack with [MainShell]
-/// instead of popping back to wherever this was pushed from.
+/// When [forced] is true (the new-user gate right after sign-up/sign-in with
+/// zero connected banks), the user can connect now or skip and add a bank
+/// manually later. Either path replaces the stack with [MainShell].
 class ConnectBankScreen extends StatefulWidget {
   const ConnectBankScreen({super.key, this.forced = false});
 
@@ -92,6 +91,13 @@ class _ConnectBankScreenState extends State<ConnectBankScreen> {
     }
   }
 
+  void _skipForNow() {
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute<void>(builder: (_) => const MainShell()),
+      (_) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final canPopFreely = !widget.forced && _step == _ConnectStep.chooseBank;
@@ -115,6 +121,7 @@ class _ConnectBankScreenState extends State<ConnectBankScreen> {
                 forced: widget.forced,
                 onBack: canPopFreely ? () => Navigator.of(context).pop() : null,
                 onSelectBank: _selectBank,
+                onSkip: widget.forced ? _skipForNow : null,
               ),
               _ConnectStep.bankLogin => _BankLoginStep(
                 key: const ValueKey('bankLogin'),
@@ -202,11 +209,13 @@ class _ChooseBankStep extends StatelessWidget {
     required this.forced,
     required this.onBack,
     required this.onSelectBank,
+    required this.onSkip,
   });
 
   final bool forced;
   final VoidCallback? onBack;
   final ValueChanged<MockBank> onSelectBank;
+  final VoidCallback? onSkip;
 
   @override
   Widget build(BuildContext context) {
@@ -241,7 +250,7 @@ class _ChooseBankStep extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 12),
               child: Text(
-                Strings.t('connect_bank_forced_subtitle'),
+                Strings.t('connect_bank_optional_subtitle'),
                 style: const TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 13,
@@ -314,6 +323,39 @@ class _ChooseBankStep extends StatelessWidget {
               },
             ),
           ),
+          if (onSkip != null) ...[
+            const SizedBox(height: 8),
+            SizedBox(
+              width: double.infinity,
+              child: TextButton(
+                onPressed: onSkip,
+                style: TextButton.styleFrom(
+                  foregroundColor: AppColors.gold,
+                  padding: const EdgeInsets.symmetric(vertical: 13),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      Strings.t('skip_bank_now'),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      Strings.t('skip_bank_manual_hint'),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );
