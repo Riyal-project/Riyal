@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../data/item_status.dart';
-import '../data/budget_store.dart';
-import '../widgets/budget_progress_card.dart';
 import '../data/monthly_review.dart';
 import '../data/people_domain.dart';
 import '../data/tracked_domain.dart';
@@ -102,12 +100,6 @@ class _TrackedItemsScreenState extends State<TrackedItemsScreen> {
                   ),
                 ],
                 const SizedBox(height: 16),
-                BudgetProgressCard(
-                  domain: identical(widget.domain, peopleDomain)
-                      ? BudgetDomain.people
-                      : BudgetDomain.utilities,
-                ),
-                const SizedBox(height: 12),
                 Expanded(
                   child: _tab == _PageTab.items
                       ? _TrackedItemsList(

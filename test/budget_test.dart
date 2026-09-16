@@ -16,6 +16,7 @@ import 'package:riyal/screens/signup_screen.dart';
 import 'package:riyal/screens/subscriptions_screen.dart';
 import 'package:riyal/screens/utilities_screen.dart';
 import 'package:riyal/screens/people_screen.dart';
+import 'package:riyal/screens/home_screen.dart';
 import 'package:riyal/theme/app_theme.dart';
 import 'package:riyal/widgets/budget_progress_card.dart';
 
@@ -254,13 +255,31 @@ void main() {
   });
 
   testWidgets(
-    'All category pages show a budget bar without overflow on small Arabic screens',
+    'Budget only appears in analytics and total spend only appears in overview',
     (tester) async {
       tester.view.physicalSize = const Size(375, 667);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
       AppLocale.locale.value = const Locale('ar');
       await tester.runAsync(() => store.save(limits(100)));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: buildAppTheme(languageCode: 'ar'),
+          home: const Scaffold(body: HomeBody()),
+        ),
+      );
+      await tester.pump();
+      expect(find.text(Strings.t('total_spend_this_month')), findsOneWidget);
+      expect(find.byType(BudgetProgressCard), findsNothing);
+      await tester.tap(find.text(Strings.t('analytics_tab')));
+      await tester.pump();
+      expect(find.text(Strings.t('total_spend_this_month')), findsNothing);
+      expect(find.byType(BudgetProgressCard), findsOneWidget);
+      expect(
+        tester.getTopLeft(find.text(Strings.t('budget_monthly'))).dy,
+        lessThan(tester.getTopLeft(find.text(Strings.t('spend_over_time'))).dy),
+      );
+
       for (final page in [
         const SubscriptionsBody(),
         const UtilitiesBody(),
@@ -278,7 +297,16 @@ void main() {
           ),
         );
         await tester.pump();
+        expect(find.byType(BudgetProgressCard), findsNothing);
+        await tester.tap(find.text(Strings.t('analytics_tab')));
+        await tester.pump();
         expect(find.byType(BudgetProgressCard), findsOneWidget);
+        expect(
+          tester.getTopLeft(find.text(Strings.t('budget_monthly'))).dy,
+          lessThan(
+            tester.getTopLeft(find.text(Strings.t('spend_over_time'))).dy,
+          ),
+        );
         expect(tester.takeException(), isNull);
       }
     },
