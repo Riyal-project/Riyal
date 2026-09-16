@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'screens/splash_screen.dart';
 import 'theme/app_theme.dart';
 import 'data/app_settings.dart';
+import 'data/budget_store.dart';
 import 'data/monthly_review.dart';
 import 'data/subscriptions_store.dart';
 import 'data/supabase_config.dart';
@@ -40,6 +41,11 @@ Future<void> main() async {
     );
   } catch (error) {
     debugPrint('Supabase init/load failed: $error');
+  }
+  try {
+    await BudgetStore.instance.load().timeout(const Duration(seconds: 3));
+  } catch (error) {
+    debugPrint('Budget load failed: $error');
   }
   runApp(const MainApp());
 }

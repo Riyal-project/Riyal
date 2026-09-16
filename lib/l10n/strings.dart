@@ -165,6 +165,24 @@ class Strings {
   static String _slug(String s) => s.toLowerCase().replaceAll(' ', '_');
 
   static const _en = <String, String>{
+    'budget_setup_title': 'Your monthly budgets',
+    'budget_setup_intro':
+        'How much would you like to budget for each category?',
+    'budget_setup_note':
+        'Set a monthly limit for subscriptions, bills, and salaries / allowances. Zero means no planned spending. We will warn you at 80% and when you reach your limit.',
+    'budget_invalid_amount': 'Enter a valid amount of zero or more.',
+    'budget_save_error': 'Could not save your budgets. Please try again.',
+    'budget_save': 'Save budgets',
+    'budget_monthly': 'Monthly budget',
+    'budget_committed': 'Monthly commitments',
+    'budget_edit': 'Edit',
+    'budget_set': 'Set budget',
+    'budget_not_set': 'Set your budgets to track monthly commitments.',
+    'budget_near': 'Approaching your budget',
+    'budget_reached': 'Budget reached or exceeded',
+    'budget_within': 'Within your budget',
+    'budget_near_notice': 'You are approaching your budget',
+    'budget_exceeded_notice': 'Your budget has been reached or exceeded',
     'free_trial': 'Free Trial',
     'category_free_trial': 'Free Trial',
     'trial_duration': 'Free trial duration',
@@ -558,6 +576,23 @@ class Strings {
   };
 
   static const _ar = <String, String>{
+    'budget_setup_title': 'ميزانياتك الشهرية',
+    'budget_setup_intro': 'كم الميزانية اللي تبي تخصصها لكل قسم؟',
+    'budget_setup_note':
+        'حدد ميزانية شهرية للاشتراكات والفواتير والرواتب والبدلات. الصفر يعني ما خصصت مصروفًا للقسم. بننبهك عند ٨٠٪ وعند الوصول للميزانية.',
+    'budget_invalid_amount': 'أدخل مبلغًا صحيحًا يساوي صفرًا أو أكثر.',
+    'budget_save_error': 'تعذر حفظ الميزانيات، حاول مرة ثانية.',
+    'budget_save': 'حفظ الميزانيات',
+    'budget_monthly': 'الميزانية الشهرية',
+    'budget_committed': 'الالتزامات الشهرية',
+    'budget_edit': 'تعديل',
+    'budget_set': 'حدد الميزانية',
+    'budget_not_set': 'حدد ميزانياتك لمتابعة الالتزامات الشهرية.',
+    'budget_near': 'اقتربت من ميزانيتك',
+    'budget_reached': 'وصلت للميزانية أو تجاوزتها',
+    'budget_within': 'ضمن الميزانية',
+    'budget_near_notice': 'اقتربت من ميزانيتك',
+    'budget_exceeded_notice': 'وصلت لميزانيتك أو تجاوزتها',
     'free_trial': 'تجربة مجانية',
     'category_free_trial': 'تجربة مجانية',
     'trial_duration': 'مدة التجربة المجانية',

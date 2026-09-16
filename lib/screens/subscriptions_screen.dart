@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../data/item_status.dart';
+import '../data/budget_store.dart';
+import '../widgets/budget_progress_card.dart';
 import '../data/monthly_review.dart';
 import '../data/subscription.dart';
 import '../data/subscription_category.dart';
@@ -95,6 +97,8 @@ class _SubscriptionsBodyState extends State<SubscriptionsBody> {
                   ),
                 ],
                 const SizedBox(height: 16),
+                const BudgetProgressCard(domain: BudgetDomain.subscriptions),
+                const SizedBox(height: 12),
                 Expanded(
                   child: _tab == _PageTab.subscriptions
                       ? _SubscriptionsList(filter: _filter, query: _query)

@@ -5,6 +5,8 @@ import '../l10n/strings.dart';
 import '../theme/app_theme.dart';
 import '../theme/app_typography.dart';
 import 'connect_bank_screen.dart';
+import 'budget_setup_screen.dart';
+import '../data/budget_store.dart';
 import '../widgets/gold_coin_painter.dart';
 import '../widgets/auth_coin_flip.dart';
 
@@ -40,10 +42,14 @@ class _SignupScreenState extends State<SignupScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _signingUp = true);
     try {
+      await BudgetStore.instance.activate(_emailController.text);
+      if (!mounted) return;
       // A brand-new account can't have a connected bank yet.
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute<void>(
-          builder: (_) => const ConnectBankScreen(forced: true),
+          builder: (_) => const BudgetSetupScreen(
+            afterSetup: ConnectBankScreen(forced: true),
+          ),
         ),
         (_) => false,
       );

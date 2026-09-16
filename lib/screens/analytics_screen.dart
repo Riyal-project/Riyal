@@ -1,5 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import '../data/budget_store.dart';
+import '../widgets/budget_progress_card.dart';
 import '../data/analytics_data.dart';
 import '../data/people_catalog.dart';
 import '../data/subscription_catalog.dart';
@@ -130,10 +132,6 @@ class _AnalyticsContentState extends State<AnalyticsContent> {
               .map((weight) => total * weight)
               .toList();
     final change = (total - history[4]) / history[4] * 100;
-    final monthlyBudget = _category == null
-        ? overallAnalyticsBudget
-        : analyticsBudgets[_category]!;
-    final budget = monthlyBudget * factor;
     final highest = items.reduce((a, b) => a.amount >= b.amount ? a : b);
     final highestNames = items
         .where((i) => i.amount == highest.amount)
@@ -407,50 +405,10 @@ class _AnalyticsContentState extends State<AnalyticsContent> {
                 ),
               ),
               const SizedBox(height: 16),
-              _card(
-                _category == null
-                    ? Strings.t('overall_budget_vs_actual')
-                    : Strings.t('category_budget_vs_actual'),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${_money(total)} / ${_money(budget)}',
-                      style: AppTypography.amount(
-                        color: AppColors.textPrimary,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: LinearProgressIndicator(
-                        value: (total / budget).clamp(0.0, 1.0),
-                        minHeight: 10,
-                        backgroundColor: AppColors.trackBackground,
-                        color: AppColors.gold,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      ar
-                          ? '${(total / budget * 100).toStringAsFixed(0)}٪ مستخدَم · ${_money((budget - total).abs())} ${total <= budget ? Strings.t('remaining') : Strings.t('over_budget')}'
-                          : '${(total / budget * 100).toStringAsFixed(0)}% used · ${_money((budget - total).abs())} ${total <= budget ? Strings.t('remaining') : Strings.t('over_budget')}',
-                      style: const TextStyle(color: AppColors.textSecondary),
-                    ),
-                    if (_category == null) ...[
-                      const SizedBox(height: 8),
-                      Text(
-                        Strings.t('combined_budget_note'),
-                        style: const TextStyle(
-                          color: AppColors.textSecondary,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
+              BudgetProgressCard(
+                domain: _category == null
+                    ? null
+                    : BudgetDomainKey.fromCategory(_category!),
               ),
               const SizedBox(height: 16),
               _card(

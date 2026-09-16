@@ -19,6 +19,7 @@ import 'user_bank_accounts_store.dart';
 import 'utility_anomaly_detection.dart';
 import 'dart:async';
 import 'dart:convert';
+import 'budget_store.dart';
 
 enum PaymentNoticeKind {
   itemAdded,
@@ -27,6 +28,7 @@ enum PaymentNoticeKind {
   utilityAnomaly,
   autoAdded,
   freeTrialEnding,
+  budgetWarning,
 }
 
 class PaymentNotice {
@@ -65,6 +67,7 @@ class NotificationsStore {
     UtilitiesStore.instance.items.addListener(refresh);
     PeopleStore.instance.items.addListener(refresh);
     MonthlyReviewStore.instance.revision.addListener(refresh);
+    BudgetStore.instance.revision.addListener(refresh);
   }
   static final instance = NotificationsStore._();
   final notices = ValueNotifier<List<PaymentNotice>>([]);
@@ -81,6 +84,27 @@ class NotificationsStore {
   void refresh({bool seed = false, DateTime? at}) {
     final now = at ?? DateTime.now();
     final additions = <PaymentNotice>[];
+    final budgets = BudgetStore.instance;
+    for (final alert in budgets.alerts) {
+      if (notices.value.any((notice) => notice.id == alert.id)) continue;
+      additions.add(
+        PaymentNotice(
+          id: alert.id,
+          title: Strings.t(
+            alert.level == BudgetLevel.exceeded
+                ? 'budget_exceeded_notice'
+                : 'budget_near_notice',
+          ),
+          message:
+              '${Strings.categoryDisplay(alert.domain.categoryKey)}\n'
+              '${Strings.t('budget_committed')}: SAR ${alert.committed.toStringAsFixed(2)} / SAR ${alert.limit.toStringAsFixed(2)}',
+          createdAt: alert.createdAt,
+          reminder: true,
+          kind: PaymentNoticeKind.budgetWarning,
+          itemId: alert.domain.categoryKey,
+        ),
+      );
+    }
     void visit(
       Object identity,
       String name,
@@ -233,9 +257,16 @@ class NotificationsStore {
         ),
       );
     }
+    final accountNotices = notices.value
+        .where(
+          (notice) =>
+              notice.kind != PaymentNoticeKind.budgetWarning ||
+              budgets.alerts.any((alert) => alert.id == notice.id),
+        )
+        .toList();
     final retained = !reviewIsDue
-        ? notices.value.where((notice) => notice.id != reviewId).toList()
-        : notices.value;
+        ? accountNotices.where((notice) => notice.id != reviewId).toList()
+        : accountNotices;
     if (additions.isNotEmpty) {
       notices.value = [...retained, ...additions]
         ..sort((a, b) => b.createdAt.compareTo(a.createdAt));

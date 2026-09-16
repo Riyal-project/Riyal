@@ -8,6 +8,8 @@ import '../theme/app_typography.dart';
 import 'connect_bank_screen.dart';
 import 'main_shell.dart';
 import 'signup_screen.dart';
+import 'budget_setup_screen.dart';
+import '../data/budget_store.dart';
 import '../widgets/gold_coin_painter.dart';
 import '../widgets/auth_coin_flip.dart';
 
@@ -40,19 +42,28 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _signingIn = true);
     try {
+      await BudgetStore.instance.activate(_emailController.text);
       final hasAccount = await UserBankAccountsStore.instance.hasAnyAccount();
       if (!mounted) return;
       if (hasAccount) {
         await UserBankAccountsStore.instance.load();
         if (!mounted) return;
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute<void>(builder: (_) => const MainShell()),
+          MaterialPageRoute<void>(
+            builder: (_) => BudgetStore.instance.configured
+                ? const MainShell()
+                : const BudgetSetupScreen(afterSetup: MainShell()),
+          ),
           (_) => false,
         );
       } else {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute<void>(
-            builder: (_) => const ConnectBankScreen(forced: true),
+            builder: (_) => BudgetStore.instance.configured
+                ? const ConnectBankScreen(forced: true)
+                : const BudgetSetupScreen(
+                    afterSetup: ConnectBankScreen(forced: true),
+                  ),
           ),
           (_) => false,
         );

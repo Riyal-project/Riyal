@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../data/notifications_store.dart';
+import '../data/budget_store.dart';
 import '../l10n/strings.dart';
 import '../screens/notifications_screen.dart';
 import '../theme/app_theme.dart';
@@ -21,15 +22,16 @@ class _NotificationCoinButtonState extends State<NotificationCoinButton>
     NotificationsStore.instance.refresh();
     unawaited(NotificationsStore.instance.readState.initialize());
     WidgetsBinding.instance.addObserver(this);
-    _timer = Timer.periodic(
-      const Duration(minutes: 1),
-      (_) => NotificationsStore.instance.refresh(),
-    );
+    _timer = Timer.periodic(const Duration(minutes: 1), (_) {
+      BudgetStore.instance.recalculate();
+      NotificationsStore.instance.refresh();
+    });
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
+      BudgetStore.instance.recalculate();
       NotificationsStore.instance.refresh();
       unawaited(NotificationsStore.instance.readState.initialize());
     }

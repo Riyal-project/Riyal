@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../data/item_status.dart';
+import '../data/budget_store.dart';
+import '../widgets/budget_progress_card.dart';
 import '../data/monthly_review.dart';
 import '../data/people_domain.dart';
 import '../data/tracked_domain.dart';
@@ -41,10 +43,9 @@ class _TrackedItemsScreenState extends State<TrackedItemsScreen> {
     _query = '';
   });
 
-  ReviewDomain get _reviewDomain =>
-      identical(widget.domain, peopleDomain)
-          ? ReviewDomain.people
-          : ReviewDomain.utility;
+  ReviewDomain get _reviewDomain => identical(widget.domain, peopleDomain)
+      ? ReviewDomain.people
+      : ReviewDomain.utility;
 
   @override
   Widget build(BuildContext context) {
@@ -101,6 +102,12 @@ class _TrackedItemsScreenState extends State<TrackedItemsScreen> {
                   ),
                 ],
                 const SizedBox(height: 16),
+                BudgetProgressCard(
+                  domain: identical(widget.domain, peopleDomain)
+                      ? BudgetDomain.people
+                      : BudgetDomain.utilities,
+                ),
+                const SizedBox(height: 12),
                 Expanded(
                   child: _tab == _PageTab.items
                       ? _TrackedItemsList(
@@ -157,9 +164,7 @@ class _TrackedItemsList extends StatelessWidget {
       builder: (context, allItems, _) {
         var items = allItems.where((s) => filter.matches(s.category)).toList();
         if (!filter.showCancelled) {
-          items = items
-              .where((s) => s.status != ItemStatus.cancelled)
-              .toList();
+          items = items.where((s) => s.status != ItemStatus.cancelled).toList();
         }
         if (query.trim().isNotEmpty) {
           items = items
@@ -248,8 +253,7 @@ class _TrackedItemTile extends StatelessWidget {
     return GestureDetector(
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute<void>(
-          builder: (_) =>
-              TrackedItemViewScreen(domain: domain, itemId: s.id),
+          builder: (_) => TrackedItemViewScreen(domain: domain, itemId: s.id),
         ),
       ),
       child: Container(

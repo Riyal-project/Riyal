@@ -9,6 +9,7 @@ import '../widgets/coin_back_button.dart';
 import 'monthly_review_screen.dart';
 import 'subscription_view_screen.dart';
 import 'tracked_item_view_screen.dart';
+import 'budget_setup_screen.dart';
 
 /// The destination for tapping [notice], if any — shared by the full
 /// notifications list and the coin-button popup so both route the same
@@ -19,6 +20,13 @@ VoidCallback? noticeTapHandler(
   VoidCallback? beforeNavigate,
 }) {
   switch (notice.kind) {
+    case PaymentNoticeKind.budgetWarning:
+      return () {
+        beforeNavigate?.call();
+        navigator.push(
+          MaterialPageRoute<void>(builder: (_) => const BudgetSetupScreen()),
+        );
+      };
     case PaymentNoticeKind.monthlyReview:
       return () {
         beforeNavigate?.call();
@@ -123,13 +131,18 @@ class NoticeTile extends StatelessWidget {
               PaymentNoticeKind.utilityAnomaly => Icons.warning_amber_rounded,
               PaymentNoticeKind.autoAdded => Icons.auto_awesome_rounded,
               PaymentNoticeKind.freeTrialEnding => Icons.hourglass_top_rounded,
+              PaymentNoticeKind.budgetWarning => Icons.warning_amber_rounded,
               PaymentNoticeKind.itemAdded ||
               PaymentNoticeKind.paymentReminder =>
                 notice.reminder
                     ? Icons.notifications_active_outlined
                     : Icons.add_card_rounded,
             },
-            color: AppColors.gold,
+            color: notice.kind == PaymentNoticeKind.budgetWarning
+                ? (notice.id.contains(':exceeded:')
+                      ? Colors.redAccent
+                      : Colors.orange)
+                : AppColors.gold,
             size: 23,
           ),
           const SizedBox(width: 12),

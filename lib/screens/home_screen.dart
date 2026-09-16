@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/budget_progress_card.dart';
 
 import '../data/bank_transaction_matcher.dart';
 import '../data/home_data.dart';
@@ -506,103 +507,7 @@ class _SpendingCard extends StatelessWidget {
   const _SpendingCard();
 
   @override
-  Widget build(BuildContext context) {
-    final progress = (subscriptionsSpent / subscriptionsBudget).clamp(0.0, 1.0);
-    final left = subscriptionsBudget - subscriptionsSpent;
-
-    return Container(
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.cardBorder),
-      ),
-      child: Stack(
-        children: [
-          const CardLogoWatermark(corner: WatermarkCorner.topEnd),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  Strings.t('spending_heading'),
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 14,
-                    height: 1.3,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '⃁${subscriptionsSpent.toStringAsFixed(0)}',
-                      style: AppTypography.amount(
-                        color: AppColors.textPrimary,
-                        fontSize: 32,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (_) =>
-                              const AnalyticsScreen(category: 'Subscriptions'),
-                        ),
-                      ),
-                      child: const Icon(
-                        Icons.chevron_right,
-                        color: AppColors.gold,
-                        size: 26,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 14),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: LinearProgressIndicator(
-                    value: progress,
-                    minHeight: 8,
-                    backgroundColor: AppColors.trackBackground,
-                    valueColor: const AlwaysStoppedAnimation(AppColors.gold),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        Strings.f(
-                          'of_sar_budget',
-                          subscriptionsBudget.toStringAsFixed(0),
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: AppColors.textSecondary,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      Strings.f('sar_left', left.toStringAsFixed(0)),
-                      style: const TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) => const BudgetProgressCard();
 }
 
 class _SectionHeader extends StatelessWidget {
