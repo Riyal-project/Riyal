@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/locale_refresh_mixin.dart';
 import '../theme/app_theme.dart';
 import 'bottom_nav.dart';
 import 'home_screen.dart';
@@ -15,9 +16,18 @@ class MainShell extends StatefulWidget {
   State<MainShell> createState() => _MainShellState();
 }
 
-class _MainShellState extends State<MainShell> {
+class _MainShellState extends State<MainShell> with LocaleRefreshState {
   int _index = 0;
   final _homeKey = GlobalKey<HomeBodyState>();
+
+  @override
+  void initState() {
+    super.initState();
+    // BottomNav's labels (nav_home/nav_subscriptions/...) would otherwise
+    // stay stale until the next tab tap — MainShell only rebuilds on its
+    // own tab-switch setState, same underlying issue as the tab bodies.
+    addLocaleRefreshListener();
+  }
 
   void _goToTab(int index) {
     // Re-tapping Home while already there resets its Overview/Analytics/

@@ -13,6 +13,7 @@ import '../data/subscriptions_store.dart';
 import '../data/user_bank_account.dart';
 import '../data/user_bank_accounts_store.dart';
 import '../data/utilities_domain.dart';
+import '../l10n/locale_refresh_mixin.dart';
 import '../l10n/strings.dart';
 import '../theme/app_theme.dart';
 import '../theme/app_typography.dart';
@@ -44,8 +45,14 @@ class HomeBody extends StatefulWidget {
 /// while already on Home — otherwise re-tapping Home would just leave
 /// whichever sub-tab (Analytics/Accounts) was last selected on screen,
 /// since [IndexedStack] keeps this state alive across tab switches.
-class HomeBodyState extends State<HomeBody> {
+class HomeBodyState extends State<HomeBody> with LocaleRefreshState {
   _HomeTab _tab = _HomeTab.overview;
+
+  @override
+  void initState() {
+    super.initState();
+    addLocaleRefreshListener();
+  }
 
   void resetToOverview() {
     if (_tab != _HomeTab.overview) setState(() => _tab = _HomeTab.overview);

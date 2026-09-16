@@ -164,8 +164,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     children: [
       Padding(
         padding: const EdgeInsets.fromLTRB(20, 10, 12, 0),
-        child: Row(
+        child: Stack(
+          alignment: Alignment.center,
           children: [
+            // Centered on the full row width — a plain Row would leave it
+            // flush left, since Skip only pushes it away from the right.
             Text(
               'RIYAL',
               style: AppTypography.wordmark(
@@ -175,12 +178,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 letterSpacing: 2,
               ),
             ),
-            const Spacer(),
-            TextButton(
-              onPressed: _saving ? null : _finish,
-              child: Text(
-                t('تخطي', 'Skip'),
-                style: const TextStyle(color: AppColors.textSecondary),
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: TextButton(
+                onPressed: _saving ? null : _finish,
+                child: Text(
+                  t('تخطي', 'Skip'),
+                  style: const TextStyle(color: AppColors.textSecondary),
+                ),
               ),
             ),
           ],

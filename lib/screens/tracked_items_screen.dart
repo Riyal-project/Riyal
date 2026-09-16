@@ -5,6 +5,7 @@ import '../data/monthly_review.dart';
 import '../data/people_domain.dart';
 import '../data/tracked_domain.dart';
 import '../data/tracked_item.dart';
+import '../l10n/locale_refresh_mixin.dart';
 import '../l10n/strings.dart';
 import '../theme/app_theme.dart';
 import '../theme/app_typography.dart';
@@ -30,11 +31,18 @@ class TrackedItemsScreen extends StatefulWidget {
   State<TrackedItemsScreen> createState() => _TrackedItemsScreenState();
 }
 
-class _TrackedItemsScreenState extends State<TrackedItemsScreen> {
+class _TrackedItemsScreenState extends State<TrackedItemsScreen>
+    with LocaleRefreshState {
   _PageTab _tab = _PageTab.items;
   ItemFilterState _filter = const ItemFilterState();
   bool _searching = false;
   String _query = '';
+
+  @override
+  void initState() {
+    super.initState();
+    addLocaleRefreshListener();
+  }
 
   void _stopSearching() => setState(() {
     _searching = false;
