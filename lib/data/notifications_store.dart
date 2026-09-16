@@ -29,6 +29,7 @@ enum PaymentNoticeKind {
   autoAdded,
   freeTrialEnding,
   budgetWarning,
+  subscriptionPriceIncrease,
 }
 
 class PaymentNotice {
@@ -59,6 +60,21 @@ class PaymentNotice {
   final String? autoAddedDomain;
 }
 
+({double previousAmount, double newAmount, String transactionId})?
+subscriptionPriceIncreaseFromHistory(
+  List<MockBankTransactionRow> historyNewestFirst,
+) {
+  if (historyNewestFirst.length < 2) return null;
+  final latest = historyNewestFirst[0];
+  final previous = historyNewestFirst[1];
+  if (latest.amount <= previous.amount) return null;
+  return (
+    previousAmount: previous.amount,
+    newAmount: latest.amount,
+    transactionId: latest.id,
+  );
+}
+
 /// In-app demo inbox, fed by the same observable stores as the payment screens.
 class NotificationsStore {
   NotificationsStore._() {
@@ -72,9 +88,11 @@ class NotificationsStore {
   static final instance = NotificationsStore._();
   final notices = ValueNotifier<List<PaymentNotice>>([]);
   final readState = NoticeReadState();
-  final Map<Object, String> _itemIds = Map.identity();
-  final Set<Object> _seen = Set.identity();
-  final Map<Object, Set<DateTime>> _reminded = Map.identity();
+  final Map<String, String> _itemIds = {};
+  final Set<String> _seen = {};
+  final Map<String, Set<DateTime>> _reminded = {};
+  final Map<String, double> _lastSubscriptionAmount = {};
+  final Set<String> _notifiedBankPriceChanges = {};
 
   /// The current-bill amount last notified about, per utility id — so an
   /// unchanged anomaly doesn't re-notify on every refresh tick, but a new
@@ -106,7 +124,7 @@ class NotificationsStore {
       );
     }
     void visit(
-      Object identity,
+      String identity,
       String name,
       String category,
       double amount,
@@ -172,8 +190,38 @@ class NotificationsStore {
     }
 
     for (final item in SubscriptionsStore.instance.subscriptions.value) {
+      final identity = 'subscription:${item.id}';
+      final previousAmount = _lastSubscriptionAmount[identity];
+      final wasAlreadySeen = _seen.contains(identity);
+      _lastSubscriptionAmount[identity] = item.amount;
+      if (wasAlreadySeen &&
+          previousAmount != null &&
+          item.amount > previousAmount &&
+          item.notificationsEnabled &&
+          (item.status == ItemStatus.active ||
+              item.status == ItemStatus.trial)) {
+        final noticeId =
+            'subscription-price:${item.id}:${previousAmount.toStringAsFixed(2)}:${item.amount.toStringAsFixed(2)}';
+        if (!notices.value.any((notice) => notice.id == noticeId)) {
+          additions.add(
+            PaymentNotice(
+              id: noticeId,
+              title: Strings.t('notice_subscription_price_increase'),
+              message: Strings.subscriptionPriceIncreaseMessage(
+                name: item.name,
+                previousAmount: previousAmount,
+                newAmount: item.amount,
+              ),
+              createdAt: now,
+              reminder: true,
+              kind: PaymentNoticeKind.subscriptionPriceIncrease,
+              itemId: item.id,
+            ),
+          );
+        }
+      }
       visit(
-        item,
+        identity,
         item.name,
         'Subscriptions',
         item.amount,
@@ -218,7 +266,7 @@ class NotificationsStore {
     }
     for (final item in UtilitiesStore.instance.items.value) {
       visit(
-        item,
+        'utility:${item.id}',
         item.name,
         'Utilities',
         item.amount,
@@ -229,7 +277,7 @@ class NotificationsStore {
     }
     for (final item in PeopleStore.instance.items.value) {
       visit(
-        item,
+        'person:${item.id}',
         item.name,
         'People',
         item.amount,
@@ -282,9 +330,63 @@ class NotificationsStore {
     // making callers await — every other notice update.
     unawaited(_refreshUtilityAnomalies());
     unawaited(_refreshAutoDetection());
+    unawaited(_refreshSubscriptionPriceChanges());
   }
 
   bool _autoDetectionRunning = false;
+
+  bool _subscriptionPriceCheckRunning = false;
+
+  Future<void> _refreshSubscriptionPriceChanges() async {
+    if (_subscriptionPriceCheckRunning) return;
+    if (UserBankAccountsStore.instance.accounts.value.isEmpty) return;
+    _subscriptionPriceCheckRunning = true;
+    try {
+      final List<MockBankTransactionRow> transactions;
+      try {
+        transactions = await loadAllConnectedTransactions();
+      } catch (error) {
+        debugPrint('Subscription price check failed: $error');
+        return;
+      }
+      final additions = <PaymentNotice>[];
+      for (final subscription
+          in SubscriptionsStore.instance.subscriptions.value) {
+        if (!subscription.notificationsEnabled ||
+            (subscription.status != ItemStatus.active &&
+                subscription.status != ItemStatus.trial)) {
+          continue;
+        }
+        final history = historyForItemName(transactions, subscription.name);
+        final increase = subscriptionPriceIncreaseFromHistory(history);
+        if (increase == null ||
+            !_notifiedBankPriceChanges.add(increase.transactionId)) {
+          continue;
+        }
+        additions.add(
+          PaymentNotice(
+            id: 'subscription-bank-price:${subscription.id}:${increase.transactionId}',
+            title: Strings.t('notice_subscription_price_increase'),
+            message: Strings.subscriptionPriceIncreaseMessage(
+              name: subscription.name,
+              previousAmount: increase.previousAmount,
+              newAmount: increase.newAmount,
+            ),
+            createdAt: history.first.transactionDate,
+            reminder: true,
+            kind: PaymentNoticeKind.subscriptionPriceIncrease,
+            itemId: subscription.id,
+          ),
+        );
+      }
+      if (additions.isEmpty) return;
+      notices.value = [...notices.value, ...additions]
+        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      readState.updateIds(notices.value.map((notice) => notice.id));
+    } finally {
+      _subscriptionPriceCheckRunning = false;
+    }
+  }
 
   /// Runs the same auto-detection [refresh] triggers on a timer, but
   /// awaitable — the Accounts screen calls this directly before deciding
@@ -349,7 +451,9 @@ class NotificationsStore {
               nextBillingDate: suggestion.suggestedNextBillingDate,
               category: classification.category,
             );
-            _seen.add(subscription);
+            _seen.add('subscription:${subscription.id}');
+            _lastSubscriptionAmount['subscription:${subscription.id}'] =
+                subscription.amount;
             await SubscriptionsStore.instance.add(subscription);
             additions.add(
               PaymentNotice(
@@ -380,7 +484,7 @@ class NotificationsStore {
               nextBillingDate: suggestion.suggestedNextBillingDate,
               category: classification.category,
             );
-            _seen.add(item);
+            _seen.add('utility:${item.id}');
             UtilitiesStore.instance.add(item);
             additions.add(
               PaymentNotice(
@@ -411,7 +515,7 @@ class NotificationsStore {
               nextBillingDate: suggestion.suggestedNextBillingDate,
               category: classification.category,
             );
-            _seen.add(item);
+            _seen.add('person:${item.id}');
             PeopleStore.instance.add(item);
             additions.add(
               PaymentNotice(

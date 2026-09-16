@@ -9,6 +9,7 @@ import 'package:riyal/data/utilities_store.dart';
 import 'package:riyal/data/tracked_item.dart';
 import 'package:riyal/data/people_categories.dart';
 import 'package:riyal/data/utility_categories.dart';
+import 'package:riyal/data/mock_bank_transaction.dart';
 
 void main() {
   test(
@@ -172,4 +173,87 @@ void main() {
       isEmpty,
     );
   });
+
+  test(
+    'Editing a subscription price emits a price increase, not a new subscription',
+    () {
+      final inbox = NotificationsStore.instance;
+      final subscription = Subscription(
+        id: 'manual-price-change',
+        name: 'Manual price app',
+        logoAsset: null,
+        amount: 40,
+        cycle: BillingCycle.monthly,
+        nextBillingDate: DateTime.now().add(const Duration(days: 20)),
+      );
+      SubscriptionsStore.instance.add(subscription);
+      final addedBefore = inbox.notices.value
+          .where(
+            (notice) =>
+                notice.kind == PaymentNoticeKind.itemAdded &&
+                notice.message.contains(subscription.name),
+          )
+          .length;
+
+      SubscriptionsStore.instance.update(subscription.copyWith(amount: 55));
+
+      expect(
+        inbox.notices.value.where(
+          (notice) =>
+              notice.kind == PaymentNoticeKind.itemAdded &&
+              notice.message.contains(subscription.name),
+        ),
+        hasLength(addedBefore),
+      );
+      final increases = inbox.notices.value.where(
+        (notice) =>
+            notice.kind == PaymentNoticeKind.subscriptionPriceIncrease &&
+            notice.itemId == subscription.id,
+      );
+      expect(increases, hasLength(1));
+      expect(increases.single.title, 'Subscription price increased');
+      expect(increases.single.message, contains('40.00'));
+      expect(increases.single.message, contains('55.00'));
+
+      SubscriptionsStore.instance.update(subscription.copyWith(amount: 45));
+      expect(
+        inbox.notices.value.where(
+          (notice) =>
+              notice.kind == PaymentNoticeKind.subscriptionPriceIncrease &&
+              notice.itemId == subscription.id,
+        ),
+        hasLength(1),
+      );
+    },
+  );
+
+  test(
+    'A higher latest bank withdrawal is detected as a subscription increase',
+    () {
+      MockBankTransactionRow row(String id, double amount, int day) =>
+          MockBankTransactionRow(
+            id: id,
+            bankId: 'bank',
+            merchantName: 'Example',
+            amount: amount,
+            transactionDate: DateTime(2026, 9, day),
+            category: 'subscription',
+          );
+
+      final increase = subscriptionPriceIncreaseFromHistory([
+        row('latest', 65, 10),
+        row('previous', 50, 1),
+      ]);
+      expect(increase?.previousAmount, 50);
+      expect(increase?.newAmount, 65);
+      expect(increase?.transactionId, 'latest');
+      expect(
+        subscriptionPriceIncreaseFromHistory([
+          row('latest-lower', 45, 10),
+          row('previous-higher', 50, 1),
+        ]),
+        isNull,
+      );
+    },
+  );
 }
