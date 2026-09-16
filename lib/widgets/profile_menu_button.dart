@@ -5,6 +5,7 @@ import '../l10n/strings.dart';
 import '../screens/profile_screen.dart';
 import '../screens/settings_screen.dart';
 import '../screens/contact_us_screen.dart';
+import '../screens/about_us_screen.dart';
 import '../screens/login_screen.dart';
 import '../theme/app_theme.dart';
 import 'flipping_coin_icon.dart';
@@ -93,7 +94,8 @@ class ProfileMenuButton extends StatelessWidget {
                             for (final entry in const [
                               ('Profile', Icons.person_outline_rounded),
                               ('Settings', Icons.settings_outlined),
-                              ('Contact us', Icons.mail_outline_rounded),
+                              ('Help', Icons.help_outline_rounded),
+                              ('About us', Icons.info_outline_rounded),
                             ])
                               Padding(
                                 padding: const EdgeInsets.only(top: 10),
@@ -123,7 +125,10 @@ class ProfileMenuButton extends StatelessWidget {
                                         'Settings' => Strings.t(
                                           'settings_menu_item',
                                         ),
-                                        _ => Strings.t('contact_us_menu_item'),
+                                        'Help' => Strings.t(
+                                          'contact_us_menu_item',
+                                        ),
+                                        _ => Strings.t('about_us_menu_item'),
                                       },
                                       style: const TextStyle(
                                         color: AppColors.textPrimary,
@@ -180,7 +185,8 @@ class ProfileMenuButton extends StatelessWidget {
     final Widget page = switch (action) {
       'Profile' => const ProfileScreen(),
       'Settings' => const SettingsScreen(),
-      _ => const ContactUsScreen(),
+      'Help' => const ContactUsScreen(),
+      _ => const AboutUsScreen(),
     };
     Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => page));
   }

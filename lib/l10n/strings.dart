@@ -459,8 +459,8 @@ class Strings {
     // Splash
     'splash_tagline': 'Know where your money goes.',
 
-    // Contact us
-    'contact_us_title': 'Contact us',
+    // Help
+    'contact_us_title': 'Help',
     'contact_header_title': 'We are here to help',
     'contact_header_subtitle':
         'Have a question or an idea for Riyal? Start here.',
@@ -508,7 +508,28 @@ class Strings {
     'account': 'Account',
     'profile_menu_item': 'Profile',
     'settings_menu_item': 'Settings',
-    'contact_us_menu_item': 'Contact us',
+    'contact_us_menu_item': 'Help',
+    'about_us_menu_item': 'About us',
+    'about_us_menu_subtitle': 'Learn more about Riyal',
+    'about_us_title': 'About us',
+    'about_header_title': 'Meet Riyal',
+    'about_header_subtitle':
+        'A clearer way to understand and manage your recurring money.',
+    'about_our_purpose': 'OUR PURPOSE',
+    'about_our_purpose_body':
+        'Riyal brings your subscriptions, utility bills and people payments '
+        'together, so you can see what is due and make confident decisions.',
+    'about_track_title': 'Everything in one place',
+    'about_track_body':
+        'Keep recurring commitments organized and easy to review.',
+    'about_plan_title': 'Plan with your budget',
+    'about_plan_body':
+        'Compare spending with your limits before costs catch you by surprise.',
+    'about_reminders_title': 'Stay one step ahead',
+    'about_reminders_body':
+        'Receive useful reminders for payments, trials and price changes.',
+    'about_developers_title': 'APP DEVELOPERS',
+    'about_made_for_you': 'Made to help you feel in control of your money.',
     'log_out': 'Log out',
 
     // Bank accounts (mocked — see supabase/migrations/0003_mock_banking.sql)
@@ -858,7 +879,7 @@ class Strings {
 
     'splash_tagline': 'اعرف إلى أين يذهب مالك.',
 
-    'contact_us_title': 'اتصل بنا',
+    'contact_us_title': 'المساعدة',
     'contact_header_title': 'نحن هنا للمساعدة',
     'contact_header_subtitle': 'لديك سؤال أو فكرة لتطبيق ريال؟ ابدأ هنا.',
     'quick_answers': 'إجابات سريعة',
@@ -903,7 +924,25 @@ class Strings {
     'account': 'الحساب',
     'profile_menu_item': 'الملف الشخصي',
     'settings_menu_item': 'الإعدادات',
-    'contact_us_menu_item': 'اتصل بنا',
+    'contact_us_menu_item': 'المساعدة',
+    'about_us_menu_item': 'من نحن',
+    'about_us_menu_subtitle': 'تعرّف أكثر على ريال',
+    'about_us_title': 'من نحن',
+    'about_header_title': 'تعرّف على ريال',
+    'about_header_subtitle': 'طريقة أوضح لفهم مصروفاتك المتكررة وإدارتها.',
+    'about_our_purpose': 'هدفنا',
+    'about_our_purpose_body':
+        'يجمع ريال اشتراكاتك وفواتير الخدمات ومدفوعات الأفراد في مكان واحد، '
+        'لتعرف ما عليك وتتمكن من اتخاذ قرارات مالية بثقة.',
+    'about_track_title': 'كل شيء في مكان واحد',
+    'about_track_body': 'نظّم التزاماتك المتكررة وراجعها بسهولة.',
+    'about_plan_title': 'خطط حسب ميزانيتك',
+    'about_plan_body': 'قارن مصروفاتك بحدود ميزانيتك قبل أن تفاجئك التكاليف.',
+    'about_reminders_title': 'كن دائمًا مستعدًا',
+    'about_reminders_body':
+        'استلم تنبيهات مفيدة للمدفوعات والتجارب المجانية وتغيّر الأسعار.',
+    'about_developers_title': 'مطورو التطبيق',
+    'about_made_for_you': 'صُمم ليساعدك على التحكم بأموالك بثقة.',
     'log_out': 'تسجيل الخروج',
 
     'accounts_title': 'الحسابات البنكية',

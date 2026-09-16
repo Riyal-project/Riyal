@@ -9,6 +9,7 @@ import '../widgets/coin_back_button.dart';
 import 'accounts_screen.dart';
 import 'profile_screen.dart';
 import 'contact_us_screen.dart';
+import 'about_us_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -400,23 +401,46 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               const SizedBox(height: 16),
               AccountSection(
-                child: ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: const Icon(
-                    Icons.help_outline,
-                    color: AppColors.gold,
-                  ),
-                  title: Text(Strings.t('help_feedback')),
-                  subtitle: Text(Strings.t('help_feedback_sub')),
-                  trailing: const Icon(
-                    Icons.chevron_right,
-                    color: AppColors.gold,
-                  ),
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) => const ContactUsScreen(),
+                child: Column(
+                  children: [
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: const Icon(
+                        Icons.help_outline,
+                        color: AppColors.gold,
+                      ),
+                      title: Text(Strings.t('help_feedback')),
+                      subtitle: Text(Strings.t('help_feedback_sub')),
+                      trailing: const Icon(
+                        Icons.chevron_right,
+                        color: AppColors.gold,
+                      ),
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => const ContactUsScreen(),
+                        ),
+                      ),
                     ),
-                  ),
+                    const Divider(color: AppColors.cardBorder),
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: const Icon(
+                        Icons.info_outline_rounded,
+                        color: AppColors.gold,
+                      ),
+                      title: Text(Strings.t('about_us_menu_item')),
+                      subtitle: Text(Strings.t('about_us_menu_subtitle')),
+                      trailing: const Icon(
+                        Icons.chevron_right,
+                        color: AppColors.gold,
+                      ),
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => const AboutUsScreen(),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 24),
