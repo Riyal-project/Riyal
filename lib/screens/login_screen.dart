@@ -5,10 +5,8 @@ import '../data/user_bank_accounts_store.dart';
 import '../l10n/strings.dart';
 import '../theme/app_theme.dart';
 import '../theme/app_typography.dart';
-import 'connect_bank_screen.dart';
 import 'main_shell.dart';
 import 'signup_screen.dart';
-import 'budget_setup_screen.dart';
 import '../data/budget_store.dart';
 import '../widgets/gold_coin_painter.dart';
 import '../widgets/auth_coin_flip.dart';
@@ -35,39 +33,19 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   // Real Supabase Auth (email/password) is wired up in AuthStore but not
-  // called here for now — email confirmation was blocking testing, so
-  // this signs in "for real" only in the sense of the device-scoped gate
-  // below. See lib/data/auth_store.dart to re-enable it later.
+  // called here for now — email confirmation was blocking testing. See
+  // lib/data/auth_store.dart to re-enable it later.
   Future<void> _signIn() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _signingIn = true);
     try {
       await BudgetStore.instance.activate(_emailController.text);
-      final hasAccount = await UserBankAccountsStore.instance.hasAnyAccount();
+      await UserBankAccountsStore.instance.load();
       if (!mounted) return;
-      if (hasAccount) {
-        await UserBankAccountsStore.instance.load();
-        if (!mounted) return;
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute<void>(
-            builder: (_) => BudgetStore.instance.configured
-                ? const MainShell()
-                : const BudgetSetupScreen(afterSetup: MainShell()),
-          ),
-          (_) => false,
-        );
-      } else {
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute<void>(
-            builder: (_) => BudgetStore.instance.configured
-                ? const ConnectBankScreen(forced: true)
-                : const BudgetSetupScreen(
-                    afterSetup: ConnectBankScreen(forced: true),
-                  ),
-          ),
-          (_) => false,
-        );
-      }
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute<void>(builder: (_) => const MainShell()),
+        (_) => false,
+      );
     } catch (error) {
       _showMessage(Strings.t('sign_in_generic_error'));
     } finally {

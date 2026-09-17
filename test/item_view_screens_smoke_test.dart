@@ -47,6 +47,21 @@ void main() {
     );
     expect(tester.takeException(), isNull);
     expect(find.text('Smoke Test Sub'), findsWidgets);
+    await tester.scrollUntilVisible(find.text('Edit'), 300);
+    await tester.tap(find.text('Edit'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Save'));
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle();
+    expect(find.byType(AlertDialog), findsOneWidget);
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    expect(
+      SubscriptionsStore.instance.subscriptions.value.firstWhere(
+        (item) => item.id == subscription.id,
+      ),
+      same(subscription),
+    );
   });
 
   testWidgets('TrackedItemViewScreen renders for a utility with no history', (

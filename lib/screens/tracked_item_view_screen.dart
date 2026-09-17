@@ -1,3 +1,4 @@
+import '../widgets/action_confirmation.dart';
 import 'package:flutter/material.dart';
 
 import '../data/bank_transaction_matcher.dart';
@@ -292,8 +293,7 @@ class _TrackedItemViewScreenState extends State<TrackedItemViewScreen> {
 
   double _averageSpend(TrackedItem item, List<MockBankTransactionRow> history) {
     if (history.isEmpty) return item.amount;
-    return history.fold<double>(0, (sum, t) => sum + t.amount) /
-        history.length;
+    return history.fold<double>(0, (sum, t) => sum + t.amount) / history.length;
   }
 
   UtilityAnomaly? _detectAnomaly(
@@ -318,7 +318,14 @@ class _TrackedItemViewScreenState extends State<TrackedItemViewScreen> {
       ),
       builder: (_) => _EditTrackedItemSheet(item: item, isPeople: _isPeople),
     );
-    if (updated != null) {
+    if (updated != null && context.mounted) {
+      final confirmed = await showActionConfirmation(
+        context,
+        title: Strings.t('edit_confirm_title'),
+        message: Strings.t('edit_confirm_message'),
+        confirmLabel: Strings.t('save'),
+      );
+      if (confirmed != true || !context.mounted) return;
       widget.domain.store.update(updated);
     }
   }
@@ -328,15 +335,12 @@ class _TrackedItemViewScreenState extends State<TrackedItemViewScreen> {
         ? ItemStatus.active
         : ItemStatus.paused;
     widget.domain.store.update(
-      item.copyWith(
-        status: next,
-        clearPausedUntil: next == ItemStatus.active,
-      ),
+      item.copyWith(status: next, clearPausedUntil: next == ItemStatus.active),
     );
   }
 
   Future<void> _delete(BuildContext context, TrackedItem item) async {
-    final confirmed = await _confirm(
+    final confirmed = await showActionConfirmation(
       context,
       title: Strings.t('delete_confirm_title'),
       message: Strings.t('delete_confirm_message'),
@@ -351,46 +355,6 @@ class _TrackedItemViewScreenState extends State<TrackedItemViewScreen> {
 
 String _formatDate(DateTime date) =>
     '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
-
-Future<bool?> _confirm(
-  BuildContext context, {
-  required String title,
-  required String message,
-  required String confirmLabel,
-}) {
-  return showDialog<bool>(
-    context: context,
-    barrierColor: AppColors.dialogBarrier,
-    builder: (dialogContext) => AlertDialog(
-      backgroundColor: AppColors.surface,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: const BorderSide(color: AppColors.cardBorder),
-      ),
-      title: Text(title, style: const TextStyle(color: AppColors.textPrimary)),
-      content: Text(
-        message,
-        style: const TextStyle(color: AppColors.textSecondary),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(dialogContext).pop(false),
-          child: Text(
-            Strings.t('back'),
-            style: const TextStyle(color: AppColors.textSecondary),
-          ),
-        ),
-        TextButton(
-          onPressed: () => Navigator.of(dialogContext).pop(true),
-          child: Text(
-            confirmLabel,
-            style: const TextStyle(color: AppColors.statusCancelled),
-          ),
-        ),
-      ],
-    ),
-  );
-}
 
 class _SectionLabel extends StatelessWidget {
   const _SectionLabel(this.text);
@@ -868,7 +832,8 @@ class _EditTrackedItemSheetState extends State<_EditTrackedItemSheet> {
   }
 
   void _save() {
-    final amount = double.tryParse(_amountController.text) ?? widget.item.amount;
+    final amount =
+        double.tryParse(_amountController.text) ?? widget.item.amount;
     final notes = _notesController.text.trim();
     Navigator.of(context).pop(
       widget.item.copyWith(
@@ -942,7 +907,8 @@ class _EditTrackedItemSheetState extends State<_EditTrackedItemSheet> {
                     child: _CycleOption(
                       label: Strings.t('monthly'),
                       isSelected: _cycle == BillingCycle.monthly,
-                      onTap: () => setState(() => _cycle = BillingCycle.monthly),
+                      onTap: () =>
+                          setState(() => _cycle = BillingCycle.monthly),
                     ),
                   ),
                   const SizedBox(width: 12),

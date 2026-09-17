@@ -1,3 +1,4 @@
+import '../widgets/action_confirmation.dart';
 import 'package:flutter/material.dart';
 
 import '../data/bank_transaction_matcher.dart';
@@ -276,6 +277,15 @@ class _AccountsScreenState extends State<AccountsScreen> {
                     foregroundColor: AppColors.statusCancelled,
                   ),
                   onPressed: () async {
+                    final confirmed = await showActionConfirmation(
+                      sheetContext,
+                      title: Strings.t('disconnect_confirm_title'),
+                      message: Strings.t('disconnect_confirm_message'),
+                      confirmLabel: Strings.t('disconnect'),
+                    );
+                    if (confirmed != true || !sheetContext.mounted || !mounted) {
+                      return;
+                    }
                     Navigator.pop(sheetContext);
                     await UserBankAccountsStore.instance.remove(account.id);
                     await _refreshSuggestions();

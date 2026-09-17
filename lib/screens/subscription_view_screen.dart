@@ -1,3 +1,4 @@
+import '../widgets/action_confirmation.dart';
 import 'package:flutter/material.dart';
 import '../widgets/free_trial_fields.dart';
 
@@ -330,7 +331,14 @@ class _SubscriptionViewScreenState extends State<SubscriptionViewScreen> {
       ),
       builder: (_) => _EditSubscriptionSheet(subscription: subscription),
     );
-    if (updated != null) {
+    if (updated != null && context.mounted) {
+      final confirmed = await showActionConfirmation(
+        context,
+        title: Strings.t('edit_confirm_title'),
+        message: Strings.t('edit_confirm_message'),
+        confirmLabel: Strings.t('save'),
+      );
+      if (confirmed != true || !context.mounted) return;
       await SubscriptionsStore.instance.update(updated);
     }
   }
@@ -343,7 +351,7 @@ class _SubscriptionViewScreenState extends State<SubscriptionViewScreen> {
   }
 
   Future<void> _cancel(BuildContext context, Subscription subscription) async {
-    final confirmed = await _confirm(
+    final confirmed = await showActionConfirmation(
       context,
       title: Strings.t('cancel_confirm_title'),
       message: Strings.t('cancel_confirm_message'),
@@ -357,7 +365,7 @@ class _SubscriptionViewScreenState extends State<SubscriptionViewScreen> {
   }
 
   Future<void> _delete(BuildContext context, Subscription subscription) async {
-    final confirmed = await _confirm(
+    final confirmed = await showActionConfirmation(
       context,
       title: Strings.t('delete_confirm_title'),
       message: Strings.t('delete_confirm_message'),
@@ -378,46 +386,6 @@ class _ReviewAnswerDisplay {
 
 String _formatDate(DateTime date) =>
     '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
-
-Future<bool?> _confirm(
-  BuildContext context, {
-  required String title,
-  required String message,
-  required String confirmLabel,
-}) {
-  return showDialog<bool>(
-    context: context,
-    barrierColor: AppColors.dialogBarrier,
-    builder: (dialogContext) => AlertDialog(
-      backgroundColor: AppColors.surface,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: const BorderSide(color: AppColors.cardBorder),
-      ),
-      title: Text(title, style: const TextStyle(color: AppColors.textPrimary)),
-      content: Text(
-        message,
-        style: const TextStyle(color: AppColors.textSecondary),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(dialogContext).pop(false),
-          child: Text(
-            Strings.t('back'),
-            style: const TextStyle(color: AppColors.textSecondary),
-          ),
-        ),
-        TextButton(
-          onPressed: () => Navigator.of(dialogContext).pop(true),
-          child: Text(
-            confirmLabel,
-            style: const TextStyle(color: AppColors.statusCancelled),
-          ),
-        ),
-      ],
-    ),
-  );
-}
 
 class _SectionLabel extends StatelessWidget {
   const _SectionLabel(this.text);

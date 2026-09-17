@@ -17,8 +17,8 @@ enum _ConnectStep { chooseBank, bankLogin, connecting, success }
 /// success sequence backed entirely by local mock data (see
 /// lib/data/mock_bank_connection_service.dart).
 ///
-/// When [forced] is true (the new-user gate right after sign-up/sign-in with
-/// zero connected banks), the user can connect now or skip and add a bank
+/// When [forced] is true (the new-user gate right after sign-up),
+/// the user can connect now or skip and add a bank
 /// manually later. Either path replaces the stack with [MainShell].
 class ConnectBankScreen extends StatefulWidget {
   const ConnectBankScreen({super.key, this.forced = false});
@@ -37,6 +37,19 @@ class _ConnectBankScreenState extends State<ConnectBankScreen> {
   bool _obscurePassword = true;
   bool _connectFailed = false;
 
+  bool get _hasCredentials =>
+      _idController.text.trim().isNotEmpty &&
+      _passwordController.text.trim().isNotEmpty;
+
+  @override
+  void initState() {
+    super.initState();
+    _idController.addListener(_credentialsChanged);
+    _passwordController.addListener(_credentialsChanged);
+  }
+
+  void _credentialsChanged() => setState(() {});
+
   @override
   void dispose() {
     _idController.dispose();
@@ -45,6 +58,8 @@ class _ConnectBankScreenState extends State<ConnectBankScreen> {
   }
 
   void _selectBank(MockBank bank) {
+    _idController.clear();
+    _passwordController.clear();
     setState(() {
       _selectedBank = bank;
       _step = _ConnectStep.bankLogin;
@@ -61,7 +76,9 @@ class _ConnectBankScreenState extends State<ConnectBankScreen> {
 
   Future<void> _submitLogin() async {
     final bank = _selectedBank;
-    if (bank == null) return;
+    if (bank == null || !_hasCredentials || _step != _ConnectStep.bankLogin) {
+      return;
+    }
     setState(() => _step = _ConnectStep.connecting);
     try {
       // A fake delay so the loading state reads as a real connection
@@ -133,7 +150,7 @@ class _ConnectBankScreenState extends State<ConnectBankScreen> {
                 onToggleObscure: () =>
                     setState(() => _obscurePassword = !_obscurePassword),
                 onBack: _backToChooseBank,
-                onSubmit: _submitLogin,
+                onSubmit: _hasCredentials ? _submitLogin : null,
               ),
               _ConnectStep.connecting => _ConnectingStep(
                 key: const ValueKey('connecting'),
@@ -382,7 +399,7 @@ class _BankLoginStep extends StatelessWidget {
   final bool showError;
   final VoidCallback onToggleObscure;
   final VoidCallback onBack;
-  final VoidCallback onSubmit;
+  final VoidCallback? onSubmit;
 
   @override
   Widget build(BuildContext context) {
