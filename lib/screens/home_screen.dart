@@ -4,12 +4,16 @@ import '../data/analytics_data.dart';
 import '../data/home_data.dart';
 import '../data/mock_bank_transaction.dart';
 import '../data/monthly_review.dart';
+import '../data/notifications_store.dart';
+import '../data/people_domain.dart';
 import '../data/recurring_detection.dart';
 import '../data/subscription.dart';
 import '../data/profile_store.dart';
 import '../data/subscriptions_store.dart';
 import '../data/user_bank_account.dart';
 import '../data/user_bank_accounts_store.dart';
+import '../data/utilities_domain.dart';
+import '../l10n/locale_refresh_mixin.dart';
 import '../l10n/strings.dart';
 import '../theme/app_theme.dart';
 import '../theme/app_typography.dart';
@@ -33,11 +37,26 @@ class HomeBody extends StatefulWidget {
   const HomeBody({super.key});
 
   @override
-  State<HomeBody> createState() => _HomeBodyState();
+  State<HomeBody> createState() => HomeBodyState();
 }
 
-class _HomeBodyState extends State<HomeBody> {
+/// Public so [MainShell] can reach it through a [GlobalKey] and reset back
+/// to the Overview sub-tab when the bottom nav's Home button is tapped
+/// while already on Home — otherwise re-tapping Home would just leave
+/// whichever sub-tab (Analytics/Accounts) was last selected on screen,
+/// since [IndexedStack] keeps this state alive across tab switches.
+class HomeBodyState extends State<HomeBody> with LocaleRefreshState {
   _HomeTab _tab = _HomeTab.overview;
+
+  @override
+  void initState() {
+    super.initState();
+    addLocaleRefreshListener();
+  }
+
+  void resetToOverview() {
+    if (_tab != _HomeTab.overview) setState(() => _tab = _HomeTab.overview);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -248,9 +267,10 @@ class _TopBarState extends State<_TopBar> {
 }
 
 /// The "Accounts" tab: every connected bank as a bigger card, each flagging
-/// how many recurring payments the detection engine found specifically in
-/// that bank's own transactions (not the combined cross-bank count the
-/// Accounts screen's suggestion panel uses).
+/// how many of that bank's recurring charges still need a manual confirm —
+/// matching [AccountsScreen]'s own count exactly (not the detection
+/// engine's raw count, which also includes merchants that already got
+/// auto-added and so no longer show up as a suggestion anywhere).
 class _BankAccountsTab extends StatefulWidget {
   const _BankAccountsTab();
 
@@ -268,14 +288,31 @@ class _BankAccountsTabState extends State<_BankAccountsTab> {
   }
 
   Future<void> _refreshCommitmentCounts() async {
+    // Same as AccountsScreen._refreshSuggestions(): run auto-detection
+    // first so a charge that just crossed the auto-add threshold is
+    // already excluded below, then count only what's left for the user
+    // to actually confirm.
+    await NotificationsStore.instance.checkForAutoAdditions();
     final transactions = await loadAllConnectedTransactions();
+    final alreadyTracked = <String>{
+      for (final s in SubscriptionsStore.instance.subscriptions.value)
+        s.name.toUpperCase(),
+      for (final i in utilitiesDomain.store.items.value) i.name.toUpperCase(),
+      for (final i in peopleDomain.store.items.value) i.name.toUpperCase(),
+    };
     final byBank = <String, List<MockBankTransactionRow>>{};
     for (final transaction in transactions) {
       byBank.putIfAbsent(transaction.bankId, () => []).add(transaction);
     }
     final counts = {
       for (final entry in byBank.entries)
-        entry.key: RecurringDetectionEngine.detect(entry.value).length,
+        entry.key: RecurringDetectionEngine.detect(entry.value)
+            .where(
+              (s) =>
+                  s.occurrences < RecurringDetectionEngine.autoAddOccurrences &&
+                  !alreadyTracked.contains(s.merchantName.toUpperCase()),
+            )
+            .length,
     };
     if (mounted) setState(() => _commitmentCounts = counts);
   }

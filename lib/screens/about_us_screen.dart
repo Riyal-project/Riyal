@@ -92,14 +92,28 @@ class AboutUsScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    const _DeveloperName(
-                      arabicName: 'فلوة اليحيى',
-                      englishName: 'Fulwah Alyahya',
-                    ),
-                    const Divider(color: AppColors.cardBorder, height: 32),
-                    const _DeveloperName(
-                      arabicName: 'دانه التميمي',
-                      englishName: 'Danah Altamimi',
+                    const IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            child: _DeveloperName(
+                              arabicName: 'فلوة اليحيى',
+                              englishName: 'Fulwah Alyahya',
+                            ),
+                          ),
+                          VerticalDivider(
+                            color: AppColors.cardBorder,
+                            width: 24,
+                          ),
+                          Expanded(
+                            child: _DeveloperName(
+                              arabicName: 'دانه التميمي',
+                              englishName: 'Danah Altamimi',
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -144,7 +158,8 @@ class _DeveloperName extends StatelessWidget {
   final String englishName;
 
   @override
-  Widget build(BuildContext context) => Row(
+  Widget build(BuildContext context) => Column(
+    mainAxisSize: MainAxisSize.min,
     children: [
       Container(
         width: 44,
@@ -155,29 +170,22 @@ class _DeveloperName extends StatelessWidget {
         ),
         child: const Icon(Icons.code_rounded, color: AppColors.gold, size: 22),
       ),
-      const SizedBox(width: 14),
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              arabicName,
-              style: const TextStyle(
-                color: AppColors.textPrimary,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 3),
-            Text(
-              englishName,
-              style: const TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: 14,
-              ),
-            ),
-          ],
+      const SizedBox(height: 10),
+      Text(
+        arabicName,
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          color: AppColors.textPrimary,
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
         ),
+      ),
+      const SizedBox(height: 3),
+      Text(
+        englishName,
+        textAlign: TextAlign.center,
+        maxLines: 2,
+        style: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
       ),
     ],
   );

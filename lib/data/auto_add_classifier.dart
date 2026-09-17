@@ -38,15 +38,28 @@ class AutoAddClassification {
   final Color? iconColor;
 }
 
+/// Uppercases and spells out symbols a bank feed and a catalog name might
+/// otherwise disagree on (a catalog entry like "Disney+" vs. a merchant
+/// string spelling it "DISNEY PLUS") before collapsing everything down to
+/// letters/digits/spaces — so a real catalog brand never silently misses a
+/// match (and falls through to People) purely over "+" vs. "PLUS".
+String _normalizeForMatch(String value) => value
+    .toUpperCase()
+    .replaceAll('+', ' PLUS')
+    .replaceAll('&', ' AND')
+    .replaceAll(RegExp(r'[^A-Z0-9 ]'), ' ')
+    .replaceAll(RegExp(r'\s+'), ' ')
+    .trim();
+
 AutoAddClassification classifyForAutoAdd(DetectedSubscription suggestion) {
-  final merchant = suggestion.merchantName.toUpperCase();
+  final merchant = _normalizeForMatch(suggestion.merchantName);
 
   // Utility catalog is checked first: STC/Mobily/Zain appear in both
   // catalogs (a telecom's postpaid plan is arguably either), but a mock
   // charge literally named "ZAIN MOBILE BILL" or "STC INTERNET BILL" is
   // unambiguously a utility bill, not a subscription.
   for (final entry in utilityCatalog) {
-    if (merchant.contains(entry.name.toUpperCase())) {
+    if (merchant.contains(_normalizeForMatch(entry.name))) {
       return AutoAddClassification(
         domain: AutoAddDomain.utility,
         category: entry.category,
@@ -58,7 +71,7 @@ AutoAddClassification classifyForAutoAdd(DetectedSubscription suggestion) {
   }
 
   for (final app in subscriptionCatalog) {
-    if (merchant.contains(app.name.toUpperCase())) {
+    if (merchant.contains(_normalizeForMatch(app.name))) {
       return AutoAddClassification(
         domain: AutoAddDomain.subscription,
         category: app.category,

@@ -6,8 +6,6 @@ import '../theme/app_typography.dart';
 import '../widgets/gold_coin_painter.dart';
 import '../l10n/strings.dart';
 import '../widgets/hero_tags.dart';
-import '../data/app_settings.dart';
-import 'login_screen.dart';
 import 'onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -36,9 +34,9 @@ class _SplashScreenState extends State<SplashScreen>
   Future<void> _continueFromSplash() async {
     await Future.delayed(const Duration(milliseconds: 350));
     if (!mounted) return;
-    final next = AppSettings.instance.onboardingCompleted
-        ? const LoginScreen()
-        : const OnboardingScreen();
+    // Always shows onboarding (including the language-choice screen) on
+    // every launch, regardless of AppSettings.onboardingCompleted.
+    const next = OnboardingScreen();
     Navigator.of(context).pushReplacement(
       PageRouteBuilder<void>(
         transitionDuration: const Duration(milliseconds: 550),

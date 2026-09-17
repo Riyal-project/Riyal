@@ -379,9 +379,6 @@ class _ReviewAnswerDisplay {
 String _formatDate(DateTime date) =>
     '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
 
-String _capitalize(String value) =>
-    value.isEmpty ? value : value[0].toUpperCase() + value.substring(1);
-
 Future<bool?> _confirm(
   BuildContext context, {
   required String title,
@@ -565,7 +562,7 @@ class _CheckInCard extends StatelessWidget {
               Text(
                 answer == null
                     ? Strings.t('not_reviewed_this_month')
-                    : '${_capitalize(answer!.need.name)} · ${_capitalize(answer!.activity.name)}',
+                    : '${answer!.need.subscriptionLabel} · ${answer!.activity.subscriptionLabel}',
                 style: const TextStyle(
                   color: AppColors.textPrimary,
                   fontSize: 13,

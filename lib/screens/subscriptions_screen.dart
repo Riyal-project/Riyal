@@ -5,6 +5,7 @@ import '../data/monthly_review.dart';
 import '../data/subscription.dart';
 import '../data/subscription_category.dart';
 import '../data/subscriptions_store.dart';
+import '../l10n/locale_refresh_mixin.dart';
 import '../l10n/strings.dart';
 import '../theme/app_theme.dart';
 import '../theme/app_typography.dart';
@@ -29,11 +30,18 @@ class SubscriptionsBody extends StatefulWidget {
   State<SubscriptionsBody> createState() => _SubscriptionsBodyState();
 }
 
-class _SubscriptionsBodyState extends State<SubscriptionsBody> {
+class _SubscriptionsBodyState extends State<SubscriptionsBody>
+    with LocaleRefreshState {
   _PageTab _tab = _PageTab.subscriptions;
   ItemFilterState _filter = const ItemFilterState();
   bool _searching = false;
   String _query = '';
+
+  @override
+  void initState() {
+    super.initState();
+    addLocaleRefreshListener();
+  }
 
   void _stopSearching() => setState(() {
     _searching = false;

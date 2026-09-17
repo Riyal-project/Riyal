@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../l10n/app_locale.dart';
 import 'people_store.dart';
 import 'subscription.dart';
 import 'subscriptions_store.dart';
@@ -15,6 +16,35 @@ enum ReviewActivity { none, low, medium, high }
 enum ReviewNeed { keep, unsure, stop }
 
 enum RecommendationType { cancel, pause, annualPlan, reviewPlan, keep }
+
+/// Read-only display wording for a subscription's own check-in answer
+/// (see the "Still using this?" card on [SubscriptionViewScreen]) — kept
+/// separate from [MonthlyReviewScreen]'s own per-domain question labels
+/// since those are scoped private to that screen's survey flow, while this
+/// is just showing a past answer back, always in the subscription-domain
+/// wording (this screen only ever displays subscriptions).
+extension ReviewNeedDisplay on ReviewNeed {
+  String get subscriptionLabel {
+    final isArabic = AppLocale.locale.value.languageCode == 'ar';
+    return switch (this) {
+      ReviewNeed.keep => isArabic ? 'نعم' : 'Yes',
+      ReviewNeed.unsure => isArabic ? 'غير متأكد' : 'Not sure',
+      ReviewNeed.stop => isArabic ? 'لا' : 'No',
+    };
+  }
+}
+
+extension ReviewActivityDisplay on ReviewActivity {
+  String get subscriptionLabel {
+    final isArabic = AppLocale.locale.value.languageCode == 'ar';
+    return switch (this) {
+      ReviewActivity.none => isArabic ? 'ولا مرة' : 'Never',
+      ReviewActivity.low => isArabic ? '1–2 يوم' : '1–2 days',
+      ReviewActivity.medium => isArabic ? '3–4 أيام' : '3–4 days',
+      ReviewActivity.high => isArabic ? '5+ أيام' : '5+ days',
+    };
+  }
+}
 
 class MonthlyReviewItem {
   const MonthlyReviewItem({
