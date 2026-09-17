@@ -118,7 +118,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       const SizedBox(height: 32),
                       Center(
                         child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 540),
+                          constraints: const BoxConstraints(maxWidth: 300),
                           child: AspectRatio(
                             aspectRatio: 1,
                             child: AuthCoinFlip(
