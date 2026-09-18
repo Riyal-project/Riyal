@@ -18,7 +18,10 @@ class RiyalCoinPainter extends CustomPainter {
     this.faceColor = Colors.transparent,
     this.edgeScale = 1,
     this.edgeOpacity = 1,
+    this.dashCount = 39,
   });
+
+  final int dashCount;
 
   /// Edge dashes, inner ring color.
   final Color color;
@@ -56,7 +59,7 @@ class RiyalCoinPainter extends CustomPainter {
     // A dashed/reeded edge (short radial ticks around the rim) instead of a
     // solid ring outline, for a coin-like milled-edge appearance. Straight
     // (butt) caps, not rounded, so each dash reads as a clean tick mark.
-    const dashCount = 44;
+    final dashCount = this.dashCount;
     final dashPaint = Paint()
       ..color = edgeColor
       ..strokeWidth = 1.9 * u * edgeScale

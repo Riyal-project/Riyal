@@ -132,6 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 child: CustomPaint(
                                   painter: const RiyalCoinPainter(
                                     edgeScale: 0.7,
+                                    dashCount: 44,
                                     edgeOpacity: 0.6,
                                   ),
                                   child: Stack(
