@@ -68,7 +68,7 @@ class RiyalCoinPainter extends CustomPainter {
       final direction = Offset(math.cos(angle), math.sin(angle));
       canvas.drawLine(
         c + direction * (radius - 1.8 * u * edgeScale),
-        c + direction * (radius + 0.7 * u),
+        c + direction * radius,
         dashPaint,
       );
     }
