@@ -18,7 +18,7 @@ class RiyalCoinPainter extends CustomPainter {
     this.faceColor = Colors.transparent,
     this.edgeScale = 1,
     this.edgeOpacity = 1,
-    this.dashCount = 39,
+    this.dashCount = 18,
   });
 
   final int dashCount;
@@ -52,31 +52,30 @@ class RiyalCoinPainter extends CustomPainter {
       radius,
       Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 0.6 * u
+        ..strokeWidth = 0.8 * u
         ..color = edgeColor,
     );
 
-    // A dashed/reeded edge (short radial ticks around the rim) instead of a
-    // solid ring outline, for a coin-like milled-edge appearance. Straight
-    // (butt) caps, not rounded, so each dash reads as a clean tick mark.
+    // A dashed/reeded edge (short radial ticks near the rim) instead of a
+    // solid ring outline, for a coin-like milled-edge appearance.
     final dashCount = this.dashCount;
     final dashPaint = Paint()
       ..color = edgeColor
       ..strokeWidth = 1.9 * u * edgeScale
-      ..strokeCap = StrokeCap.butt;
+      ..strokeCap = StrokeCap.round;
     for (var i = 0; i < dashCount; i++) {
       final angle = i * math.pi * 2 / dashCount;
       final direction = Offset(math.cos(angle), math.sin(angle));
       canvas.drawLine(
-        c + direction * (radius - 3.6 * u * edgeScale),
-        c + direction * radius,
+        c + direction * (radius - 2.6 * u * edgeScale),
+        c + direction * (radius - 0.8 * u),
         dashPaint,
       );
     }
 
     canvas.drawCircle(
       c,
-      radius - 3.6 * u * edgeScale - 0.5 * u,
+      radius - 4.4 * u * edgeScale,
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.2 * u
