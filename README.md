@@ -10,19 +10,17 @@ Riyal (ريال) is a bilingual Arabic/English Flutter mobile application design
 
 The app brings subscriptions, utility bills, and payments to people into one organized experience, while providing spending analytics, reminders, recurring-payment detection, and AI-powered financial guidance.
 
-Riyal was developed as a student project with a focus on mobile application development, financial data analysis, APIs, localization, and user-centered design.
-
 ---
 
 ## 💡 Why Riyal?
 
-Today, almost everything has become a subscription — from streaming and entertainment to software, apps, cloud storage, and everyday services. With so many recurring payments, it can be easy to lose track of what you're paying for, when it renews, or how much you're spending each month.
+Today, almost everything has become a subscription, from streaming and entertainment to software, apps, cloud storage, and everyday services. With so many recurring payments, it can be easy to lose track of what you're paying for, when it renews, or how much you're spending each month.
 
 Riyal was created to make managing payments simpler. It automatically detects recurring payments and categorizes them, while providing smart insights into where your money is going. It also helps users track free trials, upcoming renewals, and price changes.
 
 But Riyal isn't limited to subscriptions. It also helps users organize and manage other recurring expenses, such as **utility bills, allowances, and payments to people**, giving them one place to keep track of the payments that matter in their everyday lives.
 
-**Riyal — because when everything is a payment, keeping track shouldn't be. 💚**
+**Because when everything is a payment, keeping track shouldn't be. 💚**
 
 ---
 
