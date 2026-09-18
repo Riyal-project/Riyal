@@ -529,6 +529,7 @@ class Strings {
     'about_reminders_body':
         'Receive useful reminders for payments, trials and price changes.',
     'about_developers_title': 'APP DEVELOPERS',
+    'linkedin_profile': 'LinkedIn',
     'about_made_for_you': 'Made to help you feel in control of your money.',
     'log_out': 'Log out',
 
@@ -958,6 +959,7 @@ class Strings {
     'about_reminders_body':
         'استلم تنبيهات مفيدة للمدفوعات والتجارب المجانية وتغيّر الأسعار.',
     'about_developers_title': 'مطورو التطبيق',
+    'linkedin_profile': 'لينكدإن',
     'about_made_for_you': 'صُمم ليساعدك على التحكم بأموالك بثقة.',
     'log_out': 'تسجيل الخروج',
 

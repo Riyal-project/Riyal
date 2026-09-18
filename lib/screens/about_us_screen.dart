@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../l10n/strings.dart';
 import '../theme/app_theme.dart';
@@ -100,6 +101,8 @@ class AboutUsScreen extends StatelessWidget {
                             child: _DeveloperName(
                               arabicName: 'فلوة اليحيى',
                               englishName: 'Fulwah Alyahya',
+                              linkedInUrl:
+                                  'https://www.linkedin.com/in/fulwah-alyahya-7037a9293',
                             ),
                           ),
                           VerticalDivider(
@@ -110,6 +113,8 @@ class AboutUsScreen extends StatelessWidget {
                             child: _DeveloperName(
                               arabicName: 'دانه التميمي',
                               englishName: 'Danah Altamimi',
+                              linkedInUrl:
+                                  'https://www.linkedin.com/in/danah-altamimi-b2912141a',
                             ),
                           ),
                         ],
@@ -152,42 +157,84 @@ class AboutUsScreen extends StatelessWidget {
 }
 
 class _DeveloperName extends StatelessWidget {
-  const _DeveloperName({required this.arabicName, required this.englishName});
+  const _DeveloperName({
+    required this.arabicName,
+    required this.englishName,
+    required this.linkedInUrl,
+  });
 
   final String arabicName;
   final String englishName;
+  final String linkedInUrl;
+
+  Future<void> _openLinkedIn() =>
+      launchUrl(Uri.parse(linkedInUrl), mode: LaunchMode.externalApplication);
 
   @override
-  Widget build(BuildContext context) => Column(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Container(
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-          color: AppColors.gold.withValues(alpha: 0.12),
-          shape: BoxShape.circle,
-        ),
-        child: const Icon(Icons.code_rounded, color: AppColors.gold, size: 22),
+  Widget build(BuildContext context) => InkWell(
+    borderRadius: BorderRadius.circular(16),
+    onTap: _openLinkedIn,
+    child: Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppColors.gold.withValues(alpha: 0.12),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.code_rounded,
+              color: AppColors.gold,
+              size: 22,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            arabicName,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: AppColors.textPrimary,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 3),
+          Text(
+            englishName,
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            style: const TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.link_rounded,
+                color: AppColors.gold,
+                size: 14,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                Strings.t('linkedin_profile'),
+                style: const TextStyle(
+                  color: AppColors.gold,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
-      const SizedBox(height: 10),
-      Text(
-        arabicName,
-        textAlign: TextAlign.center,
-        style: const TextStyle(
-          color: AppColors.textPrimary,
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-      const SizedBox(height: 3),
-      Text(
-        englishName,
-        textAlign: TextAlign.center,
-        maxLines: 2,
-        style: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
-      ),
-    ],
+    ),
   );
 }
 
