@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../l10n/strings.dart';
@@ -206,7 +207,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                                       AutofillHints.name,
                                                     ],
                                                   ),
-                                                  const SizedBox(height: 8),
+                                                  const SizedBox(height: 14),
                                                   _field(
                                                     fieldKey: 'email',
                                                     icon: Icons.email_outlined,
@@ -214,7 +215,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                                       AutofillHints.email,
                                                     ],
                                                   ),
-                                                  const SizedBox(height: 8),
+                                                  const SizedBox(height: 14),
                                                   _field(
                                                     fieldKey: 'password',
                                                     icon: Icons
@@ -224,7 +225,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                                       AutofillHints.newPassword,
                                                     ],
                                                   ),
-                                                  const SizedBox(height: 8),
+                                                  const SizedBox(height: 14),
                                                   _field(
                                                     fieldKey:
                                                         'confirm_password',
@@ -237,28 +238,11 @@ class _SignupScreenState extends State<SignupScreen> {
                                                   ),
                                                   const SizedBox(height: 16),
                                                   Container(
-                                                    width: 250,
-                                                    padding:
-                                                        const EdgeInsets.all(3),
+                                                    width: 290,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                             40,
-                                                          ),
-                                                      gradient:
-                                                          const LinearGradient(
-                                                            begin: Alignment
-                                                                .topLeft,
-                                                            end: Alignment
-                                                                .bottomRight,
-                                                            colors: [
-                                                              AppColors
-                                                                  .goldLight,
-                                                              AppColors
-                                                                  .goldDark,
-                                                              AppColors
-                                                                  .goldLight,
-                                                            ],
                                                           ),
                                                       boxShadow: [
                                                         BoxShadow(
@@ -288,7 +272,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                                             ),
                                                         minimumSize:
                                                             const Size.fromHeight(
-                                                              42,
+                                                              50,
                                                             ),
                                                         shape:
                                                             const StadiumBorder(),
@@ -311,7 +295,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                                                 'create_account_button',
                                                               ),
                                                               style: const TextStyle(
-                                                                fontSize: 16,
+                                                                fontSize: 18,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w700,
@@ -388,88 +372,110 @@ class _SignupScreenState extends State<SignupScreen> {
   }) {
     final hint = Strings.t(fieldKey);
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 55),
-      child: TextFormField(
-        controller: switch (fieldKey) {
-          'full_name' => _fullNameController,
-          'email' => _emailController,
-          'password' => _passwordController,
-          'confirm_password' => _confirmPasswordController,
-          _ => null,
-        },
-        keyboardType: fieldKey == 'email'
-            ? TextInputType.emailAddress
-            : TextInputType.text,
-        obscureText: password && _obscurePassword,
-        autofillHints: autofillHints,
-        autocorrect: false,
-        enableSuggestions: !password,
-        textInputAction: fieldKey == 'confirm_password'
-            ? TextInputAction.done
-            : TextInputAction.next,
-        onFieldSubmitted: fieldKey == 'confirm_password'
-            ? (_) => _signUp()
-            : null,
-        validator: (value) {
-          if (value == null || value.trim().isEmpty) {
-            return Strings.f('enter_your_field', hint.toLowerCase());
-          }
-          if (fieldKey == 'email' &&
-              !RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(value.trim())) {
-            return Strings.t('valid_email_error');
-          }
-          if (fieldKey == 'password' && value.length < 8) {
-            return Strings.t('password_length_error');
-          }
-          if (fieldKey == 'confirm_password' &&
-              value != _passwordController.text) {
-            return Strings.t('passwords_no_match');
-          }
-          return null;
-        },
-        style: const TextStyle(color: AppColors.surface, fontSize: 16),
-        cursorColor: AppColors.goldDark,
-        decoration: InputDecoration(
-          isDense: true,
-          errorStyle: const TextStyle(fontSize: 10),
-          hintText: hint,
-          hintStyle: const TextStyle(color: AppColors.coinMuted),
-          prefixIcon: Icon(icon, color: AppColors.coinMuted, size: 22),
-          suffixIcon: password
-              ? IconButton(
-                  tooltip: _obscurePassword
-                      ? Strings.t('show_password')
-                      : Strings.t('hide_password'),
-                  onPressed: () =>
-                      setState(() => _obscurePassword = !_obscurePassword),
-                  icon: Icon(
-                    _obscurePassword
-                        ? Icons.visibility_outlined
-                        : Icons.visibility_off_outlined,
-                    color: AppColors.coinMuted,
-                    size: 20,
-                  ),
-                )
-              : null,
-          filled: true,
-          fillColor: AppColors.authFieldFill,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 18,
-            vertical: 12,
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
-            borderSide: const BorderSide(color: AppColors.goldDark),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
-            borderSide: BorderSide(
-              color: AppColors.goldDark.withValues(alpha: 0.5),
+      padding: const EdgeInsets.symmetric(horizontal: 2),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(22),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 22, sigmaY: 22),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(22),
+              color: Colors.white.withValues(alpha: 0.14),
             ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
-            borderSide: const BorderSide(color: AppColors.surface, width: 2),
+            child: TextFormField(
+              controller: switch (fieldKey) {
+                'full_name' => _fullNameController,
+                'email' => _emailController,
+                'password' => _passwordController,
+                'confirm_password' => _confirmPasswordController,
+                _ => null,
+              },
+              keyboardType: fieldKey == 'email'
+                  ? TextInputType.emailAddress
+                  : TextInputType.text,
+              obscureText: password && _obscurePassword,
+              autofillHints: autofillHints,
+              autocorrect: false,
+              enableSuggestions: !password,
+              textInputAction: fieldKey == 'confirm_password'
+                  ? TextInputAction.done
+                  : TextInputAction.next,
+              onFieldSubmitted: fieldKey == 'confirm_password'
+                  ? (_) => _signUp()
+                  : null,
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return Strings.f('enter_your_field', hint.toLowerCase());
+                }
+                if (fieldKey == 'email' &&
+                    !RegExp(
+                      r'^[^\s@]+@[^\s@]+\.[^\s@]+$',
+                    ).hasMatch(value.trim())) {
+                  return Strings.t('valid_email_error');
+                }
+                if (fieldKey == 'password' && value.length < 8) {
+                  return Strings.t('password_length_error');
+                }
+                if (fieldKey == 'confirm_password' &&
+                    value != _passwordController.text) {
+                  return Strings.t('passwords_no_match');
+                }
+                return null;
+              },
+              style: const TextStyle(color: AppColors.surface, fontSize: 28),
+              cursorColor: AppColors.goldDark,
+              decoration: InputDecoration(
+                isDense: false,
+                errorStyle: const TextStyle(fontSize: 13),
+                hintText: hint,
+                hintStyle: const TextStyle(
+                  color: AppColors.coinMuted,
+                  fontSize: 24,
+                ),
+                prefixIcon: Icon(icon, color: AppColors.coinMuted, size: 30),
+                suffixIcon: password
+                    ? IconButton(
+                        tooltip: _obscurePassword
+                            ? Strings.t('show_password')
+                            : Strings.t('hide_password'),
+                        onPressed: () => setState(
+                          () => _obscurePassword = !_obscurePassword,
+                        ),
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                          color: AppColors.coinMuted,
+                          size: 28,
+                        ),
+                      )
+                    : null,
+                filled: false,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 26,
+                  vertical: 12,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(22),
+                  borderSide: BorderSide(
+                    color: Colors.white.withValues(alpha: 0.6),
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(22),
+                  borderSide: BorderSide(
+                    color: Colors.white.withValues(alpha: 0.45),
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(22),
+                  borderSide: const BorderSide(
+                    color: AppColors.surface,
+                    width: 2,
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
       ),

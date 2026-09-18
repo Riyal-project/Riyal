@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../data/user_bank_accounts_store.dart';
@@ -20,8 +21,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _emailController = TextEditingController(text: 'danah@gmail.com');
+  final _passwordController = TextEditingController(text: '123123123');
   bool _obscurePassword = true;
   bool _signingIn = false;
 
@@ -200,7 +201,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                       AutofillHints.email,
                                                     ],
                                                   ),
-                                                  const SizedBox(height: 8),
+                                                  const SizedBox(height: 16),
                                                   _field(
                                                     controller:
                                                         _passwordController,
@@ -214,7 +215,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                   ),
                                                   const SizedBox(height: 16),
                                                   Container(
-                                                    width: 250,
+                                                    width: 290,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -248,7 +249,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                             ),
                                                         minimumSize:
                                                             const Size.fromHeight(
-                                                              42,
+                                                              50,
                                                             ),
                                                         shape:
                                                             const StadiumBorder(),
@@ -271,7 +272,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                                 'sign_in_button',
                                                               ),
                                                               style: const TextStyle(
-                                                                fontSize: 16,
+                                                                fontSize: 18,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w700,
@@ -353,71 +354,95 @@ class _LoginScreenState extends State<LoginScreen> {
     bool password = false,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 55),
-      child: TextFormField(
-        controller: controller,
-        keyboardType: password
-            ? TextInputType.text
-            : TextInputType.emailAddress,
-        obscureText: password && _obscurePassword,
-        autofillHints: autofillHints,
-        autocorrect: false,
-        enableSuggestions: !password,
-        textInputAction: password ? TextInputAction.done : TextInputAction.next,
-        onFieldSubmitted: password ? (_) => _signIn() : null,
-        validator: (value) {
-          if (value == null || value.trim().isEmpty) {
-            return Strings.f('enter_your_field', hint.toLowerCase());
-          }
-          if (!password &&
-              !RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(value.trim())) {
-            return Strings.t('valid_email_error');
-          }
-          return null;
-        },
-        style: const TextStyle(color: AppColors.surface, fontSize: 16),
-        cursorColor: AppColors.goldDark,
-        decoration: InputDecoration(
-          isDense: true,
-          errorStyle: const TextStyle(fontSize: 10),
-          hintText: hint,
-          hintStyle: const TextStyle(color: AppColors.coinMuted),
-          prefixIcon: Icon(icon, color: AppColors.coinMuted, size: 22),
-          suffixIcon: password
-              ? IconButton(
-                  tooltip: _obscurePassword
-                      ? Strings.t('show_password')
-                      : Strings.t('hide_password'),
-                  onPressed: () =>
-                      setState(() => _obscurePassword = !_obscurePassword),
-                  icon: Icon(
-                    _obscurePassword
-                        ? Icons.visibility_outlined
-                        : Icons.visibility_off_outlined,
-                    color: AppColors.coinMuted,
-                    size: 20,
-                  ),
-                )
-              : null,
-          filled: true,
-          fillColor: AppColors.authFieldFill,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 18,
-            vertical: 12,
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
-            borderSide: const BorderSide(color: AppColors.goldDark),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
-            borderSide: BorderSide(
-              color: AppColors.goldDark.withValues(alpha: 0.5),
+      padding: const EdgeInsets.symmetric(horizontal: 2),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(22),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 22, sigmaY: 22),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(22),
+              color: Colors.white.withValues(alpha: 0.14),
             ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
-            borderSide: const BorderSide(color: AppColors.surface, width: 2),
+            child: TextFormField(
+              controller: controller,
+              keyboardType: password
+                  ? TextInputType.text
+                  : TextInputType.emailAddress,
+              obscureText: password && _obscurePassword,
+              autofillHints: autofillHints,
+              autocorrect: false,
+              enableSuggestions: !password,
+              textInputAction: password
+                  ? TextInputAction.done
+                  : TextInputAction.next,
+              onFieldSubmitted: password ? (_) => _signIn() : null,
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return Strings.f('enter_your_field', hint.toLowerCase());
+                }
+                if (!password &&
+                    !RegExp(
+                      r'^[^\s@]+@[^\s@]+\.[^\s@]+$',
+                    ).hasMatch(value.trim())) {
+                  return Strings.t('valid_email_error');
+                }
+                return null;
+              },
+              style: const TextStyle(color: AppColors.surface, fontSize: 28),
+              cursorColor: AppColors.goldDark,
+              decoration: InputDecoration(
+                isDense: false,
+                errorStyle: const TextStyle(fontSize: 13),
+                hintText: hint,
+                hintStyle: const TextStyle(
+                  color: AppColors.coinMuted,
+                  fontSize: 24,
+                ),
+                prefixIcon: Icon(icon, color: AppColors.coinMuted, size: 30),
+                suffixIcon: password
+                    ? IconButton(
+                        tooltip: _obscurePassword
+                            ? Strings.t('show_password')
+                            : Strings.t('hide_password'),
+                        onPressed: () => setState(
+                          () => _obscurePassword = !_obscurePassword,
+                        ),
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                          color: AppColors.coinMuted,
+                          size: 28,
+                        ),
+                      )
+                    : null,
+                filled: false,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 26,
+                  vertical: 12,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(22),
+                  borderSide: BorderSide(
+                    color: Colors.white.withValues(alpha: 0.6),
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(22),
+                  borderSide: BorderSide(
+                    color: Colors.white.withValues(alpha: 0.45),
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(22),
+                  borderSide: const BorderSide(
+                    color: AppColors.surface,
+                    width: 2,
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
       ),

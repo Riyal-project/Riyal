@@ -2,76 +2,62 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 
+/// The big auth-screen coin — a darker solid rim against a brighter,
+/// flat-gradient face for clear edge/face contrast, with closely-spaced
+/// rim ticks and a small ring of diamond accents. Toned down from the
+/// original photorealistic version (fewer diamonds, narrower face
+/// gradient) while keeping the coin's layered-ring structure.
 class GoldCoinPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final center = size.center(Offset.zero);
     final radius = size.shortestSide / 2;
     final rect = Rect.fromCircle(center: center, radius: radius);
-    canvas.drawCircle(
-      center,
-      radius,
-      Paint()
-        ..shader = const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppColors.gold,
-            AppColors.goldDark,
-            Color(0xFFC2A458),
-            Color(0xFF806024),
-          ],
-          stops: [0, 0.35, 0.65, 1],
-        ).createShader(rect),
-    );
-    for (var i = 0; i < 160; i++) {
-      final angle = i * math.pi * 2 / 160;
+    // Rim: solid but only lightly darker than the face, so the edge still
+    // reads as its own band without dragging the whole coin down.
+    canvas.drawCircle(center, radius, Paint()..color = const Color(0xFFB89651));
+    for (var i = 0; i < 60; i++) {
+      final angle = i * math.pi * 2 / 60;
       final direction = Offset(math.cos(angle), math.sin(angle));
       canvas.drawLine(
-        center + direction * (radius - 7),
+        center + direction * (radius - 5),
         center + direction * (radius - 1),
         Paint()
-          ..color = (i.isEven ? AppColors.gold : AppColors.goldDark)
-          ..strokeWidth = 1.5,
+          ..color = AppColors.goldDark
+          ..strokeWidth = 1.4,
       );
     }
+    // Face: brighter than the rim, narrow gradient range for a flat,
+    // non-glossy fill. The rim reaches 12px in for a visible edge band.
     canvas.drawCircle(
       center,
-      radius - 9,
+      radius - 12,
       Paint()
         ..shader = const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Color(0xFFB58B42),
-            Color(0xFFC2A458),
-            Color(0xFFD3BE7E),
-            AppColors.gold,
-            Color(0xFFC2A458),
-            Color(0xFFB18A42),
-          ],
-          stops: [0, 0.2, 0.38, 0.64, 0.82, 1],
+          colors: [AppColors.gold, Color(0xFFD3BE7E), AppColors.gold],
+          stops: [0, 0.5, 1],
         ).createShader(rect),
     );
-    for (final inset in [10.0, 14.0, 23.0, 26.0]) {
+    for (final inset in [13.0, 24.0]) {
       canvas.drawCircle(
         center,
         radius - inset,
         Paint()
-          ..color = (inset == 10 || inset == 23
-              ? const Color(0xFFD3BE7E)
-              : AppColors.goldDark)
+          ..color = AppColors.goldDark.withValues(alpha: 0.55)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 1.2,
       );
     }
-    // Fine engraved diamonds around the rim.
-    for (var i = 0; i < 64; i++) {
-      final angle = i * math.pi * 2 / 64;
+    // A ring of engraved diamonds — fewer and bolder than the original's
+    // fine engraving, kept as an accent rather than removed outright.
+    for (var i = 0; i < 20; i++) {
+      final angle = i * math.pi * 2 / 20;
       canvas.save();
       canvas.translate(center.dx, center.dy);
       canvas.rotate(angle);
-      final r = radius - 19;
+      final r = radius - 18.5;
       final path = Path()
         ..moveTo(r - 3, 0)
         ..lineTo(r, -3)
@@ -83,7 +69,7 @@ class GoldCoinPainter extends CustomPainter {
         Paint()
           ..color = AppColors.goldDark.withValues(alpha: 0.65)
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 0.7,
+          ..strokeWidth = 0.9,
       );
       canvas.restore();
     }

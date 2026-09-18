@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../data/budget_store.dart';
 import '../widgets/budget_progress_card.dart';
+import '../widgets/capsule_tab_selector.dart';
 import '../data/analytics_data.dart';
 import '../data/people_catalog.dart';
 import '../data/subscription_catalog.dart';
@@ -9,7 +10,6 @@ import '../l10n/app_locale.dart';
 import '../l10n/strings.dart';
 import '../theme/app_theme.dart';
 import '../theme/app_typography.dart';
-import '../widgets/card_logo_watermark.dart';
 import '../widgets/coin_back_button.dart';
 import '../widgets/logo_image.dart';
 
@@ -92,6 +92,37 @@ class _AnalyticsContentState extends State<AnalyticsContent> {
   ];
   String _money(double amount) => '⃁${amount.toStringAsFixed(0)}';
 
+  Widget _chip({
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.gold : AppColors.surface,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: isSelected ? AppColors.gold : AppColors.cardBorder,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected
+                ? AppColors.goldForeground
+                : AppColors.textSecondary,
+            fontSize: 12,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final ar = AppLocale.locale.value.languageCode == 'ar';
@@ -158,7 +189,7 @@ class _AnalyticsContentState extends State<AnalyticsContent> {
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(
         widget.horizontalPadding,
-        8,
+        0,
         widget.horizontalPadding,
         widget.bottomPadding,
       ),
@@ -170,10 +201,22 @@ class _AnalyticsContentState extends State<AnalyticsContent> {
             children: [
               Text(
                 periodLabel,
-                style: const TextStyle(color: AppColors.textSecondary),
+                style: const TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 12,
+                ),
               ),
-              const SizedBox(height: 18),
+              const SizedBox(height: 10),
+              CapsuleTabSelector<String>(
+                options: [
+                  for (final period in ['Week', 'Month', 'Year'])
+                    CapsuleTabOption(periodDisplay(period), period),
+                ],
+                selected: _period,
+                onChanged: (p) => setState(() => _period = p),
+              ),
               if (widget.showCategoryPicker) ...[
+                const SizedBox(height: 14),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
@@ -184,43 +227,16 @@ class _AnalyticsContentState extends State<AnalyticsContent> {
                       'Utilities',
                       'People',
                     ])
-                      ChoiceChip(
-                        label: Text(
-                          category == null
-                              ? Strings.t('general')
-                              : Strings.categoryDisplay(category),
-                        ),
-                        selected: _category == category,
-                        selectedColor: AppColors.gold,
-                        labelStyle: TextStyle(
-                          color: _category == category
-                              ? AppColors.background
-                              : AppColors.textSecondary,
-                        ),
-                        onSelected: (_) => setState(() => _category = category),
+                      _chip(
+                        label: category == null
+                            ? Strings.t('general')
+                            : Strings.categoryDisplay(category),
+                        isSelected: _category == category,
+                        onTap: () => setState(() => _category = category),
                       ),
                   ],
                 ),
-                const SizedBox(height: 14),
               ],
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  for (final period in ['Week', 'Month', 'Year'])
-                    ChoiceChip(
-                      label: Text(periodDisplay(period)),
-                      selected: _period == period,
-                      selectedColor: AppColors.gold,
-                      labelStyle: TextStyle(
-                        color: _period == period
-                            ? AppColors.background
-                            : AppColors.textSecondary,
-                      ),
-                      onSelected: (_) => setState(() => _period = period),
-                    ),
-                ],
-              ),
               if (_period != 'Month') ...[
                 const SizedBox(height: 8),
                 Text(
@@ -399,7 +415,6 @@ class _AnalyticsContentState extends State<AnalyticsContent> {
                     ),
                   ],
                 ),
-                watermark: WatermarkCorner.topEnd,
               ),
               const SizedBox(height: 16),
               _card(
@@ -511,11 +526,7 @@ class _AnalyticsContentState extends State<AnalyticsContent> {
     );
   }
 
-  Widget _card(
-    String title,
-    Widget content, {
-    WatermarkCorner watermark = WatermarkCorner.bottomEnd,
-  }) => Container(
+  Widget _card(String title, Widget content) => Container(
     width: double.infinity,
     clipBehavior: Clip.antiAlias,
     decoration: BoxDecoration(
@@ -523,27 +534,22 @@ class _AnalyticsContentState extends State<AnalyticsContent> {
       borderRadius: BorderRadius.circular(24),
       border: Border.all(color: AppColors.cardBorder),
     ),
-    child: Stack(
-      children: [
-        CardLogoWatermark(corner: watermark),
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 15,
-                ),
-              ),
-              const SizedBox(height: 16),
-              content,
-            ],
+    child: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 15,
+            ),
           ),
-        ),
-      ],
+          const SizedBox(height: 16),
+          content,
+        ],
+      ),
     ),
   );
 }

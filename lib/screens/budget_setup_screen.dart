@@ -13,11 +13,18 @@ class BudgetSetupScreen extends StatefulWidget {
 }
 
 class _BudgetSetupScreenState extends State<BudgetSetupScreen> {
+  static const _defaultLimits = {
+    BudgetDomain.subscriptions: 1000.0,
+    BudgetDomain.utilities: 2000.0,
+    BudgetDomain.people: 300.0,
+  };
+
   final _formKey = GlobalKey<FormState>();
   late final _controllers = {
     for (final domain in BudgetDomain.values)
       domain: TextEditingController(
-        text: BudgetStore.instance.limitFor(domain)?.toStringAsFixed(2) ?? '',
+        text: (BudgetStore.instance.limitFor(domain) ?? _defaultLimits[domain]!)
+            .toStringAsFixed(2),
       ),
   };
   bool _saving = false;

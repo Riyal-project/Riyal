@@ -149,7 +149,13 @@ class _MonthlyReviewCard extends StatelessWidget {
             children: [
               // Unpadded, so it sits flush against the card's true edges
               // instead of being inset by the content's own padding below.
-              const CardLogoWatermark(corner: WatermarkCorner.bottomEnd),
+              const CardLogoWatermark(
+                corner: WatermarkCorner.bottomEnd,
+                inset: 6,
+                // Pushed further than `inset` alone so the coin ends before
+                // the trailing chevron instead of running under it.
+                endInset: 46,
+              ),
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: Row(
@@ -529,8 +535,14 @@ class _SpendingCard extends StatelessWidget {
         border: Border.all(color: AppColors.cardBorder),
       ),
       child: Stack(
+        clipBehavior: Clip.none,
         children: [
-          const CardLogoWatermark(corner: WatermarkCorner.topEnd),
+          const CardLogoWatermark(
+            corner: WatermarkCorner.topEnd,
+            inset: -14,
+            size: 150,
+            respectHeight: false,
+          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
