@@ -8,6 +8,7 @@ import '../theme/app_typography.dart';
 import 'connect_bank_screen.dart';
 import 'budget_setup_screen.dart';
 import '../data/budget_store.dart';
+import '../data/profile_store.dart';
 import '../widgets/gold_coin_painter.dart';
 import '../widgets/auth_coin_flip.dart';
 
@@ -44,6 +45,14 @@ class _SignupScreenState extends State<SignupScreen> {
     setState(() => _signingUp = true);
     try {
       await BudgetStore.instance.activate(_emailController.text);
+      // The name/email typed here aren't tied to a real Supabase Auth user
+      // (see the note above) — save them straight to ProfileStore so the
+      // home screen greeting and Profile screen reflect what was entered.
+      await ProfileStore.instance.save(
+        'Full name',
+        _fullNameController.text.trim(),
+      );
+      await ProfileStore.instance.save('Email', _emailController.text.trim());
       if (!mounted) return;
       // A brand-new account can't have a connected bank yet.
       Navigator.of(context).pushAndRemoveUntil(
