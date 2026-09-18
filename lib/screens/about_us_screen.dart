@@ -75,6 +75,12 @@ class AboutUsScreen extends StatelessWidget {
                       title: Strings.t('about_reminders_title'),
                       body: Strings.t('about_reminders_body'),
                     ),
+                    const Divider(color: AppColors.cardBorder, height: 32),
+                    _AboutFeature(
+                      icon: Icons.auto_awesome_rounded,
+                      title: Strings.t('about_ai_title'),
+                      body: Strings.t('about_ai_body'),
+                    ),
                   ],
                 ),
               ),
