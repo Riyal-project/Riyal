@@ -73,7 +73,7 @@ class RiyalCoinPainter extends CustomPainter {
 
     canvas.drawCircle(
       c,
-      17.6 * u,
+      radius - 2.8 * u * edgeScale,
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1 * u
