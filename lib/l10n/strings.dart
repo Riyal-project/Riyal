@@ -610,6 +610,14 @@ class Strings {
     'delete_confirm_title': 'Delete this?',
     'delete_confirm_message':
         'Are you sure? You won\'t be able to recover it.',
+    'delete_account_menu_item': 'Delete account',
+    'delete_account_action': 'Delete account',
+    'delete_account_confirm_title': 'Delete your account?',
+    'delete_account_confirm_message':
+        'Are you sure? Your profile and saved data on this device will be removed.',
+    'delete_account_final_title': 'Delete your account for good?',
+    'delete_account_final_message':
+        'This is your last chance to cancel — after this, there\'s no way to get your account back.',
     'cancel_confirm_title': 'Cancel this subscription?',
     'cancel_confirm_message': 'You can still see it here, marked as cancelled.',
     'notifications_toggle_label': 'Notifications',
@@ -1027,6 +1035,14 @@ class Strings {
     'delete_action': 'حذف',
     'delete_confirm_title': 'هل تريد الحذف؟',
     'delete_confirm_message': 'هل أنت متأكد؟ لن تتمكن من استرجاعه.',
+    'delete_account_menu_item': 'حذف الحساب',
+    'delete_account_action': 'حذف الحساب',
+    'delete_account_confirm_title': 'حذف حسابك؟',
+    'delete_account_confirm_message':
+        'هل أنت متأكد؟ ستتم إزالة ملفك الشخصي وبياناتك المحفوظة على هذا الجهاز.',
+    'delete_account_final_title': 'حذف حسابك نهائيًا؟',
+    'delete_account_final_message':
+        'هذه فرصتك الأخيرة للتراجع — بعدها لن تتمكن من استرجاع حسابك.',
     'cancel_confirm_title': 'هل تريد إلغاء هذا الاشتراك؟',
     'cancel_confirm_message': 'سيبقى ظاهرًا هنا، مُعلَّمًا كملغى.',
     'notifications_toggle_label': 'الإشعارات',

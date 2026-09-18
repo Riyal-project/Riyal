@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../data/auth_store.dart';
 import '../data/profile_store.dart';
 import '../data/profile_validation.dart';
+import '../data/user_bank_accounts_store.dart';
 import '../l10n/strings.dart';
+import '../widgets/action_confirmation.dart';
 import '../widgets/account_section.dart';
 import '../theme/app_theme.dart';
 import '../widgets/coin_back_button.dart';
 import '../widgets/gold_coin_painter.dart';
 import 'change_password_screen.dart';
+import 'login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -90,6 +95,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } finally {
       if (mounted) setState(() => _saving = false);
     }
+  }
+
+  // Data is device-scoped rather than backed by a deletable server-side
+  // account (see profile_local_note) — "deleting the account" here means
+  // wiping every local key, so re-launching regenerates a fresh device_id
+  // and none of this device's previous data is reachable again.
+  Future<void> _deleteAccount() async {
+    final firstConfirm = await showActionConfirmation(
+      context,
+      title: Strings.t('delete_account_confirm_title'),
+      message: Strings.t('delete_account_confirm_message'),
+      confirmLabel: Strings.t('delete_account_action'),
+    );
+    if (firstConfirm != true || !mounted) return;
+    final finalConfirm = await showActionConfirmation(
+      context,
+      title: Strings.t('delete_account_final_title'),
+      message: Strings.t('delete_account_final_message'),
+      confirmLabel: Strings.t('delete_account_action'),
+    );
+    if (finalConfirm != true || !mounted) return;
+    await AuthStore.instance.signOut();
+    UserBankAccountsStore.instance.clear();
+    await SharedPreferencesAsync().clear();
+    if (!mounted) return;
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute<void>(builder: (_) => const LoginScreen()),
+      (_) => false,
+    );
   }
 
   @override
@@ -306,6 +340,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           builder: (_) => const ChangePasswordScreen(),
                         ),
                       ),
+                    ),
+                    const SizedBox(height: 14),
+                    ListTile(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        side: const BorderSide(color: AppColors.cardBorder),
+                      ),
+                      tileColor: AppColors.surface,
+                      leading: const Icon(
+                        Icons.delete_outline,
+                        color: AppColors.statusCancelled,
+                      ),
+                      title: Text(
+                        Strings.t('delete_account_menu_item'),
+                        style: const TextStyle(
+                          color: AppColors.statusCancelled,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      onTap: _deleteAccount,
                     ),
                   ],
                 ),
