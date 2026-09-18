@@ -1,182 +1,311 @@
-<p align="center">
-  <img src="assets/icon/app_icon.png" alt="Riyal app icon" width="120" />
-</p>
+# 💰 Riyal  ريال
 
-<h1 align="center">Riyal 💚</h1>
+> **Know where your money goes.**
 
-<p align="center">
-  <strong>Know where your money goes.</strong><br />
-  A bilingual mobile app for understanding recurring spending, planning budgets,
-  and staying ahead of upcoming payments.
-</p>
+Riyal (ريال) is a bilingual Arabic/English Flutter mobile application designed to help users track recurring spending, manage personal budgets, and better understand where their money goes.
 
-## About Riyal
+The app brings subscriptions, utility bills, and payments to people into one organized experience, while providing spending analytics, reminders, recurring-payment detection, and AI-powered financial guidance.
 
-Riyal brings subscriptions, utility bills, and people-related payments into one
-clear financial view. It helps users understand their monthly commitments,
-compare spending with their budgets, and receive useful alerts before a payment
-or free trial becomes a surprise.
+Riyal was developed as a student project with a focus on mobile application development, financial data analysis, APIs, localization, and user-centered design.
 
-The app was created as a student project and uses a simulated bank connection
-flow with seeded transaction data. It does not connect to real bank accounts.
+---
 
-## Features
+## ✨ Features
 
-- **Unified recurring payments** — manage subscriptions, utilities, and
-  people-related commitments in one place.
-- **Budget onboarding** — new users can set a separate monthly budget for every
-  spending domain.
-- **Budget monitoring** — progress indicators turn orange near the limit and red
-  when the budget is reached or exceeded.
-- **Spending analytics** — view total and category-level spending, trends, and
-  budget progress.
-- **Free-trial tracking** — create weekly or monthly trials and receive an
-  in-app reminder five days before they end.
-- **Smart notifications** — get alerts for upcoming payments, budget limits,
-  subscription price increases, trial endings, and monthly reviews.
-- **Recurring-payment detection** — identify repeating charges in simulated
-  bank transactions and add them to the appropriate category.
-- **Flexible bank setup** — connect a simulated bank or skip the step and add
-  commitments manually.
-- **Riyal Bot** — ask budgeting and recurring-payment questions through a
-  Gemini-powered assistant.
-- **Arabic and English** — switch between fully localized RTL and LTR
-  experiences.
-- **Responsive interface** — a dark green and gold design built for different
-  mobile screen sizes.
+### 💳 Unified Recurring Payments
 
-## App Tour
+Track recurring expenses across three main categories:
 
-| Area | What it provides |
-| --- | --- |
-| Overview | Monthly recurring spend and a breakdown by domain |
-| Analytics | Total and category-level budgets, progress, and trends |
-| Subscriptions | Subscription details, free trials, renewals, and price history |
-| Utilities | Recurring household bills and payment tracking |
-| People | Salaries, allowances, and other people-related payments |
-| Accounts | Simulated bank accounts and detected recurring transactions |
-| Notifications | Payment, trial, budget, and price-change alerts |
-| Riyal Bot | AI-assisted guidance for budgets and recurring commitments |
+- Subscriptions
+- Utility Bills
+- People & Allowances
 
-## Technology
+Each category has its own organization, tracking, and budget monitoring.
 
-- Flutter and Dart
-- Supabase Authentication and PostgreSQL
-- Gemini API for Riyal Bot
-- Shared Preferences for local settings and read state
-- `flutter_svg` for scalable icons and logos
+### 📊 Budget Management
 
-## Getting Started
+Set a separate monthly budget for:
 
-### Prerequisites
+- Subscriptions
+- Utilities
+- People payments
 
-- Flutter SDK with Dart `3.10.8` or newer
-- A Supabase project
-- A Gemini API key if you want to enable Riyal Bot
-- An Android emulator, iOS simulator, or physical device
+Riyal continuously monitors spending and visually indicates when spending approaches or exceeds a budget limit.
 
-### 1. Clone the repository
+### 📈 Spending Analytics
 
-```bash
-git clone https://github.com/Danah-R/Riyal.git
-cd Riyal
-```
+Understand spending through:
 
-### 2. Install dependencies
+- Total monthly spending
+- Category-based spending
+- Spending trends
+- Budget progress
+- Monthly financial reviews
 
-```bash
-flutter pub get
-```
+### 🔄 Recurring Payment Detection
 
-### 3. Configure environment variables
+Riyal analyzes simulated transaction data to identify recurring payments automatically.
 
-Copy `.env.example` to a new `.env` file:
+When a merchant appears repeatedly, the system recognizes the pattern and automatically classifies the payment into the appropriate category.
 
-```bash
-cp .env.example .env
-```
+A merchant appearing four or more times can be automatically recognized as a recurring payment without requiring manual confirmation.
 
-On Windows PowerShell, use:
+### 🔔 Smart Notifications
 
-```powershell
-Copy-Item .env.example .env
-```
+Riyal provides reminders and alerts for:
 
-Then add your project values:
+- Upcoming recurring payments
+- Budget limits
+- Subscription price increases
+- Free-trial endings
+- Monthly spending reviews
 
-```env
-SUPABASE_URL=https://<your-project-ref>.supabase.co
-SUPABASE_ANON_KEY=<your-supabase-anon-key>
+### 🎁 Free-Trial Tracking
 
-GEMINI_API_KEY=<your-gemini-api-key>
-GEMINI_MODEL=gemini-3.8-flash
-```
+Users can add weekly or monthly free trials and receive an in-app reminder five days before the trial ends.
 
-The Gemini fields are optional. Riyal Bot requires them, while the rest of the
-app can still run without them.
+### 🤖 Riyal Bot
 
-### 4. Prepare Supabase
+Riyal includes an AI-powered assistant built with the Gemini API.
 
-Apply the SQL migrations in `supabase/migrations` in numeric order. With the
-Supabase CLI installed, run:
+Riyal Bot is specifically scoped to questions related to:
 
-```bash
-supabase login
-supabase link --project-ref <your-project-ref>
-supabase db push
-```
+- Budgeting
+- Spending
+- Saving
+- Subscriptions
+- Bills
 
-Alternatively, open the SQL Editor in the Supabase dashboard and run each
-migration file manually in numeric order.
+It supports both Arabic and English.
 
-The app uses Supabase email and password authentication. For faster local
-testing, email confirmation can be disabled from **Authentication > Providers >
-Email** in the Supabase dashboard.
+The assistant does not have live access to real bank accounts and does not claim to perform real financial actions.
 
-### 5. Run the app
+### 🏦 Simulated Bank Connections
 
-```bash
-flutter run
-```
+Users can connect to a simulated bank account or skip the connection and add payments manually.
 
-## Quality Checks
+The project includes mock representations of several Saudi banks, including:
 
-Run static analysis:
+- Al Rajhi
+- STC Bank
+- BSF
+- Bank AlJazira
+- Saudi Investment Bank
+- Alinma
+- GIB
+- SAB
+- Bank Albilad
+- And others
 
-```bash
-flutter analyze
-```
+> **Note:** These are simulated data sources for demonstration purposes. Riyal does not connect to real bank accounts.
 
-Run the test suite:
+### 🌐 Arabic & English
 
-```bash
-flutter test
-```
+The application is fully localized in Arabic and English, including RTL support for Arabic.
 
-The tests cover responsive layouts, authentication screens, budget behavior,
-free trials, notification generation, recurring-payment detection, item views,
-and Riyal Bot rendering.
+### 📱 Responsive Design
 
-## Project Structure
+The interface is designed to adapt across different mobile screen sizes while maintaining consistent spacing, typography, and layouts.
 
-```text
-lib/
-├── data/       Data models, stores, budgets, detection, and Supabase access
-├── l10n/       Arabic and English localization
-├── screens/    Application screens and user flows
-├── services/   Gemini API integration and Riyal Bot configuration
-├── theme/      Colors, typography, and application theme
-└── widgets/    Shared responsive UI components
+---
 
-supabase/
-└── migrations/ Database schema, policies, and seeded demo data
+## 📱 App Screens
 
-test/           Widget and unit tests
-```
+### Authentication & Onboarding
 
-## Developers 💚
+| Splash | Onboarding | Login | Sign Up |
+|:---:|:---:|:---:|:---:|
+| <img src="assets/screenshots/splash.png" width="200"> | <img src="assets/screenshots/onboarding.png" width="200"> | <img src="assets/screenshots/login.png" width="200"> | <img src="assets/screenshots/signup.png" width="200"> |
 
-| Arabic | English |
-| --- | --- |
-| فلوة اليحيى | Fulwah Alyahya |
-| دانه التميمي | Danah Altamimi |
+### Main Experience
+
+| Home | Subscriptions | Utilities | People |
+|:---:|:---:|:---:|:---:|
+| <img src="assets/screenshots/home.png" width="200"> | <img src="assets/screenshots/subscriptions.png" width="200"> | <img src="assets/screenshots/utilities.png" width="200"> | <img src="assets/screenshots/people.png" width="200"> |
+
+### Insights & Management
+
+| Analytics | Monthly Review | Notifications | Accounts |
+|:---:|:---:|:---:|:---:|
+| <img src="assets/screenshots/analytics.png" width="200"> | <img src="assets/screenshots/monthly_review.png" width="200"> | <img src="assets/screenshots/notifications.png" width="200"> | <img src="assets/screenshots/accounts.png" width="200"> |
+
+### Riyal Bot
+
+| Riyal Bot |
+|:---:|
+| <img src="assets/screenshots/riyal_bot.png" width="250"> |
+
+---
+
+## 🧭 App Structure
+
+The main navigation consists of:
+
+**Home · Subscriptions · Utilities · People**
+
+Additional screens include:
+
+- Analytics
+- Accounts
+- Notifications
+- Profile & Settings
+- Monthly Review
+- About Us
+- Contact Us
+- Riyal Bot
+
+### User Flow
+
+Splash
+   ↓
+Onboarding
+   ↓
+Login / Sign Up
+   ↓
+Optional Bank Connection
+   ↓
+Budget Setup
+   ↓
+Home
+   ↓
+Track • Analyze • Manage
+
+🎨 Design & Branding
+
+Riyal follows a dark fintech-inspired visual identity built around the Saudi Riyal.
+
+Color Palette
+Purpose	Color
+Background	#031108
+Primary Accent	#CBA960
+Utilities	#2CB3B3
+People	#BD7D60
+Status Colors
+🟢 Active
+🟡 Trial
+🔴 Cancelled
+⚪ Paused
+
+The interface uses a custom GeneralSans font family and a recurring gold coin motif throughout the application.
+
+🛠️ Tech Stack
+Frontend
+Flutter
+Dart
+Responsive UI
+Arabic / English localization
+RTL support
+Backend
+Supabase
+PostgreSQL
+Supabase Authentication
+SQL migrations
+AI
+Google Gemini API
+Riyal Bot
+Scoped AI financial assistance
+APIs & Networking
+HTTP APIs
+JSON-based data handling
+Mock financial transaction data
+Local Storage
+shared_preferences
+Additional Packages
+flutter_svg
+google_fonts
+flutter_dotenv
+http
+flutter_launcher_icons
+Development Tools
+Git
+GitHub
+VS Code
+Xcode
+Android Studio
+🗄️ Data & Backend Architecture
+
+Riyal uses Supabase for its backend infrastructure.
+
+The project contains 13 SQL migrations that evolved from an initial bank-integration experiment into the current simulated banking system.
+
+The current architecture uses mock banking data consisting of:
+
+Mock banks
+User bank accounts
+Mock transactions
+
+Recurring-payment detection and utility anomaly detection operate against the simulated transaction feed.
+
+Subscriptions, utilities, and people payments are maintained as separate but structurally similar domains within the application.
+
+🧠 Smart Detection
+
+One of Riyal's core features is its recurring-payment detection system.
+
+The system analyzes transaction patterns and looks for repeated charges.
+
+Transaction Feed
+       ↓
+Pattern Analysis
+       ↓
+Repeated Merchant Detected
+       ↓
+Recurring Payment Identified
+       ↓
+Category Classification
+       ↓
+Added to Riyal
+
+A merchant appearing four or more times can be automatically recognized as a recurring payment without requiring manual confirmation.
+
+🔐 Authentication & Data Handling
+
+Riyal uses Supabase Authentication for email/password authentication.
+
+For this student project, most application data is scoped using a generated device ID rather than relying entirely on a real authenticated banking identity.
+
+This is a deliberate simplification for the project's demonstration environment.
+
+The application does not connect to real bank accounts or process real banking transactions.
+
+🧪 Testing
+
+The project includes 20 test files covering major application functionality, including:
+
+Authentication screen responsiveness
+No-overflow UI testing
+Budget calculations
+Free-trial logic
+Notification state
+Recurring-payment detection
+Bank transaction matching
+Transaction parsing
+Monthly review logic
+Onboarding
+Profile validation
+Arabic / English locale switching
+Riyal Bot navigation
+Gemini API integration
+
+Testing helps ensure that both the financial logic and responsive UI behave consistently across the application.
+
+
+📂 Project Structure
+Riyal/
+├── android/
+├── ios/
+├── lib/
+│   ├── data/
+│   ├── ...
+│   └── main.dart
+├── assets/
+├── supabase/
+│   └── migrations/
+├── test/
+├── .env.example
+├── pubspec.yaml
+└── README.md
+
+👩🏻‍💻 Developers
+Danah Altamimi دانه التميمي
+Fulwah Alyahya فلوة اليحيى
