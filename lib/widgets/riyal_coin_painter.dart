@@ -49,8 +49,8 @@ class RiyalCoinPainter extends CustomPainter {
       radius,
       Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 0.3 * u
-        ..color = edgeColor.withValues(alpha: edgeColor.a * 0.5),
+        ..strokeWidth = 0.6 * u
+        ..color = edgeColor,
     );
 
     // A dashed/reeded edge (short radial ticks around the rim) instead of a
@@ -76,8 +76,8 @@ class RiyalCoinPainter extends CustomPainter {
       radius - 2.8 * u * edgeScale - 0.5 * u,
       Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1 * u
-        ..color = edgeColor.withValues(alpha: edgeColor.a * 0.4),
+        ..strokeWidth = 1.2 * u
+        ..color = edgeColor,
     );
   }
 
