@@ -95,7 +95,7 @@ class _RiyalBotScreenState extends State<RiyalBotScreen> {
     appBar: AppBar(
       backgroundColor: AppColors.background,
       leading: const CoinBackButton(),
-      title: Text(_t('ريال بوت', 'Riyal Bot')),
+      title: Text(_t('ريال', 'Riyal')),
       actions: [
         IconButton(
           tooltip: _t('محادثة جديدة', 'New chat'),
@@ -145,8 +145,8 @@ class _RiyalBotScreenState extends State<RiyalBotScreen> {
                     ),
                     child: Text(
                       _t(
-                        'ريال بوت غير متصل بعد. أكملي إعداد الخدمة لتفعيل المحادثة.',
-                        'Riyal Bot is not connected yet. Complete the service setup to enable chat.',
+                        'ريال غير متصل بعد. أكملي إعداد الخدمة لتفعيل المحادثة.',
+                        'Riyal is not connected yet. Complete the service setup to enable chat.',
                       ),
                       style: const TextStyle(color: AppColors.gold),
                     ),
@@ -175,7 +175,7 @@ class _RiyalBotScreenState extends State<RiyalBotScreen> {
                             ),
                             const SizedBox(height: 20),
                             Text(
-                              _t('أهلًا، أنا ريال بوت', 'Hi, I am Riyal Bot'),
+                              _t('أهلًا، أنا ريال', 'Hi, I am Riyal'),
                               style: const TextStyle(
                                 fontSize: 26,
                                 color: AppColors.textPrimary,

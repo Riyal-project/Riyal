@@ -79,9 +79,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       arTitle: 'افهم إنفاقك مع ريال',
       enTitle: 'Understand your spending with Riyal',
       arBody:
-          'شاهد الإحصائيات وفرص التوفير، واطلب من ريال بوت شرحها بالعربية أو الإنجليزية.',
+          'شاهد الإحصائيات وفرص التوفير، واطلب من ريال شرحها بالعربية أو الإنجليزية.',
       enBody:
-          'Explore analytics and saving opportunities, then ask Riyal Bot to explain them in Arabic or English.',
+          'Explore analytics and saving opportunities, then ask Riyal to explain them in Arabic or English.',
       accent: AppColors.onboardingAnalyticsAccent,
     ),
   ];

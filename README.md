@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/icon/app_icon.png" alt="Riyal app icon" width="140" />
+</p>
+
 # 💰 Riyal  ريال
 
 > **Know where your money goes.**
@@ -7,6 +11,18 @@ Riyal (ريال) is a bilingual Arabic/English Flutter mobile application design
 The app brings subscriptions, utility bills, and payments to people into one organized experience, while providing spending analytics, reminders, recurring-payment detection, and AI-powered financial guidance.
 
 Riyal was developed as a student project with a focus on mobile application development, financial data analysis, APIs, localization, and user-centered design.
+
+---
+
+## 💡 Why Riyal?
+
+Today, almost everything has become a subscription — from streaming and entertainment to software, apps, cloud storage, and everyday services. With so many recurring payments, it can be easy to lose track of what you're paying for, when it renews, or how much you're spending each month.
+
+Riyal was created to make managing payments simpler. It automatically detects recurring payments and categorizes them, while providing smart insights into where your money is going. It also helps users track free trials, upcoming renewals, and price changes.
+
+But Riyal isn't limited to subscriptions. It also helps users organize and manage other recurring expenses, such as **utility bills, allowances, and payments to people**, giving them one place to keep track of the payments that matter in their everyday lives.
+
+**Riyal — because when everything is a payment, keeping track shouldn't be. 💚**
 
 ---
 
@@ -111,29 +127,23 @@ The interface is designed to adapt across different mobile screen sizes while ma
 
 ## 📱 App Screens
 
-### Authentication & Onboarding
+### Authentication
 
-| Splash | Onboarding | Login | Sign Up |
-|:---:|:---:|:---:|:---:|
-| <img src="assets/screenshots/splash.png" width="200"> | <img src="assets/screenshots/onboarding.png" width="200"> | <img src="assets/screenshots/login.png" width="200"> | <img src="assets/screenshots/signup.png" width="200"> |
+| Splash | Login | Sign Up |
+|:---:|:---:|:---:|
+| <img src="docs/screenshots/splash.png" width="200"> | <img src="docs/screenshots/login.png" width="200"> | <img src="docs/screenshots/signup.png" width="200"> |
 
 ### Main Experience
 
-| Home | Subscriptions | Utilities | People |
-|:---:|:---:|:---:|:---:|
-| <img src="assets/screenshots/home.png" width="200"> | <img src="assets/screenshots/subscriptions.png" width="200"> | <img src="assets/screenshots/utilities.png" width="200"> | <img src="assets/screenshots/people.png" width="200"> |
+| Home | Home — Renewals | Subscriptions | Subscriptions — Add | Filtration | Utilities | People |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| <img src="docs/screenshots/home.png" width="200"> | <img src="docs/screenshots/home_calendar.png" width="200"> | <img src="docs/screenshots/subscriptions.png" width="200"> | <img src="docs/screenshots/subscriptions_add.png" width="200"> | <img src="docs/screenshots/filtration.png" width="200"> | <img src="docs/screenshots/utilities.png" width="200"> | <img src="docs/screenshots/people.png" width="200"> |
 
 ### Insights & Management
 
-| Analytics | Monthly Review | Notifications | Accounts |
-|:---:|:---:|:---:|:---:|
-| <img src="assets/screenshots/analytics.png" width="200"> | <img src="assets/screenshots/monthly_review.png" width="200"> | <img src="assets/screenshots/notifications.png" width="200"> | <img src="assets/screenshots/accounts.png" width="200"> |
-
-### Riyal Bot
-
-| Riyal Bot |
-|:---:|
-| <img src="assets/screenshots/riyal_bot.png" width="250"> |
+| Analytics | Analytics — Breakdown | Monthly Review | Accounts | Connect a Bank |
+|:---:|:---:|:---:|:---:|:---:|
+| <img src="docs/screenshots/analytics.png" width="200"> | <img src="docs/screenshots/analytics_breakdown.png" width="200"> | <img src="docs/screenshots/monthly_review.png" width="200"> | <img src="docs/screenshots/accounts.png" width="200"> | <img src="docs/screenshots/connect_bank.png" width="200"> |
 
 ---
 
@@ -156,73 +166,75 @@ Additional screens include:
 
 ### User Flow
 
+```text
 Splash
-   ↓
+  ↓
 Onboarding
-   ↓
+  ↓
 Login / Sign Up
-   ↓
+  ↓
 Optional Bank Connection
-   ↓
+  ↓
 Budget Setup
-   ↓
+  ↓
 Home
-   ↓
+  ↓
 Track • Analyze • Manage
+```
 
-🎨 Design & Branding
+## 🎨 Design & Branding
 
 Riyal follows a dark fintech-inspired visual identity built around the Saudi Riyal.
 
-Color Palette
-Purpose	Color
-Background	#031108
-Primary Accent	#CBA960
-Utilities	#2CB3B3
-People	#BD7D60
-Status Colors
-🟢 Active
-🟡 Trial
-🔴 Cancelled
-⚪ Paused
+**Color palette**
+
+| Purpose | Color |
+| --- | --- |
+| Background | `#031108` |
+| Primary accent | `#CBA960` |
+| Utilities | `#2CB3B3` |
+| People | `#BD7D60` |
+
+**Status colors**
+
+- 🟢 Active
+- 🟡 Trial
+- 🔴 Cancelled
+- ⚪ Paused
 
 The interface uses a custom GeneralSans font family and a recurring gold coin motif throughout the application.
 
-🛠️ Tech Stack
-Frontend
-Flutter
-Dart
-Responsive UI
-Arabic / English localization
-RTL support
-Backend
-Supabase
-PostgreSQL
-Supabase Authentication
-SQL migrations
-AI
-Google Gemini API
-Riyal Bot
-Scoped AI financial assistance
-APIs & Networking
-HTTP APIs
-JSON-based data handling
-Mock financial transaction data
-Local Storage
-shared_preferences
-Additional Packages
-flutter_svg
-google_fonts
-flutter_dotenv
-http
-flutter_launcher_icons
-Development Tools
-Git
-GitHub
-VS Code
-Xcode
-Android Studio
-🗄️ Data & Backend Architecture
+## 🛠️ Tech Stack
+
+**Frontend**
+- Flutter, Dart
+- Responsive UI
+- Arabic / English localization, RTL support
+
+**Backend**
+- Supabase, PostgreSQL
+- Supabase Authentication
+- SQL migrations
+
+**AI**
+- Google Gemini API
+- Riyal Bot — scoped AI financial assistance
+
+**APIs & Networking**
+- HTTP APIs
+- JSON-based data handling
+- Mock financial transaction data
+
+**Local Storage**
+- shared_preferences
+
+**Additional Packages**
+- flutter_svg, google_fonts, flutter_dotenv, http, flutter_launcher_icons
+
+**Development Tools**
+- Git, GitHub, VS Code, Xcode, Android Studio
+
+## 🗄️ Data & Backend Architecture
 
 Riyal uses Supabase for its backend infrastructure.
 
@@ -230,35 +242,37 @@ The project contains 13 SQL migrations that evolved from an initial bank-integra
 
 The current architecture uses mock banking data consisting of:
 
-Mock banks
-User bank accounts
-Mock transactions
+- Mock banks
+- User bank accounts
+- Mock transactions
 
 Recurring-payment detection and utility anomaly detection operate against the simulated transaction feed.
 
 Subscriptions, utilities, and people payments are maintained as separate but structurally similar domains within the application.
 
-🧠 Smart Detection
+## 🧠 Smart Detection
 
 One of Riyal's core features is its recurring-payment detection system.
 
 The system analyzes transaction patterns and looks for repeated charges.
 
+```text
 Transaction Feed
-       ↓
+  ↓
 Pattern Analysis
-       ↓
+  ↓
 Repeated Merchant Detected
-       ↓
+  ↓
 Recurring Payment Identified
-       ↓
+  ↓
 Category Classification
-       ↓
+  ↓
 Added to Riyal
+```
 
 A merchant appearing four or more times can be automatically recognized as a recurring payment without requiring manual confirmation.
 
-🔐 Authentication & Data Handling
+## 🔐 Authentication & Data Handling
 
 Riyal uses Supabase Authentication for email/password authentication.
 
@@ -268,44 +282,60 @@ This is a deliberate simplification for the project's demonstration environment.
 
 The application does not connect to real bank accounts or process real banking transactions.
 
-🧪 Testing
+## 🧪 Testing
 
 The project includes 20 test files covering major application functionality, including:
 
-Authentication screen responsiveness
-No-overflow UI testing
-Budget calculations
-Free-trial logic
-Notification state
-Recurring-payment detection
-Bank transaction matching
-Transaction parsing
-Monthly review logic
-Onboarding
-Profile validation
-Arabic / English locale switching
-Riyal Bot navigation
-Gemini API integration
+- Authentication screen responsiveness
+- No-overflow UI testing
+- Budget calculations
+- Free-trial logic
+- Notification state
+- Recurring-payment detection
+- Bank transaction matching
+- Transaction parsing
+- Monthly review logic
+- Onboarding
+- Profile validation
+- Arabic / English locale switching
+- Riyal Bot navigation
+- Gemini API integration
 
 Testing helps ensure that both the financial logic and responsive UI behave consistently across the application.
 
 
-📂 Project Structure
-Riyal/
-├── android/
-├── ios/
-├── lib/
-│   ├── data/
-│   ├── ...
-│   └── main.dart
-├── assets/
-├── supabase/
-│   └── migrations/
-├── test/
-├── .env.example
-├── pubspec.yaml
-└── README.md
+## 📂 Project Structure
 
-👩🏻‍💻 Developers
-Danah Altamimi دانه التميمي
-Fulwah Alyahya فلوة اليحيى
+```text
+Riyal/
+├── android/, ios/, macos/, windows/, linux/, web/   Platform projects
+├── lib/
+│   ├── data/       Data models, stores, budgets, detection logic, Supabase access
+│   ├── l10n/       Arabic and English localization
+│   ├── screens/    Application screens and user flows
+│   ├── services/   Gemini API integration and Riyal Bot configuration
+│   ├── theme/      Colors, typography, and application theme
+│   ├── widgets/    Shared responsive UI components
+│   ├── assets/     Bank/merchant logo images bundled with the app
+│   └── main.dart   App entry point
+├── assets/         App icon, category icons, fonts
+├── supabase/
+│   └── migrations/ Database schema, policies, and seeded demo data
+├── test/           Widget and unit tests
+├── docs/
+│   └── screenshots/ Drop-in app screenshots referenced by this README
+├── .env.example    Template for Supabase/Gemini environment variables
+├── pubspec.yaml    Flutter project manifest and dependencies
+└── README.md
+```
+
+## Developers
+
+Danah Altamimi - دانه التميمي
+
+Fulwah Alyahya - فلوة اليحيى
+
+---
+
+Made with 💚 for the Saudi consumer
+

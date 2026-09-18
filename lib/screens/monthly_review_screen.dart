@@ -117,7 +117,7 @@ class _MonthlyReviewScreenState extends State<MonthlyReviewScreen> {
     });
     try {
       final response = await _api!.sendMessage('''
-The user explicitly asked Riyal Bot to explain these deterministic monthly-review results.
+The user explicitly asked Riyal to explain these deterministic monthly-review results.
 Reply in ${_arabic ? 'Arabic' : 'English'} using at most 120 words. Use only the supplied amounts. Do not invent annual-plan prices or claim that anything was cancelled. Give a short prioritized action plan.
 
 Results:
@@ -130,8 +130,8 @@ ${actionable.isEmpty ? 'No action recommended; current commitments appear suitab
       if (mounted) {
         setState(
           () => _aiError = t(
-            'تعذر الحصول على شرح ريال بوت الآن.',
-            'Riyal Bot could not explain the results right now.',
+            'تعذر الحصول على شرح ريال الآن.',
+            'Riyal could not explain the results right now.',
           ),
         );
       }
@@ -457,7 +457,7 @@ ${actionable.isEmpty ? 'No action recommended; current commitments appear suitab
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      t('شرح من ريال بوت', 'Riyal Bot explanation'),
+                      t('شرح من ريال', 'Explanation from Riyal'),
                       style: const TextStyle(
                         color: AppColors.textPrimary,
                         fontWeight: FontWeight.w700,
@@ -509,7 +509,7 @@ ${actionable.isEmpty ? 'No action recommended; current commitments appear suitab
                     : const Icon(Icons.auto_awesome_rounded),
                 label: Text(
                   _api == null
-                      ? t('ريال بوت غير متصل', 'Riyal Bot is not connected')
+                      ? t('ريال غير متصل', 'Riyal is not connected')
                       : t('اشرح اقتراحاتي', 'Explain my suggestions'),
                 ),
                 style: FilledButton.styleFrom(

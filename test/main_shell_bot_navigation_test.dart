@@ -13,6 +13,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(RiyalBotScreen), findsOneWidget);
-    expect(find.text('Riyal Bot'), findsWidgets);
+    expect(find.text('Riyal'), findsWidgets);
   });
 }

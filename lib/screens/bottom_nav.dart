@@ -116,7 +116,7 @@ class NavFab extends StatelessWidget {
   Widget build(BuildContext context) {
     return FloatingActionButton(
       heroTag: 'riyal-bot-button',
-      tooltip: 'ريال بوت / Riyal Bot',
+      tooltip: 'ريال / Riyal',
       onPressed: onPressed,
       elevation: 0,
       hoverElevation: 0,
