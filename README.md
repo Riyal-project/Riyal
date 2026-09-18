@@ -2,7 +2,7 @@
   <img src="assets/icon/app_icon.png" alt="Riyal app icon" width="120" />
 </p>
 
-<h1 align="center">Riyal</h1>
+<h1 align="center">Riyal 💚</h1>
 
 <p align="center">
   <strong>Know where your money goes.</strong><br />
@@ -174,7 +174,7 @@ supabase/
 test/           Widget and unit tests
 ```
 
-## Developers
+## Developers 💚
 
 | Arabic | English |
 | --- | --- |
