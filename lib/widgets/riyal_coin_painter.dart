@@ -52,7 +52,7 @@ class RiyalCoinPainter extends CustomPainter {
       radius,
       Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.1 * u
+        ..strokeWidth = 1.6 * u
         ..color = edgeColor,
     );
 
