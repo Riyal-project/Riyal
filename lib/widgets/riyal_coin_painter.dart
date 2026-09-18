@@ -49,7 +49,7 @@ class RiyalCoinPainter extends CustomPainter {
     // coin edge instead of a set of disconnected marks with open gaps.
     canvas.drawCircle(
       c,
-      radius,
+      radius + 0.3 * u,
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.6 * u
