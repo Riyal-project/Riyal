@@ -146,7 +146,10 @@ class _SignupScreenState extends State<SignupScreen> {
                                   ],
                                 ),
                                 child: CustomPaint(
-                                  painter: const RiyalCoinPainter(),
+                                  painter: const RiyalCoinPainter(
+                                    edgeScale: 0.7,
+                                    edgeOpacity: 0.6,
+                                  ),
                                   child: Stack(
                                     alignment: Alignment.center,
                                     children: [

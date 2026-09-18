@@ -16,6 +16,8 @@ class RiyalCoinPainter extends CustomPainter {
   const RiyalCoinPainter({
     this.color = AppColors.gold,
     this.faceColor = Colors.transparent,
+    this.edgeScale = 1,
+    this.edgeOpacity = 1,
   });
 
   /// Edge dashes, inner ring color.
@@ -25,11 +27,18 @@ class RiyalCoinPainter extends CustomPainter {
   /// outline, not a filled disc.
   final Color faceColor;
 
+  /// Scales dash length/width — use < 1 to make the edge detail smaller.
+  final double edgeScale;
+
+  /// Opacity applied to the edge dashes/rings — use < 1 to make them fainter.
+  final double edgeOpacity;
+
   @override
   void paint(Canvas canvas, Size size) {
     final u = size.shortestSide / 48; // one unit of the 48-unit design grid
     final c = size.center(Offset.zero);
     final radius = 22 * u;
+    final edgeColor = color.withValues(alpha: color.a * edgeOpacity);
 
     canvas.drawCircle(c, radius, Paint()..color = faceColor);
 
@@ -41,7 +50,7 @@ class RiyalCoinPainter extends CustomPainter {
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 0.3 * u
-        ..color = color.withValues(alpha: 0.5),
+        ..color = edgeColor.withValues(alpha: edgeColor.a * 0.5),
     );
 
     // A dashed/reeded edge (short radial ticks around the rim) instead of a
@@ -49,14 +58,14 @@ class RiyalCoinPainter extends CustomPainter {
     // (butt) caps, not rounded, so each dash reads as a clean tick mark.
     const dashCount = 44;
     final dashPaint = Paint()
-      ..color = color
-      ..strokeWidth = 1.5 * u
+      ..color = edgeColor
+      ..strokeWidth = 1.5 * u * edgeScale
       ..strokeCap = StrokeCap.butt;
     for (var i = 0; i < dashCount; i++) {
       final angle = i * math.pi * 2 / dashCount;
       final direction = Offset(math.cos(angle), math.sin(angle));
       canvas.drawLine(
-        c + direction * (radius - 2.8 * u),
+        c + direction * (radius - 2.8 * u * edgeScale),
         c + direction * radius,
         dashPaint,
       );
@@ -68,7 +77,7 @@ class RiyalCoinPainter extends CustomPainter {
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1 * u
-        ..color = color.withValues(alpha: 0.4),
+        ..color = edgeColor.withValues(alpha: edgeColor.a * 0.4),
     );
   }
 
