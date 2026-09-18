@@ -50,7 +50,7 @@ class RiyalCoinPainter extends CustomPainter {
     const dashCount = 44;
     final dashPaint = Paint()
       ..color = color
-      ..strokeWidth = 1.3 * u
+      ..strokeWidth = 1.5 * u
       ..strokeCap = StrokeCap.butt;
     for (var i = 0; i < dashCount; i++) {
       final angle = i * math.pi * 2 / dashCount;
