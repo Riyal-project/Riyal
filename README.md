@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/icon/app_icon.png" alt="Riyal app icon" width="140" />
+  <img src="assets/icon/app_icon.png" alt="Riyal app icon" width="200" />
 </p>
 
 # 💰 Riyal  ريال
