@@ -4,10 +4,10 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
-import 'gold_coin_painter.dart';
+import 'riyal_coin_painter.dart';
 
-/// A small cartoon coin (see [NavCoinPainter]) that continuously flips in
-/// place between two configurable icons for as long as it's on screen.
+/// A small coin (see [RiyalCoinPainter]) that continuously flips in place
+/// between two configurable icons for as long as it's on screen.
 class FlippingCoinIcon extends StatefulWidget {
   const FlippingCoinIcon({
     super.key,
@@ -82,11 +82,11 @@ class _FlippingCoinIconState extends State<FlippingCoinIcon>
             width: widget.size,
             height: widget.size,
             child: CustomPaint(
-              painter: const NavCoinPainter(),
+              painter: const RiyalCoinPainter(),
               child: Center(
                 child: Icon(
                   isProfileFace ? widget.frontIcon : widget.backIcon,
-                  color: AppColors.surface,
+                  color: AppColors.gold,
                   size: widget.size * 0.46,
                 ),
               ),

@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../l10n/strings.dart';
 import '../theme/app_theme.dart';
-import '../widgets/gold_coin_painter.dart';
+import '../widgets/riyal_coin_painter.dart';
 
 class BottomNav extends StatelessWidget {
   const BottomNav({super.key, required this.index, required this.onTap});
@@ -127,14 +127,14 @@ class NavFab extends StatelessWidget {
       shape: const CircleBorder(),
       child: SizedBox.expand(
         child: CustomPaint(
-          painter: const NavCoinPainter(),
+          painter: const RiyalCoinPainter(),
           child: Center(
             child: SvgPicture.asset(
               'assets/icons/saudi_riyal.svg',
               width: 22,
               semanticsLabel: 'Saudi riyal',
               colorFilter: const ColorFilter.mode(
-                AppColors.surface,
+                AppColors.gold,
                 BlendMode.srcIn,
               ),
             ),

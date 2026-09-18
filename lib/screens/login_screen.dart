@@ -9,7 +9,7 @@ import '../theme/app_typography.dart';
 import 'main_shell.dart';
 import 'signup_screen.dart';
 import '../data/budget_store.dart';
-import '../widgets/gold_coin_painter.dart';
+import '../widgets/riyal_coin_painter.dart';
 import '../widgets/auth_coin_flip.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -130,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ],
                                 ),
                                 child: CustomPaint(
-                                  painter: GoldCoinPainter(),
+                                  painter: const RiyalCoinPainter(),
                                   child: Stack(
                                     alignment: Alignment.center,
                                     children: [
@@ -147,7 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                               'assets/icons/saudi_riyal.svg',
                                               colorFilter:
                                                   const ColorFilter.mode(
-                                                    AppColors.surface,
+                                                    AppColors.gold,
                                                     BlendMode.srcIn,
                                                   ),
                                             ),
@@ -175,8 +175,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                                           fontSize: 36,
                                                           fontWeight:
                                                               FontWeight.w700,
-                                                          color:
-                                                              AppColors.surface,
+                                                          color: AppColors
+                                                              .textPrimary,
                                                           height: 1.1,
                                                         ),
                                                   ),
@@ -186,8 +186,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                                       'signin_subtitle',
                                                     ),
                                                     style: const TextStyle(
-                                                      color:
-                                                          AppColors.coinMuted,
+                                                      color: AppColors
+                                                          .textSecondary,
                                                       fontSize: 14,
                                                     ),
                                                   ),
@@ -242,11 +242,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                                           : _signIn,
                                                       style: FilledButton.styleFrom(
                                                         backgroundColor:
-                                                            AppColors.surface,
-                                                        foregroundColor:
-                                                            const Color(
-                                                              0xFFFFF0C2,
-                                                            ),
+                                                            AppColors.gold,
+                                                        foregroundColor: AppColors
+                                                            .goldForeground,
                                                         minimumSize:
                                                             const Size.fromHeight(
                                                               50,
@@ -262,9 +260,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                                                   CircularProgressIndicator(
                                                                     strokeWidth:
                                                                         2,
-                                                                    color: Color(
-                                                                      0xFFFFF0C2,
-                                                                    ),
+                                                                    color: AppColors
+                                                                        .goldForeground,
                                                                   ),
                                                             )
                                                           : Text(
@@ -389,17 +386,20 @@ class _LoginScreenState extends State<LoginScreen> {
                 }
                 return null;
               },
-              style: const TextStyle(color: AppColors.surface, fontSize: 28),
-              cursorColor: AppColors.goldDark,
+              style: const TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 28,
+              ),
+              cursorColor: AppColors.gold,
               decoration: InputDecoration(
                 isDense: false,
                 errorStyle: const TextStyle(fontSize: 13),
                 hintText: hint,
                 hintStyle: const TextStyle(
-                  color: AppColors.coinMuted,
+                  color: AppColors.textSecondary,
                   fontSize: 24,
                 ),
-                prefixIcon: Icon(icon, color: AppColors.coinMuted, size: 30),
+                prefixIcon: Icon(icon, color: AppColors.textSecondary, size: 30),
                 suffixIcon: password
                     ? IconButton(
                         tooltip: _obscurePassword
@@ -412,7 +412,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           _obscurePassword
                               ? Icons.visibility_outlined
                               : Icons.visibility_off_outlined,
-                          color: AppColors.coinMuted,
+                          color: AppColors.textSecondary,
                           size: 28,
                         ),
                       )
@@ -437,7 +437,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(22),
                   borderSide: const BorderSide(
-                    color: AppColors.surface,
+                    color: AppColors.gold,
                     width: 2,
                   ),
                 ),

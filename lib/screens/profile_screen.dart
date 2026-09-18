@@ -9,7 +9,7 @@ import '../widgets/action_confirmation.dart';
 import '../widgets/account_section.dart';
 import '../theme/app_theme.dart';
 import '../widgets/coin_back_button.dart';
-import '../widgets/gold_coin_painter.dart';
+import '../widgets/riyal_coin_painter.dart';
 import 'change_password_screen.dart';
 import 'login_screen.dart';
 
@@ -149,12 +149,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       width: 112,
                       height: 112,
                       child: CustomPaint(
-                        painter: NavCoinPainter(),
+                        painter: RiyalCoinPainter(),
                         child: Center(
                           child: Icon(
                             Icons.person_outline_rounded,
                             size: 56,
-                            color: AppColors.surface,
+                            color: AppColors.gold,
                           ),
                         ),
                       ),

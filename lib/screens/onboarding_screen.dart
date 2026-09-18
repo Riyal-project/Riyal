@@ -6,7 +6,7 @@ import '../data/app_settings.dart';
 import '../l10n/app_locale.dart';
 import '../theme/app_theme.dart';
 import '../theme/app_typography.dart';
-import '../widgets/gold_coin_painter.dart';
+import '../widgets/riyal_coin_painter.dart';
 import 'login_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -320,10 +320,10 @@ class _LanguageChoice extends StatelessWidget {
                   width: 116,
                   height: 116,
                   child: CustomPaint(
-                    painter: const NavCoinPainter(),
+                    painter: const RiyalCoinPainter(),
                     child: const Icon(
                       Icons.translate_rounded,
-                      color: AppColors.surface,
+                      color: AppColors.gold,
                       size: 46,
                     ),
                   ),
@@ -624,13 +624,13 @@ class _SlideVisualState extends State<_SlideVisual>
           width: 128,
           height: 128,
           child: CustomPaint(
-            painter: const NavCoinPainter(),
+            painter: const RiyalCoinPainter(),
             child: Stack(
               alignment: Alignment.center,
               children: [
                 Transform.rotate(
                   angle: ringing,
-                  child: Icon(widget.icon, color: AppColors.surface, size: 52),
+                  child: Icon(widget.icon, color: AppColors.gold, size: 52),
                 ),
                 if (widget.pageIndex == 0 || widget.pageIndex == 2)
                   for (var i = 0; i < 3; i++)
@@ -675,7 +675,7 @@ class _SlideVisualState extends State<_SlideVisual>
               : SizedBox(
                   width: 16,
                   height: 16,
-                  child: CustomPaint(painter: const NavCoinPainter()),
+                  child: CustomPaint(painter: const RiyalCoinPainter()),
                 ),
         ),
       ),

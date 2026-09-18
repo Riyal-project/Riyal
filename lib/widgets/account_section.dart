@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
-import 'gold_coin_painter.dart';
+import 'riyal_coin_painter.dart';
 
 class AccountSection extends StatelessWidget {
   const AccountSection({super.key, required this.child});
@@ -35,8 +35,8 @@ class AccountPageHeader extends StatelessWidget {
         width: 88,
         height: 88,
         child: CustomPaint(
-          painter: const NavCoinPainter(),
-          child: Center(child: Icon(icon, color: AppColors.surface, size: 40)),
+          painter: const RiyalCoinPainter(),
+          child: Center(child: Icon(icon, color: AppColors.gold, size: 40)),
         ),
       ),
       const SizedBox(height: 18),

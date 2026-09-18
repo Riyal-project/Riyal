@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import '../theme/app_theme.dart';
 import '../theme/app_typography.dart';
-import '../widgets/gold_coin_painter.dart';
 import '../l10n/strings.dart';
 import '../widgets/hero_tags.dart';
 import 'onboarding_screen.dart';
@@ -106,22 +104,11 @@ class _SplashScreenState extends State<SplashScreen>
                         scale: coinScale,
                         child: Hero(
                           tag: heroAppCoinTag,
-                          child: SizedBox(
+                          child: Image.asset(
+                            'assets/icon/coin_3d.webp',
                             width: 132,
                             height: 132,
-                            child: CustomPaint(
-                              painter: const NavCoinPainter(),
-                              child: Center(
-                                child: SvgPicture.asset(
-                                  'assets/icons/saudi_riyal.svg',
-                                  width: 132 * 0.4,
-                                  colorFilter: const ColorFilter.mode(
-                                    AppColors.surface,
-                                    BlendMode.srcIn,
-                                  ),
-                                ),
-                              ),
-                            ),
+                            fit: BoxFit.contain,
                           ),
                         ),
                       ),

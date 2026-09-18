@@ -28,12 +28,6 @@ class AppColors {
 
   static const trackBackground = Color(0xFF23281F);
 
-  /// Muted text/icon tone for content sitting on the light gold/cream
-  /// auth coin (login/signup) — the coin is the one bright surface in an
-  /// otherwise dark theme, so it needs its own dark-on-light tone rather
-  /// than any of the (light-on-dark) text or category colors above.
-  static const coinMuted = Color(0xFF4B4630);
-
   // Category accents.
   static const subscriptions = Color(0xFFCBA960);
   static const utilities = Color(0xFF2CB3B3);
@@ -49,10 +43,6 @@ class AppColors {
   // gold shows up in one button's border gradient (signup).
   static const goldForeground = Color(0xFF1B1F16);
   static const goldLight = Color(0xFFD9C68A);
-
-  /// Pale cream fill for text fields sitting on the light auth coin
-  /// (login/signup) — the coin is the one bright surface in the theme.
-  static const authFieldFill = Color(0xFFFFFAE9);
 
   /// Black at the alpha values used behind modal sheets/dialogs and under
   /// small floating buttons — baked into the alpha channel so both stay

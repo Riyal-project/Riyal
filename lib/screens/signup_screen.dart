@@ -9,7 +9,7 @@ import 'connect_bank_screen.dart';
 import 'budget_setup_screen.dart';
 import '../data/budget_store.dart';
 import '../data/profile_store.dart';
-import '../widgets/gold_coin_painter.dart';
+import '../widgets/riyal_coin_painter.dart';
 import '../widgets/auth_coin_flip.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -146,7 +146,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                   ],
                                 ),
                                 child: CustomPaint(
-                                  painter: GoldCoinPainter(),
+                                  painter: const RiyalCoinPainter(),
                                   child: Stack(
                                     alignment: Alignment.center,
                                     children: [
@@ -163,7 +163,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                               'assets/icons/saudi_riyal.svg',
                                               colorFilter:
                                                   const ColorFilter.mode(
-                                                    AppColors.surface,
+                                                    AppColors.gold,
                                                     BlendMode.srcIn,
                                                   ),
                                             ),
@@ -191,8 +191,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                                           fontSize: 36,
                                                           fontWeight:
                                                               FontWeight.w700,
-                                                          color:
-                                                              AppColors.surface,
+                                                          color: AppColors
+                                                              .textPrimary,
                                                           height: 1.1,
                                                         ),
                                                   ),
@@ -202,8 +202,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                                       'create_account_subtitle',
                                                     ),
                                                     style: const TextStyle(
-                                                      color:
-                                                          AppColors.coinMuted,
+                                                      color: AppColors
+                                                          .textSecondary,
                                                       fontSize: 14,
                                                     ),
                                                   ),
@@ -274,11 +274,9 @@ class _SignupScreenState extends State<SignupScreen> {
                                                           : _signUp,
                                                       style: FilledButton.styleFrom(
                                                         backgroundColor:
-                                                            AppColors.surface,
-                                                        foregroundColor:
-                                                            const Color(
-                                                              0xFFFFF0C2,
-                                                            ),
+                                                            AppColors.gold,
+                                                        foregroundColor: AppColors
+                                                            .goldForeground,
                                                         minimumSize:
                                                             const Size.fromHeight(
                                                               50,
@@ -294,9 +292,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                                                   CircularProgressIndicator(
                                                                     strokeWidth:
                                                                         2,
-                                                                    color: Color(
-                                                                      0xFFFFF0C2,
-                                                                    ),
+                                                                    color: AppColors
+                                                                        .goldForeground,
                                                                   ),
                                                             )
                                                           : Text(
@@ -431,17 +428,20 @@ class _SignupScreenState extends State<SignupScreen> {
                 }
                 return null;
               },
-              style: const TextStyle(color: AppColors.surface, fontSize: 28),
-              cursorColor: AppColors.goldDark,
+              style: const TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 28,
+              ),
+              cursorColor: AppColors.gold,
               decoration: InputDecoration(
                 isDense: false,
                 errorStyle: const TextStyle(fontSize: 13),
                 hintText: hint,
                 hintStyle: const TextStyle(
-                  color: AppColors.coinMuted,
+                  color: AppColors.textSecondary,
                   fontSize: 24,
                 ),
-                prefixIcon: Icon(icon, color: AppColors.coinMuted, size: 30),
+                prefixIcon: Icon(icon, color: AppColors.textSecondary, size: 30),
                 suffixIcon: password
                     ? IconButton(
                         tooltip: _obscurePassword
@@ -454,7 +454,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           _obscurePassword
                               ? Icons.visibility_outlined
                               : Icons.visibility_off_outlined,
-                          color: AppColors.coinMuted,
+                          color: AppColors.textSecondary,
                           size: 28,
                         ),
                       )
@@ -479,7 +479,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(22),
                   borderSide: const BorderSide(
-                    color: AppColors.surface,
+                    color: AppColors.gold,
                     width: 2,
                   ),
                 ),

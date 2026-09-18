@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/gemini_api.dart';
 import '../services/riyal_bot_config.dart';
 import '../widgets/coin_back_button.dart';
-import '../widgets/gold_coin_painter.dart';
+import '../widgets/riyal_coin_painter.dart';
 import '../theme/app_theme.dart';
 
 class RiyalBotScreen extends StatefulWidget {
@@ -163,11 +163,11 @@ class _RiyalBotScreenState extends State<RiyalBotScreen> {
                               width: 90,
                               height: 90,
                               child: CustomPaint(
-                                painter: NavCoinPainter(),
+                                painter: RiyalCoinPainter(),
                                 child: Center(
                                   child: Icon(
                                     Icons.chat_bubble_outline_rounded,
-                                    color: AppColors.surface,
+                                    color: AppColors.gold,
                                     size: 38,
                                   ),
                                 ),

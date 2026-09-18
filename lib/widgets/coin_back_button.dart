@@ -2,7 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../l10n/strings.dart';
 import '../theme/app_theme.dart';
-import 'gold_coin_painter.dart';
+import 'riyal_coin_painter.dart';
 
 class CoinBackButton extends StatefulWidget {
   const CoinBackButton({super.key, this.onPressed});
@@ -74,7 +74,7 @@ class _CoinBackButtonState extends State<CoinBackButton>
             width: 40,
             height: 40,
             child: CustomPaint(
-              painter: const NavCoinPainter(),
+              painter: const RiyalCoinPainter(),
               child: Center(
                 child: Transform(
                   alignment: Alignment.center,
@@ -83,7 +83,7 @@ class _CoinBackButtonState extends State<CoinBackButton>
                   ),
                   child: const Icon(
                     Icons.arrow_back_rounded,
-                    color: AppColors.surface,
+                    color: AppColors.gold,
                     size: 21,
                   ),
                 ),
