@@ -59,13 +59,13 @@ class RiyalCoinPainter extends CustomPainter {
     const dashCount = 44;
     final dashPaint = Paint()
       ..color = edgeColor
-      ..strokeWidth = 1.5 * u * edgeScale
+      ..strokeWidth = 1.9 * u * edgeScale
       ..strokeCap = StrokeCap.butt;
     for (var i = 0; i < dashCount; i++) {
       final angle = i * math.pi * 2 / dashCount;
       final direction = Offset(math.cos(angle), math.sin(angle));
       canvas.drawLine(
-        c + direction * (radius - 2.8 * u * edgeScale),
+        c + direction * (radius - 3.6 * u * edgeScale),
         c + direction * radius,
         dashPaint,
       );
@@ -73,7 +73,7 @@ class RiyalCoinPainter extends CustomPainter {
 
     canvas.drawCircle(
       c,
-      radius - 2.8 * u * edgeScale - 0.5 * u,
+      radius - 3.6 * u * edgeScale - 0.5 * u,
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.2 * u
