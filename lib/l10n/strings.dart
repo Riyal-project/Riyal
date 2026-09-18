@@ -608,7 +608,8 @@ class Strings {
     'cancel_subscription_action': 'Cancel subscription',
     'delete_action': 'Delete',
     'delete_confirm_title': 'Delete this?',
-    'delete_confirm_message': 'This can\'t be undone.',
+    'delete_confirm_message':
+        'Are you sure? You won\'t be able to recover it.',
     'cancel_confirm_title': 'Cancel this subscription?',
     'cancel_confirm_message': 'You can still see it here, marked as cancelled.',
     'notifications_toggle_label': 'Notifications',
@@ -1025,7 +1026,7 @@ class Strings {
     'cancel_subscription_action': 'إلغاء الاشتراك',
     'delete_action': 'حذف',
     'delete_confirm_title': 'هل تريد الحذف؟',
-    'delete_confirm_message': 'لا يمكن التراجع عن هذا الإجراء.',
+    'delete_confirm_message': 'هل أنت متأكد؟ لن تتمكن من استرجاعه.',
     'cancel_confirm_title': 'هل تريد إلغاء هذا الاشتراك؟',
     'cancel_confirm_message': 'سيبقى ظاهرًا هنا، مُعلَّمًا كملغى.',
     'notifications_toggle_label': 'الإشعارات',

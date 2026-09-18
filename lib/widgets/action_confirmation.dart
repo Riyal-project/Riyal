@@ -13,6 +13,11 @@ Future<bool?> showActionConfirmation(
     barrierColor: AppColors.dialogBarrier,
     builder: (dialogContext) => AlertDialog(
       backgroundColor: AppColors.surface,
+      // Material 3 tints elevated surfaces with the theme's primary color by
+      // default — without this, the dialog reads as a slightly different,
+      // washed-out shade instead of matching the app's flat card surfaces.
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
         side: const BorderSide(color: AppColors.cardBorder),
@@ -25,17 +30,17 @@ Future<bool?> showActionConfirmation(
       actions: [
         TextButton(
           onPressed: () => Navigator.of(dialogContext).pop(false),
-          child: Text(
-            Strings.t('cancel'),
-            style: const TextStyle(color: AppColors.textSecondary),
+          style: TextButton.styleFrom(
+            foregroundColor: AppColors.textSecondary,
           ),
+          child: Text(Strings.t('cancel')),
         ),
         TextButton(
           onPressed: () => Navigator.of(dialogContext).pop(true),
-          child: Text(
-            confirmLabel,
-            style: const TextStyle(color: AppColors.statusCancelled),
+          style: TextButton.styleFrom(
+            foregroundColor: AppColors.statusCancelled,
           ),
+          child: Text(confirmLabel),
         ),
       ],
     ),
