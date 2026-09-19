@@ -117,9 +117,8 @@ class TrackedItemsStore {
     onTimeout: () => _writes = Future.value(),
   );
 
-  /// Loads the active account's saved cards, or [fallback] the first time
-  /// (and saves it, so later edits — even deleting everything — stick).
-  Future<void> restore(List<TrackedItem> fallback) async {
+  /// Loads the active account's saved cards (none, the first time).
+  Future<void> restore() async {
     List<TrackedItem>? saved;
     try {
       final key = await DeviceIdStore.instance.scoped(storageKey!);
@@ -128,13 +127,12 @@ class TrackedItemsStore {
     } catch (error) {
       debugPrint('Tracked items load failed: $error');
     }
-    replaceSilently(saved ?? fallback);
-    if (saved == null) _persist(force: true);
+    replaceSilently(saved ?? <TrackedItem>[]);
   }
 
-  void _persist({bool force = false}) {
+  void _persist() {
     final id = DeviceIdStore.instance.cachedId;
-    if ((_silent && !force) || storageKey == null || id == null) return;
+    if (_silent || storageKey == null || id == null) return;
     final json = _encode(items.value);
     _writes = _writes.then((_) async {
       try {

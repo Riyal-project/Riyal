@@ -4,14 +4,16 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:riyal/data/budget_store.dart';
-import 'package:riyal/data/demo_mode.dart';
 import 'package:riyal/data/notifications_store.dart';
+import 'package:riyal/data/people_categories.dart';
 import 'package:riyal/data/people_store.dart';
 import 'package:riyal/data/profile_store.dart';
 import 'package:riyal/data/subscription.dart';
 import 'package:riyal/data/subscription_category.dart';
+import 'package:riyal/data/tracked_item.dart';
 import 'package:riyal/data/subscriptions_store.dart';
 import 'package:riyal/data/utilities_store.dart';
+import 'package:riyal/data/utility_categories.dart';
 import 'package:riyal/services/gemini_api.dart';
 import 'package:riyal/services/riyal_bot_context.dart';
 import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
@@ -21,7 +23,6 @@ void main() {
   setUp(() {
     SharedPreferencesAsyncPlatform.instance =
         InMemorySharedPreferencesAsync.empty();
-    DemoMode.enabled = true;
     PeopleStore.reset();
     UtilitiesStore.reset();
   });
@@ -41,6 +42,27 @@ void main() {
           category: SubscriptionCategories.entertainment,
         ),
       ];
+      final due = DateTime.now().add(const Duration(days: 5));
+      UtilitiesStore.instance.add(
+        TrackedItem(
+          id: 'u1',
+          name: 'Saudi Electricity Company',
+          amount: 1189,
+          cycle: BillingCycle.monthly,
+          nextBillingDate: due,
+          category: UtilityCategories.electricity,
+        ),
+      );
+      PeopleStore.instance.add(
+        TrackedItem(
+          id: 'p1',
+          name: 'Nanny',
+          amount: 3000,
+          cycle: BillingCycle.monthly,
+          nextBillingDate: due,
+          category: PeopleCategories.childcare,
+        ),
+      );
       await BudgetStore.instance.activate('bot-context@test.com');
       await BudgetStore.instance.save({
         for (final d in BudgetDomain.values) d: 5000,
@@ -57,13 +79,12 @@ void main() {
       );
       expect(text, contains('Saudi Electricity Company | 1189.00 SAR monthly'));
       expect(text, contains('Nanny | 3000.00 SAR monthly'));
-      expect(text, contains('People: limit 5000.00, committed 7000.00'));
+      expect(text, contains('People: limit 5000.00, committed 3000.00'));
       expect(text, contains('Connected banks: none'));
     },
   );
 
-  test('a new account has empty lists, not demo data', () async {
-    DemoMode.enabled = false;
+  test('an account with nothing added has empty lists', () async {
     PeopleStore.reset();
     UtilitiesStore.reset();
     SubscriptionsStore.instance.subscriptions.value = [];

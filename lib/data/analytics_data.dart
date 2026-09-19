@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 
-import 'demo_mode.dart';
 import 'home_data.dart';
 import 'item_status.dart';
 import 'people_store.dart';
@@ -63,18 +62,10 @@ List<AnalyticsItem> get analyticsItems {
   ];
 }
 
-// The app doesn't log past months' commitments yet, so earlier months are
-// only illustrated for the demo login; a real account's stay at 0 until it
-// has history of its own.
-const _demoRamp = [0.80, 0.85, 0.90, 0.93, 0.96];
-
 /// Six months per category, oldest first; the last entry is this month and
-/// always equals the Home overview.
+/// always equals the Home overview. The app doesn't log past months'
+/// commitments yet, so earlier months stay 0 rather than being invented.
 Map<String, List<double>> get analyticsHistory => {
   for (final category in overview)
-    category.label: [
-      for (final factor in DemoMode.enabled ? _demoRamp : const [0, 0, 0, 0, 0])
-        category.amount * factor,
-      category.amount,
-    ],
+    category.label: [0, 0, 0, 0, 0, category.amount],
 };

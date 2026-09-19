@@ -1,10 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 import 'package:riyal/data/account_session.dart';
 import 'package:riyal/data/analytics_data.dart';
-import 'package:riyal/data/demo_mode.dart';
 import 'package:riyal/data/device_id_store.dart';
 import 'package:riyal/data/home_data.dart';
 import 'package:riyal/data/notifications_store.dart';
@@ -13,6 +15,7 @@ import 'package:riyal/data/people_store.dart';
 import 'package:riyal/data/profile_store.dart';
 import 'package:riyal/data/subscription.dart';
 import 'package:riyal/data/subscriptions_store.dart';
+import 'package:riyal/data/tracked_category.dart';
 import 'package:riyal/data/tracked_item.dart';
 import 'package:riyal/data/utilities_store.dart';
 import 'package:riyal/data/utility_categories.dart';
@@ -21,110 +24,67 @@ import 'package:riyal/l10n/strings.dart';
 import 'package:riyal/screens/home_screen.dart';
 import 'package:riyal/theme/app_theme.dart';
 
+TrackedItem card(String name, TrackedCategory category, [double amount = 99]) =>
+    TrackedItem(
+      id: name,
+      name: name,
+      amount: amount,
+      cycle: BillingCycle.monthly,
+      nextBillingDate: DateTime.now().add(const Duration(days: 4)),
+      category: category,
+    );
+
+/// The Supabase reload at the end of a login isn't available in tests; the
+/// account switch and local data are loaded before it.
+Future<void> logIn(String email) async {
+  try {
+    await AccountSession.instance.signIn(email);
+  } catch (_) {}
+}
+
 void main() {
   setUp(() {
     SharedPreferencesAsyncPlatform.instance =
         InMemorySharedPreferencesAsync.empty();
-    AppLocale.locale.value = const Locale('en');
-    DemoMode.enabled = true;
     PeopleStore.reset();
     UtilitiesStore.reset();
-  });
-
-  test('demo login is seeded with the same prices as the mock database', () {
     SubscriptionsStore.instance.subscriptions.value = [];
-    expect(PeopleStore.instance.items.value.map((i) => i.amount), [
-      2200,
-      1800,
-      3000,
-    ]);
-    expect(UtilitiesStore.instance.items.value.map((i) => i.amount), [
-      1189,
-      250,
-      234,
-      150,
-    ]);
-    final utilities = overview[1].amount;
-    expect(
-      utilities,
-      analyticsItems
-          .where((i) => i.category == 'Utilities')
-          .fold<double>(0, (sum, i) => sum + i.amount),
-    );
-    expect(
-      utilities,
-      UtilitiesStore.instance.items.value.fold<double>(
-        0,
-        (sum, i) => sum + i.amount,
-      ),
-    );
+    AppLocale.locale.value = const Locale('en');
   });
 
-  test(
-    'sign-up starts with no defaults; the demo login gets them back',
-    () async {
-      final demoId = await DeviceIdStore.instance.getOrCreateDeviceId();
-      await AccountSession.instance.signUp('new@user.com');
+  test('nothing is seeded: an untouched app has no cards and no spend', () {
+    expect(PeopleStore.instance.items.value, isEmpty);
+    expect(UtilitiesStore.instance.items.value, isEmpty);
+    expect(SubscriptionsStore.instance.subscriptions.value, isEmpty);
+    expect(overview.every((c) => c.amount == 0), isTrue);
+    expect(analyticsItems, isEmpty);
+    expect(analyticsHistory['Utilities'], [0, 0, 0, 0, 0, 0]);
+  });
 
-      expect(DemoMode.enabled, isFalse);
-      expect(PeopleStore.instance.items.value, isEmpty);
-      expect(UtilitiesStore.instance.items.value, isEmpty);
-      expect(SubscriptionsStore.instance.subscriptions.value, isEmpty);
-      expect(NotificationsStore.instance.notices.value, isEmpty);
-      expect(overview.every((c) => c.amount == 0), isTrue);
-      expect(analyticsItems, isEmpty);
-      expect(await DeviceIdStore.instance.getOrCreateDeviceId(), isNot(demoId));
+  test('sign-up, and logging in with a new email, both start empty', () async {
+    await AccountSession.instance.signUp('new@user.com');
+    expect(PeopleStore.instance.items.value, isEmpty);
+    expect(UtilitiesStore.instance.items.value, isEmpty);
+    expect(SubscriptionsStore.instance.subscriptions.value, isEmpty);
+    expect(NotificationsStore.instance.notices.value, isEmpty);
 
-      // Sign-in reloads from Supabase, which isn't available in tests; the
-      // account switch itself happens before that call.
-      try {
-        await AccountSession.instance.signIn('someone@else.com');
-      } catch (_) {}
-      expect(DemoMode.enabled, isTrue);
-      expect(PeopleStore.instance.items.value, hasLength(3));
-      expect(UtilitiesStore.instance.items.value, hasLength(4));
-      expect(await DeviceIdStore.instance.getOrCreateDeviceId(), demoId);
-
-      // Logging back in as the signed-up email returns to its empty account.
-      try {
-        await AccountSession.instance.signIn('New@User.com');
-      } catch (_) {}
-      expect(DemoMode.enabled, isFalse);
-      expect(PeopleStore.instance.items.value, isEmpty);
-    },
-  );
+    await logIn('never@signed.up');
+    expect(PeopleStore.instance.items.value, isEmpty);
+    expect(UtilitiesStore.instance.items.value, isEmpty);
+    expect(NotificationsStore.instance.notices.value, isEmpty);
+    expect(ProfileStore.instance.values['Email'], 'never@signed.up');
+  });
 
   test('each account keeps its own data and never sees another\'s', () async {
-    TrackedItem card(String name) => TrackedItem(
-      id: name,
-      name: name,
-      amount: 99,
-      cycle: BillingCycle.monthly,
-      nextBillingDate: DateTime.now().add(const Duration(days: 4)),
-      category: UtilityCategories.water,
-    );
-    Future<void> logIn(String email) async {
-      try {
-        await AccountSession.instance.signIn(email);
-      } catch (_) {} // the Supabase reload isn't available in tests
-    }
-
     String? name() => ProfileStore.instance.values['Full name'];
     List<String> utilities() =>
         UtilitiesStore.instance.items.value.map((i) => i.name).toList();
 
     await AccountSession.instance.signUp('a@x.com');
     await ProfileStore.instance.save('Full name', 'Alice');
-    UtilitiesStore.instance.add(card('Alice water'));
+    UtilitiesStore.instance.add(card('Alice water', UtilityCategories.water));
     PeopleStore.instance.add(
-      TrackedItem(
-        id: 'p',
-        name: 'Alice driver',
-        amount: 2000,
-        cycle: BillingCycle.monthly,
-        nextBillingDate: DateTime.now().add(const Duration(days: 4)),
-        category: PeopleCategories.driving,
-      ),
+      card('Alice driver', PeopleCategories.driving, 2000),
     );
 
     await AccountSession.instance.signUp('b@x.com');
@@ -132,7 +92,7 @@ void main() {
     expect(PeopleStore.instance.items.value, isEmpty);
     expect(name(), isNot('Alice'));
     await ProfileStore.instance.save('Full name', 'Bob');
-    UtilitiesStore.instance.add(card('Bob water'));
+    UtilitiesStore.instance.add(card('Bob water', UtilityCategories.water));
 
     // Logging back in restores exactly that account's info.
     await logIn('a@x.com');
@@ -144,22 +104,14 @@ void main() {
     expect(PeopleStore.instance.items.value, isEmpty);
     expect(name(), 'Bob');
 
-    // Two logins with emails that never signed up each get their own demo
-    // copy: one's edits don't reach the other, or the real accounts.
+    // Emails that never signed up get their own empty accounts too.
     await logIn('c@x.com');
-    expect(utilities(), hasLength(4));
-    UtilitiesStore.instance.remove(
-      UtilitiesStore.instance.items.value.first.id,
-    );
-    expect(utilities(), hasLength(3));
+    expect(utilities(), isEmpty);
+    UtilitiesStore.instance.add(card('C gas', UtilityCategories.gas));
     await logIn('d@x.com');
-    expect(utilities(), hasLength(4));
+    expect(utilities(), isEmpty);
     await logIn('c@x.com');
-    expect(utilities(), hasLength(3));
-    // Saved cards come back whole, icon included.
-    final driver = PeopleStore.instance.items.value.first;
-    expect(driver.icon, Icons.directions_car_outlined);
-    expect(driver.amount, 2200);
+    expect(utilities(), ['C gas']);
 
     // Signing up again with a taken email can't overwrite the account.
     expect(
@@ -168,16 +120,37 @@ void main() {
     );
   });
 
-  testWidgets('home renders for a new sign-up with nothing spent yet', (
+  test(
+    'sample data from older builds is removed, real cards are kept',
+    () async {
+      String enc(String e) => base64Url.encode(utf8.encode(e));
+      await DeviceIdStore.instance.setDeviceId('old-id');
+      PeopleStore.instance.add(card('Driver', PeopleCategories.driving, 2200));
+      PeopleStore.instance.add(card('Gardener', PeopleCategories.other, 1500));
+      UtilitiesStore.instance.add(
+        card('Saudi Electricity Company', UtilityCategories.electricity, 1189),
+      );
+      await PeopleStore.instance.flush();
+      await UtilitiesStore.instance.flush();
+      final prefs = SharedPreferencesAsync();
+      await prefs.setString(
+        'riyal.account_ns.v1.${enc('old@x.com')}',
+        'old-id',
+      );
+      await prefs.setBool('riyal.account_demo.v1.${enc('old@x.com')}', true);
+
+      await logIn('old@x.com');
+      expect(PeopleStore.instance.items.value.map((i) => i.name), ['Gardener']);
+      expect(UtilitiesStore.instance.items.value, isEmpty);
+    },
+  );
+
+  testWidgets('home renders for an account with nothing spent yet', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(375, 900);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    DemoMode.enabled = false;
-    PeopleStore.reset();
-    UtilitiesStore.reset();
-    SubscriptionsStore.instance.subscriptions.value = [];
     await tester.pumpWidget(
       MaterialApp(
         theme: buildAppTheme(),
@@ -198,10 +171,6 @@ void main() {
     tester.view.physicalSize = const Size(375, 900);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    DemoMode.enabled = false;
-    PeopleStore.reset();
-    UtilitiesStore.reset();
-    SubscriptionsStore.instance.subscriptions.value = [];
     await tester.pumpWidget(
       MaterialApp(
         theme: buildAppTheme(),
@@ -212,14 +181,7 @@ void main() {
     expect(find.text('⃁0'), findsNWidgets(4)); // total + 3 categories
 
     UtilitiesStore.instance.add(
-      TrackedItem(
-        id: 'u1',
-        name: 'Saudi Electricity Company',
-        amount: 640,
-        cycle: BillingCycle.monthly,
-        nextBillingDate: DateTime.now().add(const Duration(days: 5)),
-        category: UtilityCategories.electricity,
-      ),
+      card('Saudi Electricity Company', UtilityCategories.electricity, 640),
     );
     await tester.pump();
     expect(find.text('⃁640'), findsNWidgets(2)); // total + Utilities

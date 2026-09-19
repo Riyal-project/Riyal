@@ -13,7 +13,6 @@ import 'tracked_item.dart';
 import 'utilities_store.dart';
 import 'people_store.dart';
 import 'app_settings.dart';
-import 'demo_mode.dart';
 import 'monthly_review.dart';
 import 'notice_read_state.dart';
 import 'user_bank_accounts_store.dart';
@@ -111,7 +110,7 @@ class NotificationsStore {
     _notifiedBankPriceChanges.clear();
     _lastAnomalyAmount.clear();
     readState.reset();
-    refresh(seed: DemoMode.enabled);
+    refresh(seed: true);
     unawaited(readState.initialize());
   }
 
@@ -164,7 +163,9 @@ class NotificationsStore {
       );
       final formattedDate = '${date.day}/${date.month}/${date.year}';
       final categoryDisplay = Strings.categoryDisplay(category);
-      if (_seen.add(identity)) {
+      // Cards that already existed when the inbox opened are a quiet
+      // baseline; only cards added afterwards get a "new" notice.
+      if (_seen.add(identity) && !seed) {
         additions.add(
           PaymentNotice(
             id: 'added:$itemId',

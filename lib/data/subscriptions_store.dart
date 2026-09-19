@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import 'demo_mode.dart';
 import 'device_id_store.dart';
-import 'id_generator.dart';
 import 'item_status.dart';
 import 'subscription.dart';
 import 'subscription_category.dart';
@@ -10,9 +8,9 @@ import 'supabase_config.dart';
 import 'tracked_category.dart';
 
 /// Backed by the Supabase `subscriptions` table (see
-/// supabase/migrations/0001_init.sql) instead of an in-memory list — a
-/// first run for a device seeds the same demo subscriptions the app
-/// always shipped with, then persists them so they're stable afterwards.
+/// supabase/migrations/0001_init.sql) instead of an in-memory list. Starts
+/// empty: subscriptions only come from the user, or from recurring payments
+/// detected in a connected bank's real transactions.
 class SubscriptionsStore {
   SubscriptionsStore._();
 
@@ -28,20 +26,6 @@ class SubscriptionsStore {
         .select()
         .eq('device_id', deviceId)
         .order('created_at', ascending: true);
-
-    if (rows.isEmpty) {
-      // A new sign-up starts with no default subscriptions.
-      if (!DemoMode.enabled) {
-        subscriptions.value = [];
-        return;
-      }
-      final seeded = _seed();
-      for (final subscription in seeded) {
-        await _insert(deviceId, subscription);
-      }
-      subscriptions.value = seeded;
-      return;
-    }
 
     subscriptions.value = rows.map(_fromRow).toList();
   }
@@ -163,56 +147,4 @@ class SubscriptionsStore {
         (c) => c.key == key,
         orElse: () => SubscriptionCategories.other,
       );
-
-  static List<Subscription> _seed() {
-    final now = DateTime.now();
-    return [
-      Subscription(
-        id: IdGenerator.uuidV4(),
-        name: 'Netflix',
-        logoAsset: 'lib/assets/logos/Netflix_icon.svg',
-        amount: 45,
-        cycle: BillingCycle.monthly,
-        nextBillingDate: now.add(const Duration(days: 3)),
-        category: SubscriptionCategories.entertainment,
-      ),
-      Subscription(
-        id: IdGenerator.uuidV4(),
-        name: 'ChatGPT Plus',
-        logoAsset:
-            'lib/assets/logos/chatgpt-logo-chat-gpt-icon-on-white-background-free-vector.jpg',
-        amount: 80,
-        cycle: BillingCycle.monthly,
-        nextBillingDate: now.add(const Duration(days: 10)),
-        category: SubscriptionCategories.ai,
-      ),
-      Subscription(
-        id: IdGenerator.uuidV4(),
-        name: 'Duolingo',
-        logoAsset: 'lib/assets/logos/doulingo.webp',
-        amount: 30,
-        cycle: BillingCycle.monthly,
-        nextBillingDate: now.add(const Duration(days: 12)),
-        category: SubscriptionCategories.education,
-      ),
-      Subscription(
-        id: IdGenerator.uuidV4(),
-        name: 'Spotify',
-        logoAsset: 'lib/assets/logos/Spotify_App_Logo.svg.webp',
-        amount: 25,
-        cycle: BillingCycle.monthly,
-        nextBillingDate: now.add(const Duration(days: 18)),
-        category: SubscriptionCategories.entertainment,
-      ),
-      Subscription(
-        id: IdGenerator.uuidV4(),
-        name: 'Adobe Creative Cloud',
-        logoAsset: 'lib/assets/logos/Adobe_Creative_Cloud_rainbow_icon.svg',
-        amount: 249,
-        cycle: BillingCycle.monthly,
-        nextBillingDate: now.add(const Duration(days: 22)),
-        category: SubscriptionCategories.productivity,
-      ),
-    ];
-  }
 }
