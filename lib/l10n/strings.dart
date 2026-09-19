@@ -327,6 +327,8 @@ class Strings {
     'group_water': 'Water',
     'group_household': 'Household',
     'group_transport': 'Transport',
+    'group_mobile': 'Mobile',
+    'analytics_empty': 'No spending data yet. Add a subscription, utility or person to see your analytics.',
 
     // Domain nouns (Utilities / People)
     'noun_singular_utility_bill': 'utility bill',
@@ -781,6 +783,8 @@ class Strings {
     'group_water': 'المياه',
     'group_household': 'المنزل',
     'group_transport': 'المواصلات',
+    'group_mobile': 'الجوال',
+    'analytics_empty': 'لا توجد بيانات إنفاق بعد. أضف اشتراكاً أو فاتورة أو شخصاً لعرض التحليلات.',
 
     'noun_singular_utility_bill': 'فاتورة مرافق',
     'noun_plural_utility_bill': 'فواتير المرافق',

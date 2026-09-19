@@ -17,12 +17,15 @@ class DeviceIdStore {
   Future<String> getOrCreateDeviceId() async {
     final existing = await _prefs.getString(_deviceIdKey);
     if (existing != null) return existing;
-    final generated = _generateId();
+    final generated = generateId();
     await _prefs.setString(_deviceIdKey, generated);
     return generated;
   }
 
-  String _generateId() {
+  /// Switches the active namespace (see [AccountSession]).
+  Future<void> setDeviceId(String id) => _prefs.setString(_deviceIdKey, id);
+
+  String generateId() {
     final random = Random.secure();
     final bytes = List<int>.generate(16, (_) => random.nextInt(256));
     return bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();

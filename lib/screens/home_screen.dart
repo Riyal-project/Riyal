@@ -624,6 +624,15 @@ class _OverviewBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final total = overview.fold<double>(0, (sum, c) => sum + c.amount);
+    if (total == 0) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: const SizedBox(
+          height: 14,
+          child: ColoredBox(color: AppColors.trackBackground),
+        ),
+      );
+    }
     return ClipRRect(
       borderRadius: BorderRadius.circular(8),
       child: SizedBox(

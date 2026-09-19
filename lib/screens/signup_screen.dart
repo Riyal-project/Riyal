@@ -7,6 +7,7 @@ import '../theme/app_theme.dart';
 import '../theme/app_typography.dart';
 import 'connect_bank_screen.dart';
 import 'budget_setup_screen.dart';
+import '../data/account_session.dart';
 import '../data/budget_store.dart';
 import '../data/profile_store.dart';
 import '../widgets/riyal_coin_painter.dart';
@@ -44,6 +45,7 @@ class _SignupScreenState extends State<SignupScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _signingUp = true);
     try {
+      await AccountSession.instance.signUp(_emailController.text);
       await BudgetStore.instance.activate(_emailController.text);
       // The name/email typed here aren't tied to a real Supabase Auth user
       // (see the note above) — save them straight to ProfileStore so the
@@ -284,8 +286,9 @@ class _SignupScreenState extends State<SignupScreen> {
                                                       style: FilledButton.styleFrom(
                                                         backgroundColor:
                                                             AppColors.gold,
-                                                        foregroundColor: AppColors
-                                                            .goldForeground,
+                                                        foregroundColor:
+                                                            AppColors
+                                                                .goldForeground,
                                                         minimumSize:
                                                             const Size.fromHeight(
                                                               50,
@@ -297,13 +300,11 @@ class _SignupScreenState extends State<SignupScreen> {
                                                           ? const SizedBox(
                                                               width: 18,
                                                               height: 18,
-                                                              child:
-                                                                  CircularProgressIndicator(
-                                                                    strokeWidth:
-                                                                        2,
-                                                                    color: AppColors
-                                                                        .goldForeground,
-                                                                  ),
+                                                              child: CircularProgressIndicator(
+                                                                strokeWidth: 2,
+                                                                color: AppColors
+                                                                    .goldForeground,
+                                                              ),
                                                             )
                                                           : Text(
                                                               Strings.t(
@@ -450,7 +451,11 @@ class _SignupScreenState extends State<SignupScreen> {
                   color: AppColors.textSecondary,
                   fontSize: 24,
                 ),
-                prefixIcon: Icon(icon, color: AppColors.textSecondary, size: 30),
+                prefixIcon: Icon(
+                  icon,
+                  color: AppColors.textSecondary,
+                  size: 30,
+                ),
                 suffixIcon: password
                     ? IconButton(
                         tooltip: _obscurePassword
@@ -487,10 +492,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(22),
-                  borderSide: const BorderSide(
-                    color: AppColors.gold,
-                    width: 2,
-                  ),
+                  borderSide: const BorderSide(color: AppColors.gold, width: 2),
                 ),
               ),
             ),

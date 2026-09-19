@@ -161,7 +161,11 @@ class _AnalyticsContentState extends State<AnalyticsContent> {
                   : [0.55, 0.64, 0.73, 0.81, 0.92, 1.0])
               .map((weight) => total * weight)
               .toList();
-    final highest = items.reduce((a, b) => a.amount >= b.amount ? a : b);
+    // Placeholder only when a new sign-up has no items — that branch
+    // shows the empty state instead of anything reading it.
+    final highest = items.isEmpty
+        ? const AnalyticsItem('', '', 0, 0, '')
+        : items.reduce((a, b) => a.amount >= b.amount ? a : b);
     final highestNames = items
         .where((i) => i.amount == highest.amount)
         .map((i) => i.name)
@@ -253,182 +257,199 @@ class _AnalyticsContentState extends State<AnalyticsContent> {
                     ? null
                     : BudgetDomainKey.fromCategory(_category!),
               ),
-              const SizedBox(height: 16),
-              _card(
-                Strings.t('spend_over_time'),
-                Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        ar
-                            ? 'الإنفاق ${periodAdjDisplay(_period)} · ريال'
-                            : '${periodAdjDisplay(_period)} spend · ⃁',
-                        style: TextStyle(
-                          color: AppColors.textSecondary,
-                          fontSize: 12,
+              if (items.isEmpty) ...[
+                const SizedBox(height: 40),
+                Center(
+                  child: Text(
+                    Strings.t('analytics_empty'),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: AppColors.textSecondary,
+                      height: 1.5,
+                    ),
+                  ),
+                ),
+              ] else ...[
+                const SizedBox(height: 16),
+                _card(
+                  Strings.t('spend_over_time'),
+                  Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          ar
+                              ? 'الإنفاق ${periodAdjDisplay(_period)} · ريال'
+                              : '${periodAdjDisplay(_period)} spend · ⃁',
+                          style: TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    SizedBox(
-                      height: 190,
-                      width: double.infinity,
-                      child: CustomPaint(painter: _TrendPainter(history)),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: labels
-                          .map(
-                            (m) => Expanded(
-                              child: Text(
-                                m,
-                                textAlign: TextAlign.center,
-                                maxLines: 1,
-                                overflow: TextOverflow.fade,
-                                softWrap: false,
-                                style: const TextStyle(
-                                  color: AppColors.textSecondary,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-              _card(
-                _category == null
-                    ? Strings.t('category_split')
-                    : Strings.t('spending_breakdown'),
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    final chart = SizedBox(
-                      width: 160,
-                      height: 160,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Positioned.fill(
-                            child: CustomPaint(
-                              painter: _SplitPainter(
-                                breakdown.values.toList(),
-                                _palette,
-                              ),
-                            ),
-                          ),
-                          const Text(
-                            '100%',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                        ],
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        height: 190,
+                        width: double.infinity,
+                        child: CustomPaint(painter: _TrendPainter(history)),
                       ),
-                    );
-                    final legend = Column(
-                      children: [
-                        for (var i = 0; i < breakdown.length; i++)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 9),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 9,
-                                  height: 9,
-                                  decoration: BoxDecoration(
-                                    color: _palette[i % _palette.length],
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Text(
-                                    _category == null
-                                        ? Strings.categoryDisplay(
-                                            breakdown.keys.elementAt(i),
-                                          )
-                                        : Strings.groupDisplay(
-                                            breakdown.keys.elementAt(i),
-                                          ),
-                                    style: const TextStyle(
-                                      color: AppColors.textPrimary,
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  '${(breakdown.values.elementAt(i) / total * 100).toStringAsFixed(1)}%  ·  ${_money(breakdown.values.elementAt(i))}',
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: labels
+                            .map(
+                              (m) => Expanded(
+                                child: Text(
+                                  m,
+                                  textAlign: TextAlign.center,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.fade,
+                                  softWrap: false,
                                   style: const TextStyle(
                                     color: AppColors.textSecondary,
                                     fontSize: 12,
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                      ],
-                    );
-                    return constraints.maxWidth > 580
-                        ? Row(
-                            children: [
-                              chart,
-                              const SizedBox(width: 32),
-                              Expanded(child: legend),
-                            ],
-                          )
-                        : Column(
-                            children: [
-                              chart,
-                              const SizedBox(height: 16),
-                              legend,
-                            ],
-                          );
-                  },
-                ),
-              ),
-              const SizedBox(height: 16),
-              _card(
-                items.where((i) => i.amount == highest.amount).length > 1
-                    ? Strings.t('highest_cost_items_tied')
-                    : Strings.t('highest_cost_item'),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      highestNames,
-                      style: const TextStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
+                              ),
+                            )
+                            .toList(),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      '${_money(highest.amount * factor)} / ${periodDisplay(_period)}'
-                      '${items.where((i) => i.amount == highest.amount).length > 1 ? ' ${Strings.t('each')}' : ''}',
-                      style: const TextStyle(color: AppColors.gold),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-              _card(
-                Strings.t('upcoming_renewals'),
-                Column(
-                  children: [
-                    for (var i = 0; i < items.length; i++) ...[
-                      if (i > 0)
-                        const Divider(color: AppColors.cardBorder, height: 24),
-                      _renewal(items[i]),
                     ],
-                  ],
+                  ),
                 ),
-              ),
+                const SizedBox(height: 16),
+                _card(
+                  _category == null
+                      ? Strings.t('category_split')
+                      : Strings.t('spending_breakdown'),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final chart = SizedBox(
+                        width: 160,
+                        height: 160,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Positioned.fill(
+                              child: CustomPaint(
+                                painter: _SplitPainter(
+                                  breakdown.values.toList(),
+                                  _palette,
+                                ),
+                              ),
+                            ),
+                            const Text(
+                              '100%',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                      final legend = Column(
+                        children: [
+                          for (var i = 0; i < breakdown.length; i++)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 9),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 9,
+                                    height: 9,
+                                    decoration: BoxDecoration(
+                                      color: _palette[i % _palette.length],
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      _category == null
+                                          ? Strings.categoryDisplay(
+                                              breakdown.keys.elementAt(i),
+                                            )
+                                          : Strings.groupDisplay(
+                                              breakdown.keys.elementAt(i),
+                                            ),
+                                      style: const TextStyle(
+                                        color: AppColors.textPrimary,
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    '${(breakdown.values.elementAt(i) / total * 100).toStringAsFixed(1)}%  ·  ${_money(breakdown.values.elementAt(i))}',
+                                    style: const TextStyle(
+                                      color: AppColors.textSecondary,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                        ],
+                      );
+                      return constraints.maxWidth > 580
+                          ? Row(
+                              children: [
+                                chart,
+                                const SizedBox(width: 32),
+                                Expanded(child: legend),
+                              ],
+                            )
+                          : Column(
+                              children: [
+                                chart,
+                                const SizedBox(height: 16),
+                                legend,
+                              ],
+                            );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+                _card(
+                  items.where((i) => i.amount == highest.amount).length > 1
+                      ? Strings.t('highest_cost_items_tied')
+                      : Strings.t('highest_cost_item'),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        highestNames,
+                        style: const TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '${_money(highest.amount * factor)} / ${periodDisplay(_period)}'
+                        '${items.where((i) => i.amount == highest.amount).length > 1 ? ' ${Strings.t('each')}' : ''}',
+                        style: const TextStyle(color: AppColors.gold),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                _card(
+                  Strings.t('upcoming_renewals'),
+                  Column(
+                    children: [
+                      for (var i = 0; i < items.length; i++) ...[
+                        if (i > 0)
+                          const Divider(
+                            color: AppColors.cardBorder,
+                            height: 24,
+                          ),
+                        _renewal(items[i]),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
             ],
           ),
         ),

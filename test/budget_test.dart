@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 import 'package:riyal/data/budget_store.dart';
+import 'package:riyal/data/demo_mode.dart';
 import 'package:riyal/data/item_status.dart';
 import 'package:riyal/data/notifications_store.dart';
 import 'package:riyal/data/people_store.dart';
@@ -51,6 +52,8 @@ void main() {
   final store = BudgetStore.instance;
 
   setUp(() async {
+    // Signing up (a widget test below) switches the global demo flag off.
+    DemoMode.enabled = true;
     SubscriptionsStore.instance.subscriptions.value = [];
     UtilitiesStore.instance.items.value = [];
     PeopleStore.instance.items.value = [];

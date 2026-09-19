@@ -1,3 +1,4 @@
+import 'demo_mode.dart';
 import 'id_generator.dart';
 import 'subscription.dart' show BillingCycle;
 import 'tracked_item.dart';
@@ -6,7 +7,14 @@ import 'utility_categories.dart';
 class UtilitiesStore {
   UtilitiesStore._();
 
-  static final TrackedItemsStore instance = TrackedItemsStore(_seed());
+  static final TrackedItemsStore instance = TrackedItemsStore(
+    DemoMode.enabled ? _seed() : <TrackedItem>[],
+  );
+
+  /// Re-seeds the demo data, or empties it for a new sign-up, when the
+  /// active account changes.
+  static void reset() =>
+      instance.items.value = DemoMode.enabled ? _seed() : <TrackedItem>[];
 
   static List<TrackedItem> _seed() {
     final now = DateTime.now();
@@ -16,7 +24,7 @@ class UtilitiesStore {
         name: 'Saudi Electricity Company',
         logoAsset:
             'lib/assets/logos/1696007538-89-saudi-electricity-company.jpg',
-        amount: 883,
+        amount: 1189,
         cycle: BillingCycle.monthly,
         nextBillingDate: now.add(const Duration(days: 5)),
         category: UtilityCategories.electricity,
@@ -34,7 +42,7 @@ class UtilitiesStore {
         id: IdGenerator.uuidV4(),
         name: 'National Water Company',
         logoAsset: 'lib/assets/logos/saudi water comp.png',
-        amount: 194,
+        amount: 234,
         cycle: BillingCycle.monthly,
         nextBillingDate: now.add(const Duration(days: 20)),
         category: UtilityCategories.water,

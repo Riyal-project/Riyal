@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
+import 'demo_mode.dart';
 import 'id_generator.dart';
 import 'people_categories.dart';
 import 'subscription.dart' show BillingCycle;
@@ -9,7 +10,14 @@ import 'tracked_item.dart';
 class PeopleStore {
   PeopleStore._();
 
-  static final TrackedItemsStore instance = TrackedItemsStore(_seed());
+  static final TrackedItemsStore instance = TrackedItemsStore(
+    DemoMode.enabled ? _seed() : <TrackedItem>[],
+  );
+
+  /// Re-seeds the demo data, or empties it for a new sign-up, when the
+  /// active account changes.
+  static void reset() =>
+      instance.items.value = DemoMode.enabled ? _seed() : <TrackedItem>[];
 
   static List<TrackedItem> _seed() {
     final now = DateTime.now();

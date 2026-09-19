@@ -13,6 +13,7 @@ import 'tracked_item.dart';
 import 'utilities_store.dart';
 import 'people_store.dart';
 import 'app_settings.dart';
+import 'demo_mode.dart';
 import 'monthly_review.dart';
 import 'notice_read_state.dart';
 import 'user_bank_accounts_store.dart';
@@ -98,6 +99,19 @@ class NotificationsStore {
   /// unchanged anomaly doesn't re-notify on every refresh tick, but a new
   /// bill that crosses the threshold again does.
   final Map<String, double> _lastAnomalyAmount = {};
+
+  /// Empties the inbox when the active account changes, then rebuilds it
+  /// from the new account's stores (demo notices only for the demo login).
+  void reset() {
+    notices.value = [];
+    _itemIds.clear();
+    _seen.clear();
+    _reminded.clear();
+    _lastSubscriptionAmount.clear();
+    _notifiedBankPriceChanges.clear();
+    _lastAnomalyAmount.clear();
+    refresh(seed: DemoMode.enabled);
+  }
 
   void refresh({bool seed = false, DateTime? at}) {
     final now = at ?? DateTime.now();

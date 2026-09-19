@@ -2,7 +2,7 @@ import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../data/user_bank_accounts_store.dart';
+import '../data/account_session.dart';
 import '../l10n/strings.dart';
 import '../theme/app_theme.dart';
 import '../theme/app_typography.dart';
@@ -40,8 +40,8 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _signingIn = true);
     try {
+      await AccountSession.instance.signIn(_emailController.text);
       await BudgetStore.instance.activate(_emailController.text);
-      await UserBankAccountsStore.instance.load();
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute<void>(builder: (_) => const MainShell()),
@@ -252,8 +252,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                                       style: FilledButton.styleFrom(
                                                         backgroundColor:
                                                             AppColors.gold,
-                                                        foregroundColor: AppColors
-                                                            .goldForeground,
+                                                        foregroundColor:
+                                                            AppColors
+                                                                .goldForeground,
                                                         minimumSize:
                                                             const Size.fromHeight(
                                                               50,
@@ -265,13 +266,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                                           ? const SizedBox(
                                                               width: 18,
                                                               height: 18,
-                                                              child:
-                                                                  CircularProgressIndicator(
-                                                                    strokeWidth:
-                                                                        2,
-                                                                    color: AppColors
-                                                                        .goldForeground,
-                                                                  ),
+                                                              child: CircularProgressIndicator(
+                                                                strokeWidth: 2,
+                                                                color: AppColors
+                                                                    .goldForeground,
+                                                              ),
                                                             )
                                                           : Text(
                                                               Strings.t(
@@ -408,7 +407,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   color: AppColors.textSecondary,
                   fontSize: 24,
                 ),
-                prefixIcon: Icon(icon, color: AppColors.textSecondary, size: 30),
+                prefixIcon: Icon(
+                  icon,
+                  color: AppColors.textSecondary,
+                  size: 30,
+                ),
                 suffixIcon: password
                     ? IconButton(
                         tooltip: _obscurePassword
@@ -445,10 +448,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(22),
-                  borderSide: const BorderSide(
-                    color: AppColors.gold,
-                    width: 2,
-                  ),
+                  borderSide: const BorderSide(color: AppColors.gold, width: 2),
                 ),
               ),
             ),

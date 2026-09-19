@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import 'demo_mode.dart';
 import 'device_id_store.dart';
 import 'id_generator.dart';
 import 'item_status.dart';
@@ -29,6 +30,11 @@ class SubscriptionsStore {
         .order('created_at', ascending: true);
 
     if (rows.isEmpty) {
+      // A new sign-up starts with no default subscriptions.
+      if (!DemoMode.enabled) {
+        subscriptions.value = [];
+        return;
+      }
       final seeded = _seed();
       for (final subscription in seeded) {
         await _insert(deviceId, subscription);
