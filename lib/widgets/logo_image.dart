@@ -27,7 +27,7 @@ class LogoImage extends StatelessWidget {
     'noon': 1.3,
     'osn-logo': 1.3,
     'starzplay': 1.3,
-    'playstation': 1.25,
+    'playstation': 0.85,
     '/x.png': 1.4,
     'char ai': 1.25,
     'canva': 1.12,

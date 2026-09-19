@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../l10n/strings.dart';
 import '../theme/app_theme.dart';
 import '../widgets/account_section.dart';
 import '../widgets/coin_back_button.dart';
+import '../widgets/riyal_coin_painter.dart';
 
 class AboutUsScreen extends StatelessWidget {
   const AboutUsScreen({super.key});
@@ -14,8 +16,17 @@ class AboutUsScreen extends StatelessWidget {
     backgroundColor: AppColors.background,
     appBar: AppBar(
       backgroundColor: AppColors.background,
+      surfaceTintColor: Colors.transparent,
+      scrolledUnderElevation: 0,
       leading: const CoinBackButton(),
-      title: Text(Strings.t('about_us_title')),
+      title: Text(
+        Strings.t('about_us_title'),
+        style: const TextStyle(
+          color: AppColors.textPrimary,
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
     ),
     body: SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
@@ -77,7 +88,7 @@ class AboutUsScreen extends StatelessWidget {
                     ),
                     const Divider(color: AppColors.cardBorder, height: 32),
                     _AboutFeature(
-                      icon: Icons.auto_awesome_rounded,
+                      leading: const _MiniCoin(),
                       title: Strings.t('about_ai_title'),
                       body: Strings.t('about_ai_body'),
                     ),
@@ -142,14 +153,25 @@ class AboutUsScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 6),
-                    const Text(
-                      'RIYAL  •  0.1.0',
-                      style: TextStyle(
-                        color: AppColors.gold,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1.3,
-                      ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'RIYAL  •  0.1.0',
+                          style: TextStyle(
+                            color: AppColors.gold,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1.3,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Image.asset(
+                          'assets/icons/saudi_made.png',
+                          height: 22,
+                          errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -193,7 +215,7 @@ class _DeveloperName extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: const Icon(
-              Icons.code_rounded,
+              Icons.person_outline_rounded,
               color: AppColors.gold,
               size: 22,
             ),
@@ -246,12 +268,14 @@ class _DeveloperName extends StatelessWidget {
 
 class _AboutFeature extends StatelessWidget {
   const _AboutFeature({
-    required this.icon,
+    this.icon,
+    this.leading,
     required this.title,
     required this.body,
   });
 
-  final IconData icon;
+  final IconData? icon;
+  final Widget? leading;
   final String title;
   final String body;
 
@@ -266,7 +290,7 @@ class _AboutFeature extends StatelessWidget {
           color: AppColors.gold.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(14),
         ),
-        child: Icon(icon, color: AppColors.gold, size: 23),
+        child: leading ?? Icon(icon, color: AppColors.gold, size: 23),
       ),
       const SizedBox(width: 14),
       Expanded(
@@ -293,5 +317,24 @@ class _AboutFeature extends StatelessWidget {
         ),
       ),
     ],
+  );
+}
+
+class _MiniCoin extends StatelessWidget {
+  const _MiniCoin();
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.all(5),
+    child: CustomPaint(
+      painter: const RiyalCoinPainter(),
+      child: Center(
+        child: SvgPicture.asset(
+          'assets/icons/saudi_riyal.svg',
+          width: 14,
+          colorFilter: const ColorFilter.mode(AppColors.gold, BlendMode.srcIn),
+        ),
+      ),
+    ),
   );
 }

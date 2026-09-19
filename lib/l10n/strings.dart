@@ -536,7 +536,7 @@ class Strings {
         'Get quick, friendly answers about your budgeting and spending, in Arabic or English.',
     'about_developers_title': 'APP DEVELOPERS',
     'linkedin_profile': 'LinkedIn',
-    'about_made_for_you': 'Made to help you feel in control of your money.',
+    'about_made_for_you': 'Made with 💚 for the Saudi consumer',
     'log_out': 'Log out',
 
     // Bank accounts (mocked — see supabase/migrations/0003_mock_banking.sql)
@@ -972,7 +972,7 @@ class Strings {
         'احصل على إجابات سريعة وودودة حول ميزانيتك ومصروفاتك، بالعربية أو الإنجليزية.',
     'about_developers_title': 'مطورو التطبيق',
     'linkedin_profile': 'لينكدإن',
-    'about_made_for_you': 'صُمم ليساعدك على التحكم بأموالك بثقة.',
+    'about_made_for_you': 'صُنع بـ 💚 للمستهلك السعودي',
     'log_out': 'تسجيل الخروج',
 
     'accounts_title': 'الحسابات البنكية',
