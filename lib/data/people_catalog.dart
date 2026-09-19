@@ -57,7 +57,7 @@ const List<CatalogEntry> peopleCatalog = [
     name: "Children's Allowance",
     icon: Icons.child_friendly_outlined,
     iconColor: AppColors.peopleChildcare,
-    category: PeopleCategories.childcare,
+    category: PeopleCategories.allowance,
   ),
   CatalogEntry(
     name: 'Family Allowance',
