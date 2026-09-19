@@ -13,6 +13,8 @@ import '../theme/app_theme.dart';
 import '../theme/app_typography.dart';
 import '../widgets/coin_back_button.dart';
 import '../widgets/logo_image.dart';
+import '../data/refresh_data.dart';
+import '../widgets/riyal_refresh.dart';
 
 /// Full-page analytics, reached from Home ("See all" / the chevron on the
 /// spending card). Just a thin Scaffold around [AnalyticsContent].
@@ -196,7 +198,8 @@ class _AnalyticsContentState extends State<AnalyticsContent> {
         : _period == 'Week'
         ? '${Strings.t('week_ending')} ${_today.day} ${Strings.monthAbbrev(_today.month)} ${_today.year}'
         : '${Strings.monthAbbrev(_today.month)} ${_today.year}';
-    return SingleChildScrollView(
+    return RiyalRefreshScrollView.single(
+      onRefresh: refreshAppData,
       padding: EdgeInsets.fromLTRB(
         widget.horizontalPadding,
         0,

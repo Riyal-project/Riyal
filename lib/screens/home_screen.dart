@@ -5,6 +5,7 @@ import '../data/home_data.dart';
 import '../data/mock_bank_transaction.dart';
 import '../data/monthly_review.dart';
 import '../data/notifications_store.dart';
+import '../data/refresh_data.dart';
 import '../data/people_domain.dart';
 import '../data/recurring_detection.dart';
 import '../data/subscription.dart';
@@ -22,6 +23,7 @@ import '../widgets/notification_coin_button.dart';
 import '../widgets/logo_image.dart';
 import '../widgets/card_logo_watermark.dart';
 import '../widgets/capsule_tab_selector.dart';
+import '../widgets/riyal_refresh.dart';
 import 'accounts_screen.dart';
 import 'analytics_screen.dart';
 import 'connect_bank_screen.dart';
@@ -84,7 +86,8 @@ class HomeBodyState extends State<HomeBody> with LocaleRefreshState {
             const SizedBox(height: 16),
             Expanded(
               child: switch (_tab) {
-                _HomeTab.overview => ListView(
+                _HomeTab.overview => RiyalRefreshScrollView.list(
+                  onRefresh: refreshAppData,
                   padding: const EdgeInsets.only(bottom: 130),
                   children: [
                     const _SpendingCard(),
@@ -372,7 +375,8 @@ class _BankAccountsTabState extends State<_BankAccountsTab> {
             ),
           );
         }
-        return ListView(
+        return RiyalRefreshScrollView.list(
+          onRefresh: refreshAppData,
           padding: const EdgeInsets.only(bottom: 130),
           children: [
             for (final account in accounts)
