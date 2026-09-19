@@ -259,7 +259,7 @@ class _TopBarState extends State<_TopBar> {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         color: AppColors.textPrimary,
-                        fontSize: 15,
+                        fontSize: 18,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
