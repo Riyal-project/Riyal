@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import 'budget_store.dart';
 import 'people_store.dart';
+import 'spending_history.dart';
 import 'subscriptions_store.dart';
 import 'utilities_store.dart';
 
@@ -23,6 +24,7 @@ Listenable get dashboardChanges => Listenable.merge([
   SubscriptionsStore.instance.subscriptions,
   UtilitiesStore.instance.items,
   PeopleStore.instance.items,
+  SpendingHistory.instance.earlier,
 ]);
 
 // Mirrors AppColors.subscriptions/utilities/people (lib/theme/app_theme.dart)

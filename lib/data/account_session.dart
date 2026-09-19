@@ -8,6 +8,7 @@ import 'monthly_review.dart';
 import 'notifications_store.dart';
 import 'people_store.dart';
 import 'profile_store.dart';
+import 'spending_history.dart';
 import 'subscriptions_store.dart';
 import 'supabase_config.dart';
 import 'user_bank_accounts_store.dart';
@@ -96,6 +97,7 @@ class AccountSession {
     await PeopleStore.instance.flush();
     await UtilitiesStore.instance.flush();
     await DeviceIdStore.instance.setDeviceId(id);
+    SpendingHistory.instance.clear();
   }
 
   Future<void> _loadLocal() async {

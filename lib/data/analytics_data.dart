@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'home_data.dart';
 import 'item_status.dart';
 import 'people_store.dart';
+import 'spending_history.dart';
 import 'subscriptions_store.dart';
 import 'utilities_store.dart';
 
@@ -63,9 +64,17 @@ List<AnalyticsItem> get analyticsItems {
 }
 
 /// Six months per category, oldest first; the last entry is this month and
-/// always equals the Home overview. The app doesn't log past months'
-/// commitments yet, so earlier months stay 0 rather than being invented.
-Map<String, List<double>> get analyticsHistory => {
-  for (final category in overview)
-    category.label: [0, 0, 0, 0, 0, category.amount],
-};
+/// always equals the Home overview (its recurring commitments). The earlier
+/// five are what the connected banks show was actually paid that month, and
+/// stay 0 when there is no bank data for them.
+Map<String, List<double>> get analyticsHistory {
+  final earlier = SpendingHistory.instance.earlier.value;
+  return {
+    for (final category in overview)
+      category.label: [
+        ...(earlier[category.label] ??
+            List<double>.filled(SpendingHistory.months, 0)),
+        category.amount,
+      ],
+  };
+}
