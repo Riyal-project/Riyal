@@ -53,4 +53,16 @@ const List<CatalogEntry> peopleCatalog = [
     iconColor: AppColors.peopleAssistant,
     category: PeopleCategories.other,
   ),
+  CatalogEntry(
+    name: "Children's Allowance",
+    icon: Icons.child_friendly_outlined,
+    iconColor: AppColors.peopleChildcare,
+    category: PeopleCategories.childcare,
+  ),
+  CatalogEntry(
+    name: 'Family Allowance',
+    icon: Icons.family_restroom_outlined,
+    iconColor: AppColors.peopleAssistant,
+    category: PeopleCategories.other,
+  ),
 ];
