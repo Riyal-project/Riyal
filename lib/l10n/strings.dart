@@ -331,6 +331,7 @@ class Strings {
     'group_household': 'Household',
     'group_transport': 'Transport',
     'group_mobile': 'Mobile',
+    'overall': 'Overall',
     'account_exists_error':
         'An account with this email already exists. Please log in instead.',
     'analytics_empty':
@@ -789,6 +790,7 @@ class Strings {
     'group_household': 'المنزل',
     'group_transport': 'المواصلات',
     'group_mobile': 'الجوال',
+    'overall': 'الإجمالي',
     'account_exists_error':
         'يوجد حساب بهذا البريد الإلكتروني بالفعل. الرجاء تسجيل الدخول.',
     'analytics_empty':

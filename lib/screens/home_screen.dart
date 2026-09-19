@@ -515,8 +515,17 @@ class _BankAccountCard extends StatelessWidget {
   }
 }
 
-class _SpendingCard extends StatelessWidget {
+class _SpendingCard extends StatefulWidget {
   const _SpendingCard();
+
+  @override
+  State<_SpendingCard> createState() => _SpendingCardState();
+}
+
+class _SpendingCardState extends State<_SpendingCard> {
+  /// Null shows the overall total; otherwise one category's label from
+  /// [overview] ('Subscriptions' / 'Utilities' / 'People').
+  String? _selected;
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
@@ -525,11 +534,16 @@ class _SpendingCard extends StatelessWidget {
   );
 
   Widget _content(BuildContext context) {
-    final total = overview.fold<double>(0, (sum, item) => sum + item.amount);
-    final previous = analyticsHistory.values.fold<double>(
-      0,
-      (sum, values) => sum + values[values.length - 2],
-    );
+    final categories = overview;
+    final history = analyticsHistory;
+    final shown = _selected == null
+        ? categories
+        : categories.where((c) => c.label == _selected).toList();
+    final total = shown.fold<double>(0, (sum, c) => sum + c.amount);
+    final previous = shown.fold<double>(0, (sum, c) {
+      final values = history[c.label]!;
+      return sum + values[values.length - 2];
+    });
     final change = previous == 0 ? 0 : (total - previous) / previous * 100;
     return Container(
       clipBehavior: Clip.antiAlias,
@@ -575,12 +589,75 @@ class _SpendingCard extends StatelessWidget {
                 ),
                 style: const TextStyle(color: AppColors.gold, fontSize: 13),
               ),
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 6,
+                runSpacing: 6,
+                children: [
+                  _SpendingCapsule(
+                    label: Strings.t('overall'),
+                    color: AppColors.gold,
+                    selected: _selected == null,
+                    onTap: () => setState(() => _selected = null),
+                  ),
+                  for (final c in categories)
+                    _SpendingCapsule(
+                      label: Strings.categoryDisplay(c.label),
+                      color: Color(c.color),
+                      selected: _selected == c.label,
+                      onTap: () => setState(() => _selected = c.label),
+                    ),
+                ],
+              ),
             ],
           ),
         ],
       ),
     );
   }
+}
+
+/// A small, quiet selector on the spending card: outlined when idle, tinted
+/// with its category color when selected.
+class _SpendingCapsule extends StatelessWidget {
+  const _SpendingCapsule({
+    required this.label,
+    required this.color,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final Color color;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+    behavior: HitTestBehavior.opaque,
+    onTap: onTap,
+    child: AnimatedContainer(
+      duration: const Duration(milliseconds: 160),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: selected ? color.withValues(alpha: 0.14) : Colors.transparent,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: selected
+              ? color.withValues(alpha: 0.5)
+              : AppColors.dividerStrong,
+        ),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: selected ? color : AppColors.textSecondary,
+          fontSize: 11,
+          fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+        ),
+      ),
+    ),
+  );
 }
 
 class _SectionHeader extends StatelessWidget {
