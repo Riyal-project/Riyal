@@ -9,6 +9,7 @@ import '../widgets/account_section.dart';
 import '../theme/app_theme.dart';
 import '../widgets/coin_back_button.dart';
 import '../widgets/riyal_coin_painter.dart';
+import '../widgets/riyal_loader.dart';
 import 'change_password_screen.dart';
 import 'login_screen.dart';
 
@@ -133,7 +134,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       title: Text(Strings.t('profile_title')),
     ),
     body: _loading
-        ? const Center(child: CircularProgressIndicator(color: AppColors.gold))
+        ? const Center(child: RiyalLoader())
         : SingleChildScrollView(
             padding: const EdgeInsets.all(24),
             child: Center(

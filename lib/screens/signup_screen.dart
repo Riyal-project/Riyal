@@ -12,6 +12,7 @@ import '../data/budget_store.dart';
 import '../data/profile_store.dart';
 import '../widgets/riyal_coin_painter.dart';
 import '../widgets/auth_coin_flip.dart';
+import '../widgets/riyal_loader.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -302,14 +303,10 @@ class _SignupScreenState extends State<SignupScreen> {
                                                             const StadiumBorder(),
                                                       ),
                                                       child: _signingUp
-                                                          ? const SizedBox(
-                                                              width: 18,
-                                                              height: 18,
-                                                              child: CircularProgressIndicator(
-                                                                strokeWidth: 2,
-                                                                color: AppColors
-                                                                    .goldForeground,
-                                                              ),
+                                                          ? const RiyalLoader(
+                                                              size: 18,
+                                                              color: AppColors
+                                                                  .goldForeground,
                                                             )
                                                           : Text(
                                                               Strings.t(

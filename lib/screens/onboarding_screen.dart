@@ -7,6 +7,7 @@ import '../l10n/app_locale.dart';
 import '../theme/app_theme.dart';
 import '../theme/app_typography.dart';
 import '../widgets/riyal_coin_painter.dart';
+import '../widgets/riyal_loader.dart';
 import 'login_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -264,13 +265,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       style: const TextStyle(fontWeight: FontWeight.w700),
                     ),
                     icon: _saving
-                        ? const SizedBox(
-                            width: 18,
-                            height: 18,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: AppColors.background,
-                            ),
+                        ? const RiyalLoader(
+                            size: 18,
+                            color: AppColors.background,
                           )
                         : Icon(
                             _page == _slides.length - 1
@@ -366,7 +363,7 @@ class _LanguageChoice extends StatelessWidget {
                 ),
                 if (saving) ...[
                   const SizedBox(height: 20),
-                  const CircularProgressIndicator(color: AppColors.gold),
+                  const RiyalLoader(),
                 ],
               ],
             ),

@@ -8,6 +8,7 @@ import '../l10n/strings.dart';
 import '../theme/app_theme.dart';
 import '../theme/app_typography.dart';
 import '../widgets/logo_image.dart';
+import '../widgets/riyal_loader.dart';
 import 'tracked_item_details_screen.dart';
 
 class SelectChargeScreen extends StatelessWidget {
@@ -57,9 +58,7 @@ class SelectChargeScreen extends StatelessWidget {
                   future: loadRecentDomainCharges(domain),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
-                      return const Center(
-                        child: CircularProgressIndicator(color: AppColors.gold),
-                      );
+                      return const Center(child: RiyalLoader());
                     }
                     final charges = snapshot.data!;
                     return ListView.separated(

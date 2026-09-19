@@ -3,6 +3,7 @@ import '../data/budget_store.dart';
 import '../l10n/strings.dart';
 import '../theme/app_theme.dart';
 import '../widgets/coin_back_button.dart';
+import '../widgets/riyal_loader.dart';
 
 class BudgetSetupScreen extends StatefulWidget {
   const BudgetSetupScreen({super.key, this.afterSetup});
@@ -133,10 +134,9 @@ class _BudgetSetupScreenState extends State<BudgetSetupScreen> {
                   FilledButton(
                     onPressed: _saving ? null : _save,
                     child: _saving
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
+                        ? const RiyalLoader(
+                            size: 20,
+                            color: AppColors.goldForeground,
                           )
                         : Text(Strings.t('budget_save')),
                   ),

@@ -11,6 +11,7 @@ import 'signup_screen.dart';
 import '../data/budget_store.dart';
 import '../widgets/riyal_coin_painter.dart';
 import '../widgets/auth_coin_flip.dart';
+import '../widgets/riyal_loader.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -268,14 +269,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                                             const StadiumBorder(),
                                                       ),
                                                       child: _signingIn
-                                                          ? const SizedBox(
-                                                              width: 18,
-                                                              height: 18,
-                                                              child: CircularProgressIndicator(
-                                                                strokeWidth: 2,
-                                                                color: AppColors
-                                                                    .goldForeground,
-                                                              ),
+                                                          ? const RiyalLoader(
+                                                              size: 18,
+                                                              color: AppColors
+                                                                  .goldForeground,
                                                             )
                                                           : Text(
                                                               Strings.t(

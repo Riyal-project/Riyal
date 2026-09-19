@@ -3,6 +3,7 @@ import '../services/gemini_api.dart';
 import '../services/riyal_bot_config.dart';
 import '../widgets/coin_back_button.dart';
 import '../widgets/riyal_coin_painter.dart';
+import '../widgets/riyal_loader.dart';
 import '../theme/app_theme.dart';
 import '../theme/app_typography.dart';
 
@@ -251,16 +252,7 @@ class _RiyalBotScreenState extends State<RiyalBotScreen> {
                           if (index == _messages.length) {
                             return const Padding(
                               padding: EdgeInsets.all(18),
-                              child: Center(
-                                child: SizedBox(
-                                  width: 22,
-                                  height: 22,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: AppColors.gold,
-                                  ),
-                                ),
-                              ),
+                              child: Center(child: RiyalLoader(size: 26)),
                             );
                           }
                           final message = _messages[index];
@@ -379,7 +371,9 @@ class _RiyalBotScreenState extends State<RiyalBotScreen> {
                     Builder(
                       builder: (context) {
                         final enabled =
-                            !(_sending || _api == null || _input.text.trim().isEmpty);
+                            !(_sending ||
+                                _api == null ||
+                                _input.text.trim().isEmpty);
                         return Tooltip(
                           message: _t('إرسال', 'Send'),
                           child: GestureDetector(

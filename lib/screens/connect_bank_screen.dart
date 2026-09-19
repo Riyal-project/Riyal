@@ -9,6 +9,7 @@ import '../theme/app_theme.dart';
 import '../theme/app_typography.dart';
 import '../widgets/coin_back_button.dart';
 import '../widgets/logo_image.dart';
+import '../widgets/riyal_loader.dart';
 import 'main_shell.dart';
 
 enum _ConnectStep { chooseBank, bankLogin, connecting, success }
@@ -290,9 +291,7 @@ class _ChooseBankStep extends StatelessWidget {
               future: MockBanksStore.instance.load(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return const Center(
-                    child: CircularProgressIndicator(color: AppColors.gold),
-                  );
+                  return const Center(child: RiyalLoader());
                 }
                 final banks = snapshot.data!;
                 return GridView.builder(
@@ -549,7 +548,7 @@ class _ConnectingStep extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          CircularProgressIndicator(color: bank.primaryColor),
+          RiyalLoader(color: bank.primaryColor),
           const SizedBox(height: 20),
           Text(
             Strings.f('connecting_to_bank', bank.name),

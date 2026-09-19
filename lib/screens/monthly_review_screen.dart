@@ -9,6 +9,7 @@ import '../theme/app_theme.dart';
 import '../theme/app_typography.dart';
 import '../widgets/coin_back_button.dart';
 import '../widgets/logo_image.dart';
+import '../widgets/riyal_loader.dart';
 
 class MonthlyReviewScreen extends StatefulWidget {
   const MonthlyReviewScreen({super.key});
@@ -303,14 +304,7 @@ ${actionable.isEmpty ? 'No action recommended; current commitments appear suitab
               child: FilledButton.icon(
                 onPressed: _saving ? null : _next,
                 icon: _saving
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: AppColors.background,
-                        ),
-                      )
+                    ? const RiyalLoader(size: 18, color: AppColors.background)
                     : Icon(
                         _index == _items.length - 1
                             ? Icons.auto_awesome_rounded
@@ -498,14 +492,7 @@ ${actionable.isEmpty ? 'No action recommended; current commitments appear suitab
               FilledButton.icon(
                 onPressed: _api == null || _askingAi ? null : _askAi,
                 icon: _askingAi
-                    ? const SizedBox(
-                        width: 17,
-                        height: 17,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: AppColors.background,
-                        ),
-                      )
+                    ? const RiyalLoader(size: 17, color: AppColors.background)
                     : const Icon(Icons.auto_awesome_rounded),
                 label: Text(
                   _api == null
