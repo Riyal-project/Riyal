@@ -23,6 +23,124 @@ class _SelectAppScreenState extends State<SelectAppScreen> {
   String _query = '';
   TrackedCategory? _category;
 
+  Widget _addTile(BuildContext context) => GestureDetector(
+    onTap: () => _addCustomApp(context),
+    child: Column(
+      children: [
+        Container(
+          width: 56,
+          height: 56,
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(56 * 0.28),
+            border: Border.all(color: AppColors.goldDark),
+          ),
+          child: const Icon(Icons.add_rounded, color: AppColors.gold),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          Strings.t('add_other_app'),
+          textAlign: TextAlign.center,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            color: AppColors.gold,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    ),
+  );
+
+  Future<void> _addCustomApp(BuildContext context) async {
+    final controller = TextEditingController();
+    TrackedCategory category = SubscriptionCategories.other;
+    final name = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (sheetContext) => StatefulBuilder(
+        builder: (context, setSheet) => Padding(
+          padding: EdgeInsets.fromLTRB(
+            20,
+            20,
+            20,
+            20 + MediaQuery.of(sheetContext).viewInsets.bottom,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                Strings.t('add_other_app'),
+                style: const TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 14),
+              TextField(
+                controller: controller,
+                autofocus: true,
+                style: const TextStyle(color: AppColors.textPrimary),
+                cursorColor: AppColors.gold,
+                decoration: InputDecoration(
+                  hintText: Strings.t('custom_app_name'),
+                  hintStyle: const TextStyle(color: AppColors.textSecondary),
+                  filled: true,
+                  fillColor: AppColors.background,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 14),
+              CategoryFilterBar(
+                categories: SubscriptionCategories.values,
+                selected: category,
+                showAll: false,
+                onChanged: (c) => setSheet(() => category = c ?? category),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.gold,
+                    foregroundColor: AppColors.goldForeground,
+                    shape: const StadiumBorder(),
+                  ),
+                  onPressed: () {
+                    final n = controller.text.trim();
+                    if (n.isNotEmpty) Navigator.pop(sheetContext, n);
+                  },
+                  child: Text(Strings.t('add_app_continue')),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    controller.dispose();
+    if (name == null || !context.mounted) return;
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => SubscriptionDetailsScreen(
+          name: name,
+          initialCategory: category,
+          initialFreeTrial: widget.freeTrial,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final results = subscriptionCatalog
@@ -82,16 +200,7 @@ class _SelectAppScreenState extends State<SelectAppScreen> {
               ),
               const SizedBox(height: 12),
               Expanded(
-                child: results.isEmpty
-                    ? Center(
-                        child: Text(
-                          Strings.t('no_apps_found'),
-                          style: const TextStyle(
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                      )
-                    : GridView.builder(
+                child: GridView.builder(
                         padding: const EdgeInsets.only(bottom: 24),
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
@@ -100,8 +209,9 @@ class _SelectAppScreenState extends State<SelectAppScreen> {
                               crossAxisSpacing: 12,
                               childAspectRatio: 0.78,
                             ),
-                        itemCount: results.length,
+                        itemCount: results.length + 1,
                         itemBuilder: (context, i) {
+                          if (i == results.length) return _addTile(context);
                           final app = results[i];
                           return GestureDetector(
                             onTap: () {
