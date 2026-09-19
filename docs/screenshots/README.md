@@ -15,9 +15,9 @@ App screenshots referenced by the main README.
 - monthly_review.png
 - accounts.png
 - connect_bank.png
+- riyal_bot.png
 
 Still missing (add if available, using these filenames):
 
 - onboarding.png
 - notifications.png
-- riyal_bot.png

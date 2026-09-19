@@ -137,9 +137,9 @@ The interface is designed to adapt across different mobile screen sizes while ma
 
 ### Insights & Management
 
-| Analytics | Analytics — Breakdown | Monthly Review | Accounts | Connect a Bank |
-|:---:|:---:|:---:|:---:|:---:|
-| <img src="docs/screenshots/analytics.png" width="200"> | <img src="docs/screenshots/analytics_breakdown.png" width="200"> | <img src="docs/screenshots/monthly_review.png" width="200"> | <img src="docs/screenshots/accounts.png" width="200"> | <img src="docs/screenshots/connect_bank.png" width="200"> |
+| Analytics | Analytics — Breakdown | Monthly Review | Accounts | Connect a Bank | Riyal Assistant |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| <img src="docs/screenshots/analytics.png" width="200"> | <img src="docs/screenshots/analytics_breakdown.png" width="200"> | <img src="docs/screenshots/monthly_review.png" width="200"> | <img src="docs/screenshots/accounts.png" width="200"> | <img src="docs/screenshots/connect_bank.png" width="200"> | <img src="docs/screenshots/riyal_bot.png" width="200"> |
 
 ---
 
