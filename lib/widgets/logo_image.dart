@@ -28,14 +28,14 @@ class LogoImage extends StatelessWidget {
     'osn-logo': 1.3,
     'starzplay': 1.3,
     'playstation': 1.25,
-    '/x.png': 1.25,
+    '/x.png': 1.1,
     'char ai': 1.25,
     'canva': 1.12,
     'grammarly': 0.78,
     'microsoft365': 0.78,
     'onedrive': 0.92,
     'slack': 0.92,
-    'asana': 0.92,
+    'asana': 0.85,
     'ticktick': 0.9,
     'evernote': 0.9,
     'notion': 0.9,
@@ -77,15 +77,17 @@ class LogoImage extends StatelessWidget {
           orElse: () => const MapEntry('', 1.0),
         )
         .value;
+    // Non-square artwork (Asana) is cropped at the corners by cover.
+    final fit = lower.contains('asana') ? BoxFit.contain : BoxFit.cover;
     final raw = lower.endsWith('.svg')
         ? SvgPicture.asset(
             path,
-            fit: BoxFit.cover,
+            fit: fit,
             placeholderBuilder: (_) => _fallbackIcon(),
           )
         : Image.asset(
             path,
-            fit: BoxFit.cover,
+            fit: fit,
             errorBuilder: (context, error, stackTrace) => _fallbackIcon(),
           );
     final content = scale == 1.0 ? raw : Transform.scale(scale: scale, child: raw);
