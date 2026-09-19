@@ -63,6 +63,6 @@ const List<CatalogEntry> peopleCatalog = [
     name: 'Family Allowance',
     icon: Icons.family_restroom_outlined,
     iconColor: AppColors.peopleAssistant,
-    category: PeopleCategories.other,
+    category: PeopleCategories.allowance,
   ),
 ];

@@ -18,6 +18,10 @@ class PeopleCategories {
     Icons.directions_car_outlined,
   );
   static const security = TrackedCategory('security', Icons.shield_outlined);
+  static const allowance = TrackedCategory(
+    'allowance',
+    Icons.savings_outlined,
+  );
   static const other = TrackedCategory('other', Icons.more_horiz_rounded);
 
   /// Placeholder role for a person auto-added from a recurring bank
@@ -35,6 +39,7 @@ class PeopleCategories {
     childcare,
     driving,
     security,
+    allowance,
     other,
     unassigned,
   ];
