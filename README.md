@@ -111,8 +111,6 @@ The project includes mock representations of several Saudi banks, including:
 - Bank Albilad
 - And others
 
-> **Note:** These are simulated data sources for demonstration purposes. Riyal does not connect to real bank accounts.
-
 ### 🌐 Arabic & English
 
 The application is fully localized in Arabic and English, including RTL support for Arabic.
