@@ -315,9 +315,23 @@ class _RiyalBotScreenState extends State<RiyalBotScreen> {
                         textDirection: _isArabic(_input.text)
                             ? TextDirection.rtl
                             : TextDirection.ltr,
+                        style: const TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 14,
+                        ),
+                        cursorColor: AppColors.gold,
                         decoration: InputDecoration(
                           counterText: '',
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 18,
+                            vertical: 11,
+                          ),
                           hintText: _t('اكتبي رسالتك…', 'Type your message…'),
+                          hintStyle: const TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 14,
+                          ),
                           filled: true,
                           fillColor: AppColors.surface,
                           border: OutlineInputBorder(
@@ -326,21 +340,50 @@ class _RiyalBotScreenState extends State<RiyalBotScreen> {
                               color: AppColors.cardBorder,
                             ),
                           ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24),
+                            borderSide: const BorderSide(
+                              color: AppColors.cardBorder,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24),
+                            borderSide: const BorderSide(
+                              color: AppColors.goldDark,
+                            ),
+                          ),
                         ),
                       ),
                     ),
                     const SizedBox(width: 8),
-                    IconButton.filled(
-                      tooltip: _t('إرسال', 'Send'),
-                      style: IconButton.styleFrom(
-                        backgroundColor: AppColors.gold,
-                        foregroundColor: AppColors.background,
-                      ),
-                      onPressed:
-                          _sending || _api == null || _input.text.trim().isEmpty
-                          ? null
-                          : _send,
-                      icon: const Icon(Icons.send_rounded),
+                    Builder(
+                      builder: (context) {
+                        final enabled =
+                            !(_sending || _api == null || _input.text.trim().isEmpty);
+                        return Tooltip(
+                          message: _t('إرسال', 'Send'),
+                          child: GestureDetector(
+                            onTap: enabled ? _send : null,
+                            child: Opacity(
+                              opacity: enabled ? 1 : 0.4,
+                              child: const SizedBox(
+                                width: 44,
+                                height: 44,
+                                child: CustomPaint(
+                                  painter: RiyalCoinPainter(),
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.arrow_upward_rounded,
+                                      color: AppColors.gold,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
