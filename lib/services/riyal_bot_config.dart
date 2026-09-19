@@ -1,5 +1,6 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'gemini_api.dart';
+import 'riyal_bot_context.dart';
 import 'riyal_bot_prompt.dart';
 
 class RiyalBotConfig {
@@ -19,6 +20,7 @@ class RiyalBotConfig {
           ? 'gemini-3.8-flash'
           : configuredModel,
       systemInstruction: riyalBotPrompt,
+      contextProvider: buildRiyalBotContext,
     );
   }
 }

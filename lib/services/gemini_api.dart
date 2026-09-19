@@ -34,7 +34,9 @@ class GeminiMessage {
 /// Direct keys are for local development only. A Flutter/web bundle cannot
 /// keep an API key secret, including .env assets or dart-define values.
 /// For deployment, call Gemini through a server that holds the key.
-/// No profile/payment data is read or sent automatically by this service.
+/// The service itself reads no app data; the caller can pass
+/// [contextProvider] to append a fresh snapshot of the user's data to the
+/// system instruction on every message (it is not stored in the history).
 class GeminiApi {
   GeminiApi({
     required String apiKey,
@@ -44,6 +46,7 @@ class GeminiApi {
         'Help explain subscriptions, bills and household payments. '
         'Do not invent account data or claim to change payments. '
         'Ask for missing information when necessary.',
+    this.contextProvider,
     this.timeout = const Duration(seconds: 45),
     http.Client? client,
   }) : _apiKey = apiKey.trim(),
@@ -61,6 +64,7 @@ class GeminiApi {
   final String _apiKey;
   final String model;
   final String systemInstruction;
+  final Future<String> Function()? contextProvider;
   final Duration timeout;
   final http.Client _client;
   final bool _ownsClient;
@@ -80,6 +84,15 @@ class GeminiApi {
     if (text.isEmpty) throw ArgumentError('Message cannot be empty.');
     _busy = true;
     try {
+      var system = systemInstruction;
+      if (contextProvider != null) {
+        try {
+          final context = (await contextProvider!()).trim();
+          if (context.isNotEmpty) system = '$system\n\n$context';
+        } catch (_) {
+          // Answer without the snapshot rather than failing the message.
+        }
+      }
       final response = await _client
           .post(
             Uri.https(
@@ -95,10 +108,10 @@ class GeminiApi {
                 ..._history.map((m) => m.toJson()),
                 GeminiMessage.user(text).toJson(),
               ],
-              if (systemInstruction.trim().isNotEmpty)
+              if (system.trim().isNotEmpty)
                 'systemInstruction': {
                   'parts': [
-                    {'text': systemInstruction},
+                    {'text': system},
                   ],
                 },
             }),
