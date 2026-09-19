@@ -294,29 +294,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                         ),
                       ),
-                    AccountSection(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Icon(
-                            Icons.shield_outlined,
-                            color: AppColors.gold,
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              Strings.t('profile_local_note'),
-                              style: const TextStyle(
-                                color: AppColors.textSecondary,
-                                height: 1.5,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 10),
                     ListTile(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
