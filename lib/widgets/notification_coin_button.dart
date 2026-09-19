@@ -56,8 +56,8 @@ class _NotificationCoinButtonState extends State<NotificationCoinButton>
             ? Strings.t('unread_notifications')
             : Strings.t('notifications_title'),
         child: SizedBox(
-          width: 44,
-          height: 44,
+          width: 47,
+          height: 47,
           child: Stack(
             clipBehavior: Clip.none,
             children: [

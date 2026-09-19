@@ -11,7 +11,7 @@ import 'riyal_coin_painter.dart';
 class FlippingCoinIcon extends StatefulWidget {
   const FlippingCoinIcon({
     super.key,
-    this.size = 44,
+    this.size = 47,
     this.frontIcon = Icons.person_outline_rounded,
     this.backIcon = Icons.settings_outlined,
     this.flipInterval = const Duration(seconds: 5),

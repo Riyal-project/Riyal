@@ -209,14 +209,34 @@ class _RiyalBotScreenState extends State<RiyalBotScreen> {
                                     'How can I organize household staff payments?',
                                   ),
                                 ])
-                                  ActionChip(
-                                    label: Text(prompt),
-                                    onPressed: _api == null
+                                  GestureDetector(
+                                    onTap: _api == null
                                         ? null
                                         : () {
                                             _input.text = prompt;
                                             _send();
                                           },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 14,
+                                        vertical: 8,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.surface,
+                                        borderRadius: BorderRadius.circular(18),
+                                        border: Border.all(
+                                          color: AppColors.cardBorder,
+                                        ),
+                                      ),
+                                      child: Text(
+                                        prompt,
+                                        style: const TextStyle(
+                                          color: AppColors.textSecondary,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
                                   ),
                               ],
                             ),
