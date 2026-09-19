@@ -10,7 +10,9 @@ import 'data/monthly_review.dart';
 import 'data/subscriptions_store.dart';
 import 'data/supabase_config.dart';
 import 'data/user_bank_accounts_store.dart';
+import 'data/notifications_store.dart';
 import 'l10n/app_locale.dart';
+import 'widgets/rebuild_all.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,7 +49,17 @@ Future<void> main() async {
   } catch (error) {
     debugPrint('Budget load failed: $error');
   }
+  AppLocale.locale.addListener(_retranslateEverything);
   runApp(const MainApp());
+}
+
+/// Called whenever the language changes, so everything switches at once:
+/// inbox notices are stored as already-translated text, so they're rebuilt,
+/// and once [MaterialApp] has taken the new locale every screen rebuilds too
+/// (see [rebuildAllElements]) instead of only the ones that listen to it.
+void _retranslateEverything() {
+  NotificationsStore.instance.reset();
+  WidgetsBinding.instance.addPostFrameCallback((_) => rebuildAllElements());
 }
 
 class MainApp extends StatelessWidget {

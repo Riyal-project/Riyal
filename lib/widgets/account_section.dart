@@ -28,34 +28,43 @@ class AccountPageHeader extends StatelessWidget {
   final IconData icon;
   final String title, subtitle;
   @override
-  Widget build(BuildContext context) => Column(
-    children: [
-      const SizedBox(height: 8),
-      SizedBox(
-        width: 88,
-        height: 88,
-        child: CustomPaint(
-          painter: const RiyalCoinPainter(),
-          child: Center(child: Icon(icon, color: AppColors.gold, size: 40)),
+  // Stretched to the full width with every line centered inside it, so the
+  // logo, title and subtitle sit on the page's center line in both LTR and
+  // RTL — whatever the parent's alignment or the text's own width.
+  Widget build(BuildContext context) => SizedBox(
+    width: double.infinity,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const SizedBox(height: 8),
+        Center(
+          child: SizedBox(
+            width: 88,
+            height: 88,
+            child: CustomPaint(
+              painter: const RiyalCoinPainter(),
+              child: Center(child: Icon(icon, color: AppColors.gold, size: 40)),
+            ),
+          ),
         ),
-      ),
-      const SizedBox(height: 18),
-      Text(
-        title,
-        textAlign: TextAlign.center,
-        style: const TextStyle(
-          color: AppColors.textPrimary,
-          fontSize: 25,
-          fontWeight: FontWeight.w600,
+        const SizedBox(height: 18),
+        Text(
+          title,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            color: AppColors.textPrimary,
+            fontSize: 25,
+            fontWeight: FontWeight.w600,
+          ),
         ),
-      ),
-      const SizedBox(height: 8),
-      Text(
-        subtitle,
-        textAlign: TextAlign.center,
-        style: const TextStyle(color: AppColors.textSecondary, height: 1.5),
-      ),
-      const SizedBox(height: 28),
-    ],
+        const SizedBox(height: 8),
+        Text(
+          subtitle,
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: AppColors.textSecondary, height: 1.5),
+        ),
+        const SizedBox(height: 28),
+      ],
+    ),
   );
 }
