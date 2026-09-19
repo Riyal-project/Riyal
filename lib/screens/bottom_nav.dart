@@ -43,7 +43,7 @@ class BottomNav extends StatelessWidget {
                   onTap: () => onTap(1),
                 ),
               ),
-              const SizedBox(width: 48),
+              const SizedBox(width: 54),
               Expanded(
                 child: NavItem(
                   icon: Icons.bolt_outlined,
@@ -114,30 +114,37 @@ class NavFab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FloatingActionButton(
-      heroTag: 'riyal-bot-button',
-      tooltip: 'ريال / Riyal',
-      onPressed: onPressed,
-      elevation: 0,
-      hoverElevation: 0,
-      focusElevation: 0,
-      highlightElevation: 0,
-      backgroundColor: Colors.transparent,
-      foregroundColor: AppColors.surface,
-      shape: const CircleBorder(),
-      child: SizedBox.expand(
-        child: CustomPaint(
-          // A solid face keeps the navigation coin distinct from the bar
-          // without changing the shared coin style.
-          painter: const RiyalCoinPainter(faceColor: AppColors.surface),
-          child: Center(
-            child: SvgPicture.asset(
-              'assets/icons/saudi_riyal.svg',
-              width: 22,
-              semanticsLabel: 'Saudi riyal',
-              colorFilter: const ColorFilter.mode(
-                AppColors.gold,
-                BlendMode.srcIn,
+    // Scaled up from the standard 56 so the coin stands out a little more.
+    return SizedBox(
+      width: 64,
+      height: 64,
+      child: FittedBox(
+        child: FloatingActionButton(
+          heroTag: 'riyal-bot-button',
+          tooltip: 'ريال / Riyal',
+          onPressed: onPressed,
+          elevation: 0,
+          hoverElevation: 0,
+          focusElevation: 0,
+          highlightElevation: 0,
+          backgroundColor: Colors.transparent,
+          foregroundColor: AppColors.surface,
+          shape: const CircleBorder(),
+          child: SizedBox.expand(
+            child: CustomPaint(
+              // A solid face keeps the navigation coin distinct from the bar
+              // without changing the shared coin style.
+              painter: const RiyalCoinPainter(faceColor: AppColors.surface),
+              child: Center(
+                child: SvgPicture.asset(
+                  'assets/icons/saudi_riyal.svg',
+                  width: 22,
+                  semanticsLabel: 'Saudi riyal',
+                  colorFilter: const ColorFilter.mode(
+                    AppColors.gold,
+                    BlendMode.srcIn,
+                  ),
+                ),
               ),
             ),
           ),

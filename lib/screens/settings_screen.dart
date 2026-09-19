@@ -160,6 +160,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               '$days ${days == 1 ? Strings.t('day_singular') : Strings.t('day_plural')}',
                             ),
                             selected: _settings.reminderDays == days,
+                            shape: const StadiumBorder(),
                             selectedColor: AppColors.gold,
                             labelStyle: TextStyle(
                               color: _settings.reminderDays == days
@@ -221,6 +222,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ChoiceChip(
                             label: Text(Strings.f('day_of_month', '$day')),
                             selected: _settings.monthlyReviewDay == day,
+                            shape: const StadiumBorder(),
                             selectedColor: AppColors.gold,
                             labelStyle: TextStyle(
                               color: _settings.monthlyReviewDay == day
