@@ -128,7 +128,8 @@ class _SelectAppScreenState extends State<SelectAppScreen> {
         ),
       ),
     );
-    controller.dispose();
+    // Not disposed here: the sheet's exit animation still uses it after the
+    // await returns, and disposing early throws a red error screen.
     if (name == null || !context.mounted) return;
     Navigator.of(context).push(
       MaterialPageRoute<void>(
