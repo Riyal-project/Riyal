@@ -96,5 +96,15 @@ ThemeData buildAppTheme({String languageCode = 'en'}) {
       surface: AppColors.surface,
     ),
     textTheme: textTheme,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: AppColors.background,
+      surfaceTintColor: Colors.transparent,
+      scrolledUnderElevation: 0,
+      titleTextStyle: TextStyle(
+        color: AppColors.textPrimary,
+        fontSize: 20,
+        fontWeight: FontWeight.w700,
+      ),
+    ),
   );
 }

@@ -154,7 +154,7 @@ class _MonthlyReviewCard extends StatelessWidget {
                 inset: 6,
                 // Pushed further than `inset` alone so the coin ends before
                 // the trailing chevron instead of running under it.
-                endInset: 46,
+                endInset: 42,
               ),
               Padding(
                 padding: const EdgeInsets.all(16),
