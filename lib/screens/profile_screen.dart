@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../data/account_session.dart';
 import '../data/auth_store.dart';
 import '../data/profile_store.dart';
 import '../data/profile_validation.dart';
-import '../data/user_bank_accounts_store.dart';
 import '../l10n/strings.dart';
 import '../widgets/action_confirmation.dart';
 import '../widgets/account_section.dart';
@@ -97,10 +96,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  // Data is device-scoped rather than backed by a deletable server-side
-  // account (see profile_local_note) — "deleting the account" here means
-  // wiping every local key, so re-launching regenerates a fresh device_id
-  // and none of this device's previous data is reachable again.
+  // Accounts live on this device (see profile_local_note): deleting one
+  // removes its password, its data and its budgets, so the email can no
+  // longer log in. Other accounts on the device are untouched.
   Future<void> _deleteAccount() async {
     final firstConfirm = await showActionConfirmation(
       context,
@@ -117,8 +115,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
     if (finalConfirm != true || !mounted) return;
     await AuthStore.instance.signOut();
-    UserBankAccountsStore.instance.clear();
-    await SharedPreferencesAsync().clear();
+    await AccountSession.instance.deleteActiveAccount();
     if (!mounted) return;
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute<void>(builder: (_) => const LoginScreen()),

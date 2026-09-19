@@ -34,11 +34,15 @@ TrackedItem card(String name, TrackedCategory category, [double amount = 99]) =>
       category: category,
     );
 
+const pw = 'correct horse';
+
 /// The Supabase reload at the end of a login isn't available in tests; the
 /// account switch and local data are loaded before it.
-Future<void> logIn(String email) async {
+Future<void> logIn(String email, [String password = pw]) async {
   try {
-    await AccountSession.instance.signIn(email);
+    await AccountSession.instance.signIn(email, password);
+  } on InvalidCredentialsException {
+    rethrow;
   } catch (_) {}
 }
 
@@ -61,18 +65,39 @@ void main() {
     expect(analyticsHistory['Utilities'], [0, 0, 0, 0, 0, 0]);
   });
 
-  test('sign-up, and logging in with a new email, both start empty', () async {
-    await AccountSession.instance.signUp('new@user.com');
+  test('you must sign up first: no account, no login', () async {
+    // Nothing has signed up yet, so no credentials work.
+    await expectLater(
+      AccountSession.instance.signIn('never@signed.up', pw),
+      throwsA(isA<InvalidCredentialsException>()),
+    );
+    await expectLater(
+      AccountSession.instance.signIn('', ''),
+      throwsA(isA<InvalidCredentialsException>()),
+    );
+
+    await AccountSession.instance.signUp('new@user.com', pw);
     expect(PeopleStore.instance.items.value, isEmpty);
     expect(UtilitiesStore.instance.items.value, isEmpty);
     expect(SubscriptionsStore.instance.subscriptions.value, isEmpty);
     expect(NotificationsStore.instance.notices.value, isEmpty);
 
-    await logIn('never@signed.up');
-    expect(PeopleStore.instance.items.value, isEmpty);
-    expect(UtilitiesStore.instance.items.value, isEmpty);
-    expect(NotificationsStore.instance.notices.value, isEmpty);
-    expect(ProfileStore.instance.values['Email'], 'never@signed.up');
+    // Once signed up, only the right password (and any email casing) works.
+    await expectLater(
+      AccountSession.instance.signIn('new@user.com', 'wrong password'),
+      throwsA(isA<InvalidCredentialsException>()),
+    );
+    await expectLater(
+      AccountSession.instance.signIn('someone@else.com', pw),
+      throwsA(isA<InvalidCredentialsException>()),
+    );
+    await logIn(' New@User.com ');
+
+    // A password is never stored in the clear.
+    final prefs = SharedPreferencesAsync();
+    for (final key in await prefs.getKeys()) {
+      expect(await prefs.getString(key), isNot(contains(pw)));
+    }
   });
 
   test('each account keeps its own data and never sees another\'s', () async {
@@ -80,14 +105,14 @@ void main() {
     List<String> utilities() =>
         UtilitiesStore.instance.items.value.map((i) => i.name).toList();
 
-    await AccountSession.instance.signUp('a@x.com');
+    await AccountSession.instance.signUp('a@x.com', pw);
     await ProfileStore.instance.save('Full name', 'Alice');
     UtilitiesStore.instance.add(card('Alice water', UtilityCategories.water));
     PeopleStore.instance.add(
       card('Alice driver', PeopleCategories.driving, 2000),
     );
 
-    await AccountSession.instance.signUp('b@x.com');
+    await AccountSession.instance.signUp('b@x.com', pw);
     expect(utilities(), isEmpty);
     expect(PeopleStore.instance.items.value, isEmpty);
     expect(name(), isNot('Alice'));
@@ -104,46 +129,63 @@ void main() {
     expect(PeopleStore.instance.items.value, isEmpty);
     expect(name(), 'Bob');
 
-    // Emails that never signed up get their own empty accounts too.
-    await logIn('c@x.com');
-    expect(utilities(), isEmpty);
-    UtilitiesStore.instance.add(card('C gas', UtilityCategories.gas));
-    await logIn('d@x.com');
-    expect(utilities(), isEmpty);
-    await logIn('c@x.com');
-    expect(utilities(), ['C gas']);
-
     // Signing up again with a taken email can't overwrite the account.
-    expect(
-      () => AccountSession.instance.signUp('A@x.com'),
+    await expectLater(
+      AccountSession.instance.signUp('A@x.com', 'another password'),
       throwsA(isA<AccountExistsException>()),
     );
+    await logIn('a@x.com');
+    expect(utilities(), ['Alice water']);
   });
 
-  test(
-    'sample data from older builds is removed, real cards are kept',
-    () async {
-      String enc(String e) => base64Url.encode(utf8.encode(e));
-      await DeviceIdStore.instance.setDeviceId('old-id');
-      PeopleStore.instance.add(card('Driver', PeopleCategories.driving, 2200));
-      PeopleStore.instance.add(card('Gardener', PeopleCategories.other, 1500));
-      UtilitiesStore.instance.add(
-        card('Saudi Electricity Company', UtilityCategories.electricity, 1189),
-      );
-      await PeopleStore.instance.flush();
-      await UtilitiesStore.instance.flush();
-      final prefs = SharedPreferencesAsync();
-      await prefs.setString(
-        'riyal.account_ns.v1.${enc('old@x.com')}',
-        'old-id',
-      );
-      await prefs.setBool('riyal.account_demo.v1.${enc('old@x.com')}', true);
+  test('an account from before passwords must sign up to log in', () async {
+    String enc(String e) => base64Url.encode(utf8.encode(e));
+    await DeviceIdStore.instance.setDeviceId('old-id');
+    PeopleStore.instance.add(card('Driver', PeopleCategories.driving, 2200));
+    PeopleStore.instance.add(card('Gardener', PeopleCategories.other, 1500));
+    UtilitiesStore.instance.add(
+      card('Saudi Electricity Company', UtilityCategories.electricity, 1189),
+    );
+    await PeopleStore.instance.flush();
+    await UtilitiesStore.instance.flush();
+    final prefs = SharedPreferencesAsync();
+    await prefs.setString('riyal.account_ns.v1.${enc('old@x.com')}', 'old-id');
+    await prefs.setBool('riyal.account_demo.v1.${enc('old@x.com')}', true);
 
-      await logIn('old@x.com');
-      expect(PeopleStore.instance.items.value.map((i) => i.name), ['Gardener']);
-      expect(UtilitiesStore.instance.items.value, isEmpty);
-    },
-  );
+    await expectLater(
+      AccountSession.instance.signIn('old@x.com', pw),
+      throwsA(isA<InvalidCredentialsException>()),
+    );
+    // Signing up with that email brings its data back, without the old
+    // sample items.
+    try {
+      await AccountSession.instance.signUp('old@x.com', pw);
+    } catch (_) {} // the Supabase reload isn't available in tests
+    expect(PeopleStore.instance.items.value.map((i) => i.name), ['Gardener']);
+    expect(UtilitiesStore.instance.items.value, isEmpty);
+    await logIn('old@x.com');
+  });
+
+  test('deleting an account removes it and leaves the others alone', () async {
+    await AccountSession.instance.signUp('keep@x.com', pw);
+    UtilitiesStore.instance.add(card('Keep water', UtilityCategories.water));
+    await AccountSession.instance.signUp('gone@x.com', pw);
+    UtilitiesStore.instance.add(card('Gone water', UtilityCategories.water));
+
+    await AccountSession.instance.deleteActiveAccount();
+    expect(UtilitiesStore.instance.items.value, isEmpty);
+    // The deleted email can't log in any more, and can sign up afresh.
+    await expectLater(
+      AccountSession.instance.signIn('gone@x.com', pw),
+      throwsA(isA<InvalidCredentialsException>()),
+    );
+    await logIn('keep@x.com');
+    expect(UtilitiesStore.instance.items.value.map((i) => i.name), [
+      'Keep water',
+    ]);
+    await AccountSession.instance.signUp('gone@x.com', pw);
+    expect(UtilitiesStore.instance.items.value, isEmpty);
+  });
 
   testWidgets('home renders for an account with nothing spent yet', (
     tester,

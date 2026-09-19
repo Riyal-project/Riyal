@@ -21,8 +21,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController(text: 'danah@gmail.com');
-  final _passwordController = TextEditingController(text: '123123123');
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _signingIn = false;
 
@@ -40,13 +40,18 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _signingIn = true);
     try {
-      await AccountSession.instance.signIn(_emailController.text);
+      await AccountSession.instance.signIn(
+        _emailController.text,
+        _passwordController.text,
+      );
       await BudgetStore.instance.activate(_emailController.text);
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute<void>(builder: (_) => const MainShell()),
         (_) => false,
       );
+    } on InvalidCredentialsException {
+      _showMessage(Strings.t('invalid_credentials_error'));
     } catch (error) {
       _showMessage(Strings.t('sign_in_generic_error'));
     } finally {

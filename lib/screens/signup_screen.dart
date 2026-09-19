@@ -45,7 +45,10 @@ class _SignupScreenState extends State<SignupScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _signingUp = true);
     try {
-      await AccountSession.instance.signUp(_emailController.text);
+      await AccountSession.instance.signUp(
+        _emailController.text,
+        _passwordController.text,
+      );
       await BudgetStore.instance.activate(_emailController.text);
       // The name/email typed here aren't tied to a real Supabase Auth user
       // (see the note above) — save them straight to ProfileStore so the

@@ -94,6 +94,20 @@ class BudgetStore {
     await activate(account ?? 'device');
   }
 
+  /// Deletes [account]'s saved budgets and alerts (when the account is deleted).
+  Future<void> forget(String account) async {
+    await _pendingWrite;
+    final normalized = account.trim().toLowerCase();
+    await _prefs.remove(_profileKey(normalized));
+    if (_account == normalized) {
+      await _prefs.remove('riyal.budgets.active');
+      _account = null;
+      _limits = {};
+      _alerts = [];
+      recalculate();
+    }
+  }
+
   Future<void> activate(String account) async {
     await _pendingWrite;
     final normalized = account.trim().toLowerCase();

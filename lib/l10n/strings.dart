@@ -332,6 +332,8 @@ class Strings {
     'group_transport': 'Transport',
     'group_mobile': 'Mobile',
     'overall': 'Overall',
+    'invalid_credentials_error':
+        'Incorrect email or password. New here? Please sign up first.',
     'account_exists_error':
         'An account with this email already exists. Please log in instead.',
     'analytics_empty':
@@ -791,6 +793,8 @@ class Strings {
     'group_transport': 'المواصلات',
     'group_mobile': 'الجوال',
     'overall': 'الإجمالي',
+    'invalid_credentials_error':
+        'البريد الإلكتروني أو كلمة المرور غير صحيحة. إذا كنت جديدًا، سجّل حسابًا أولاً.',
     'account_exists_error':
         'يوجد حساب بهذا البريد الإلكتروني بالفعل. الرجاء تسجيل الدخول.',
     'analytics_empty':
