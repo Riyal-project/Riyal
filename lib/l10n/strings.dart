@@ -331,6 +331,8 @@ class Strings {
     'group_household': 'Household',
     'group_transport': 'Transport',
     'group_mobile': 'Mobile',
+    'account_exists_error':
+        'An account with this email already exists. Please log in instead.',
     'analytics_empty':
         'No spending data yet. Add a subscription, utility or person to see your analytics.',
 
@@ -787,6 +789,8 @@ class Strings {
     'group_household': 'المنزل',
     'group_transport': 'المواصلات',
     'group_mobile': 'الجوال',
+    'account_exists_error':
+        'يوجد حساب بهذا البريد الإلكتروني بالفعل. الرجاء تسجيل الدخول.',
     'analytics_empty':
         'لا توجد بيانات إنفاق بعد. أضف اشتراكاً أو فاتورة أو شخصاً لعرض التحليلات.',
 

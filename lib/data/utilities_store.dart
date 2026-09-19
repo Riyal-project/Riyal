@@ -2,6 +2,7 @@ import 'demo_mode.dart';
 import 'id_generator.dart';
 import 'subscription.dart' show BillingCycle;
 import 'tracked_item.dart';
+import 'utility_catalog.dart';
 import 'utility_categories.dart';
 
 class UtilitiesStore {
@@ -9,12 +10,23 @@ class UtilitiesStore {
 
   static final TrackedItemsStore instance = TrackedItemsStore(
     DemoMode.enabled ? _seed() : <TrackedItem>[],
+    storageKey: 'riyal.utilities_items.v1',
+    categories: UtilityCategories.values,
+    icons: () => [
+      for (final entry in utilityCatalog)
+        if (entry.icon != null) entry.icon!,
+      for (final category in UtilityCategories.values) category.icon,
+    ],
   );
 
-  /// Re-seeds the demo data, or empties it for a new sign-up, when the
-  /// active account changes.
+  /// In-memory reset (nothing is saved): the demo data, or nothing.
   static void reset() =>
-      instance.items.value = DemoMode.enabled ? _seed() : <TrackedItem>[];
+      instance.replaceSilently(DemoMode.enabled ? _seed() : <TrackedItem>[]);
+
+  /// Loads the active account's saved utilities; the very first time, the
+  /// demo data for the demo login and nothing for a new sign-up.
+  static Future<void> restore() =>
+      instance.restore(DemoMode.enabled ? _seed() : <TrackedItem>[]);
 
   static List<TrackedItem> _seed() {
     final now = DateTime.now();

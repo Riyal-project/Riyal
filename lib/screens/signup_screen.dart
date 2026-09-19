@@ -65,6 +65,8 @@ class _SignupScreenState extends State<SignupScreen> {
         ),
         (_) => false,
       );
+    } on AccountExistsException {
+      _showMessage(Strings.t('account_exists_error'));
     } catch (error) {
       _showMessage(Strings.t('sign_up_generic_error'));
     } finally {

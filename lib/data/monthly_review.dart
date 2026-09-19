@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../l10n/app_locale.dart';
+import 'device_id_store.dart';
 import 'people_store.dart';
 import 'subscription.dart';
 import 'subscriptions_store.dart';
@@ -248,7 +249,7 @@ class MonthlyReviewStore {
   MonthlyReviewStore._();
 
   static final instance = MonthlyReviewStore._();
-  static const _storageKey = 'riyal.monthly_reviews.v1';
+  static const storageKey = 'riyal.monthly_reviews.v1';
 
   final revision = ValueNotifier<int>(0);
   final Map<String, Map<String, dynamic>> _records = {};
@@ -312,10 +313,19 @@ class MonthlyReviewStore {
     }
   }
 
+  /// Drops the previous account's check-ins and loads the active account's.
+  Future<void> switchAccount() {
+    _records.clear();
+    _initialized = false;
+    return initialize();
+  }
+
   Future<void> initialize() async {
     if (_initialized) return;
     try {
-      final raw = await SharedPreferencesAsync().getString(_storageKey);
+      final raw = await SharedPreferencesAsync().getString(
+        await DeviceIdStore.instance.scoped(storageKey),
+      );
       if (raw != null) {
         final decoded = jsonDecode(raw);
         if (decoded is Map<String, dynamic>) {
@@ -355,7 +365,7 @@ class MonthlyReviewStore {
     revision.value++;
     try {
       await SharedPreferencesAsync().setString(
-        _storageKey,
+        await DeviceIdStore.instance.scoped(storageKey),
         jsonEncode(_records),
       );
     } catch (error) {

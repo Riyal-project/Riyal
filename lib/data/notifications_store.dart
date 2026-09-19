@@ -110,7 +110,9 @@ class NotificationsStore {
     _lastSubscriptionAmount.clear();
     _notifiedBankPriceChanges.clear();
     _lastAnomalyAmount.clear();
+    readState.reset();
     refresh(seed: DemoMode.enabled);
+    unawaited(readState.initialize());
   }
 
   void refresh({bool seed = false, DateTime? at}) {
@@ -302,7 +304,13 @@ class NotificationsStore {
     }
     final reviewStore = MonthlyReviewStore.instance;
     final reviewId = 'monthly-review:${reviewStore.currentPeriod}';
+    // Nothing to review on a brand-new account.
+    final hasCommitments =
+        SubscriptionsStore.instance.subscriptions.value.isNotEmpty ||
+        UtilitiesStore.instance.items.value.isNotEmpty ||
+        PeopleStore.instance.items.value.isNotEmpty;
     final reviewIsDue =
+        hasCommitments &&
         reviewStore.initialized &&
         AppSettings.instance.monthlyReviewReminders &&
         DateTime.now().day >= AppSettings.instance.monthlyReviewDay &&

@@ -1,6 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'device_id_store.dart';
+
+const _readKey = 'riyal.read_notifications.v1';
+
 /// Stores read notification IDs independently of the current login session.
 class NoticeReadState {
   NoticeReadState({
@@ -8,13 +12,13 @@ class NoticeReadState {
     Future<void> Function(List<String>)? save,
   }) : _load =
            load ??
-           (() => SharedPreferencesAsync().getStringList(
-             'riyal.read_notifications.v1',
+           (() async => SharedPreferencesAsync().getStringList(
+             await DeviceIdStore.instance.scoped(_readKey),
            )),
        _save =
            save ??
-           ((ids) => SharedPreferencesAsync().setStringList(
-             'riyal.read_notifications.v1',
+           ((ids) async => SharedPreferencesAsync().setStringList(
+             await DeviceIdStore.instance.scoped(_readKey),
              ids,
            ));
   final Future<List<String>?> Function() _load;
@@ -27,6 +31,17 @@ class NoticeReadState {
   bool _ready = false;
 
   bool _restored = false;
+
+  /// Forgets the previous account's read ids; [initialize] loads the new ones.
+  void reset() {
+    _read.clear();
+    _current = {};
+    _restored = false;
+    _ready = false;
+    _loading = null;
+    hasUnread.value = false;
+  }
+
   Future<void> initialize() {
     if (_restored) return Future.value();
     return _loading ??= _restore().whenComplete(() => _loading = null);
