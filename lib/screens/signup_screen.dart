@@ -159,7 +159,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                     dashWidthScale: 0.4,
                                     dashLengthScale: 0.55,
                                     dashOuterEndOffset: 0.3,
-                                    outerRimWidthScale: 0.5,
+                                    outerRimWidthScale: 0.3,
                                     innerRingWidthScale: 0.4,
                                     innerRingInset: 3.2,
                                   ),
