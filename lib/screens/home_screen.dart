@@ -152,10 +152,9 @@ class _MonthlyReviewCard extends StatelessWidget {
               const CardLogoWatermark(
                 corner: WatermarkCorner.bottomEnd,
                 inset: 6,
-                // Pushed further than `inset` alone so the coin ends just
-                // before the trailing chevron's glyph instead of running
-                // under it.
-                endInset: 32,
+                // Pushed further than `inset` alone so the coin tucks right
+                // up to (and just behind) the trailing chevron.
+                endInset: 26,
               ),
               Padding(
                 padding: const EdgeInsets.all(16),
