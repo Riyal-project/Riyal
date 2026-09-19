@@ -4,6 +4,7 @@ import '../services/riyal_bot_config.dart';
 import '../widgets/coin_back_button.dart';
 import '../widgets/riyal_coin_painter.dart';
 import '../theme/app_theme.dart';
+import '../theme/app_typography.dart';
 
 class RiyalBotScreen extends StatefulWidget {
   const RiyalBotScreen({super.key, this.api});
@@ -95,7 +96,15 @@ class _RiyalBotScreenState extends State<RiyalBotScreen> {
     appBar: AppBar(
       backgroundColor: AppColors.background,
       leading: const CoinBackButton(),
-      title: Text(_t('ريال', 'Riyal')),
+      title: Text(
+        _t('ريال', 'Riyal'),
+        style: AppTypography.wordmark(
+          color: AppColors.gold,
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 2,
+        ),
+      ),
       actions: [
         IconButton(
           tooltip: _t('محادثة جديدة', 'New chat'),
@@ -119,20 +128,6 @@ class _RiyalBotScreenState extends State<RiyalBotScreen> {
           constraints: const BoxConstraints(maxWidth: 850),
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
-                child: Text(
-                  _t(
-                    'تُرسل رسائلك إلى Gemini. لا تُشارك بيانات حسابك تلقائيًا.',
-                    'Messages are sent to Gemini. Your account data is not shared automatically.',
-                  ),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 12,
-                  ),
-                ),
-              ),
               if (_api == null)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),

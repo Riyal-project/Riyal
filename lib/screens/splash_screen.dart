@@ -104,29 +104,57 @@ class _SplashScreenState extends State<SplashScreen>
                         scale: coinScale,
                         child: Hero(
                           tag: heroAppCoinTag,
-                          child: Image.asset(
-                            'assets/icon/coin_3d.webp',
-                            width: 132,
-                            height: 132,
-                            fit: BoxFit.contain,
+                          child: ColorFiltered(
+                            // Fold a little of the app's deep-green base
+                            // into the metallic artwork so the gold is less
+                            // bright while its coin detail remains intact.
+                            colorFilter: const ColorFilter.mode(
+                              Color(0x33031108),
+                              BlendMode.srcATop,
+                            ),
+                            child: Image.asset(
+                              'assets/icon/coin_3d.webp',
+                              width: 188,
+                              height: 188,
+                              fit: BoxFit.contain,
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 28),
-                  Opacity(
-                    opacity: titleT,
-                    child: Transform.translate(
-                      offset: Offset(0, (1 - titleT) * 12),
-                      child: Text(
-                        'RIYAL',
-                        style: AppTypography.wordmark(
-                          color: AppColors.gold,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 3,
-                        ),
+                  const SizedBox(height: 18),
+                  Semantics(
+                    label: 'RIYAL',
+                    child: ExcludeSemantics(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: List.generate(5, (index) {
+                          final letterT = Interval(
+                            index * 0.12,
+                            0.5 + index * 0.12,
+                            curve: Curves.easeOutCubic,
+                          ).transform(titleT);
+                          return Opacity(
+                            opacity: letterT,
+                            child: Transform.translate(
+                              offset: Offset(0, (1 - letterT) * 10),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 1.5,
+                                ),
+                                child: Text(
+                                  'RIYAL'[index],
+                                  style: AppTypography.wordmark(
+                                    color: AppColors.goldLight,
+                                    fontSize: 26,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
                       ),
                     ),
                   ),
@@ -139,7 +167,7 @@ class _SplashScreenState extends State<SplashScreen>
                         Strings.t('splash_tagline'),
                         style: const TextStyle(
                           color: AppColors.textSecondary,
-                          fontSize: 13,
+                          fontSize: 14,
                         ),
                       ),
                     ),

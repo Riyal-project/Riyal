@@ -147,9 +147,14 @@ class _SignupScreenState extends State<SignupScreen> {
                                 ),
                                 child: CustomPaint(
                                   painter: const RiyalCoinPainter(
-                                    edgeScale: 0.7,
-                                    dashCount: 44,
-                                    edgeOpacity: 0.6,
+                                    faceColor: AppColors.surface,
+                                    dashCount: 40,
+                                    dashWidthScale: 0.4,
+                                    dashLengthScale: 0.55,
+                                    dashOuterEndOffset: 0.3,
+                                    outerRimWidthScale: 0.5,
+                                    innerRingWidthScale: 0.4,
+                                    innerRingInset: 3.2,
                                   ),
                                   child: Stack(
                                     alignment: Alignment.center,
@@ -159,8 +164,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                       // coin's face.
                                       ExcludeSemantics(
                                         child: FractionallySizedBox(
-                                          widthFactor: 0.6,
-                                          heightFactor: 0.6,
+                                          widthFactor: 0.57,
+                                          heightFactor: 0.57,
                                           child: Opacity(
                                             opacity: 0.14,
                                             child: SvgPicture.asset(

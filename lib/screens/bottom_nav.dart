@@ -127,7 +127,9 @@ class NavFab extends StatelessWidget {
       shape: const CircleBorder(),
       child: SizedBox.expand(
         child: CustomPaint(
-          painter: const RiyalCoinPainter(),
+          // A solid face keeps the navigation coin distinct from the bar
+          // without changing the shared coin style.
+          painter: const RiyalCoinPainter(faceColor: AppColors.surface),
           child: Center(
             child: SvgPicture.asset(
               'assets/icons/saudi_riyal.svg',
