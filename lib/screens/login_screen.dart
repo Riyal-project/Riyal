@@ -142,7 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     dashLengthScale: 0.55,
                                     dashOuterEndOffset: 0.3,
                                     outerRimWidthScale: 0.3,
-                                    innerRingWidthScale: 0.4,
+                                    innerRingWidthScale: 0.32,
                                     innerRingInset: 3.2,
                                   ),
                                   child: Stack(
