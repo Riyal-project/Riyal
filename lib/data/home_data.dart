@@ -1,4 +1,9 @@
-import 'demo_mode.dart';
+import 'package:flutter/foundation.dart';
+
+import 'budget_store.dart';
+import 'people_store.dart';
+import 'subscriptions_store.dart';
+import 'utilities_store.dart';
 
 class SpendingCategory {
   const SpendingCategory({
@@ -12,24 +17,31 @@ class SpendingCategory {
   final int color;
 }
 
-const subscriptionsSpent = 950.0;
-const subscriptionsBudget = 2000.0;
+/// Fires whenever a card is added, edited, paused or removed — anything on
+/// the Home and Analytics tabs that is derived from the cards listens to it.
+Listenable get dashboardChanges => Listenable.merge([
+  SubscriptionsStore.instance.subscriptions,
+  UtilitiesStore.instance.items,
+  PeopleStore.instance.items,
+]);
 
 // Mirrors AppColors.subscriptions/utilities/people (lib/theme/app_theme.dart)
-// as raw ints — this file stays free of a Flutter/Material import so it
-// can be a plain data file.
-const _demoOverview = [
-  SpendingCategory(label: 'Subscriptions', amount: 950, color: 0xFFCBA960),
-  SpendingCategory(label: 'Utilities', amount: 1823, color: 0xFF2CB3B3),
-  SpendingCategory(label: 'People', amount: 7000, color: 0xFFBD7D60),
-];
+// as raw ints.
+const _categoryColors = {
+  BudgetDomain.subscriptions: 0xFFCBA960,
+  BudgetDomain.utilities: 0xFF2CB3B3,
+  BudgetDomain.people: 0xFFBD7D60,
+};
 
-// A new sign-up has spent nothing yet.
-const _emptyOverview = [
-  SpendingCategory(label: 'Subscriptions', amount: 0, color: 0xFFCBA960),
-  SpendingCategory(label: 'Utilities', amount: 0, color: 0xFF2CB3B3),
-  SpendingCategory(label: 'People', amount: 0, color: 0xFFBD7D60),
+/// This month's recurring commitments per category, built from the cards on
+/// the Subscriptions / Utilities / People screens. It is the same figure the
+/// budgets use as "committed", so the dashboard, analytics and budget cards
+/// always agree with each other.
+List<SpendingCategory> get overview => [
+  for (final domain in BudgetDomain.values)
+    SpendingCategory(
+      label: domain.categoryKey,
+      amount: BudgetStore.instance.snapshot(domain).committed,
+      color: _categoryColors[domain]!,
+    ),
 ];
-
-List<SpendingCategory> get overview =>
-    DemoMode.enabled ? _demoOverview : _emptyOverview;

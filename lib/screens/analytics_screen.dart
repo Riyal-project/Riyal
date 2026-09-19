@@ -4,6 +4,7 @@ import '../data/budget_store.dart';
 import '../widgets/budget_progress_card.dart';
 import '../widgets/capsule_tab_selector.dart';
 import '../data/analytics_data.dart';
+import '../data/home_data.dart';
 import '../data/people_catalog.dart';
 import '../data/subscription_catalog.dart';
 import '../l10n/app_locale.dart';
@@ -124,7 +125,12 @@ class _AnalyticsContentState extends State<AnalyticsContent> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: dashboardChanges,
+    builder: (context, _) => _content(context),
+  );
+
+  Widget _content(BuildContext context) {
     final ar = AppLocale.locale.value.languageCode == 'ar';
     String periodDisplay(String p) => switch (p) {
       'Week' => Strings.t('period_week'),
@@ -580,7 +586,10 @@ class _TrendPainter extends CustomPainter {
   final List<double> values;
   @override
   void paint(Canvas canvas, Size size) {
-    final maxValue = (values.reduce(math.max) / 500).ceil() * 500.0;
+    final maxValue = math.max(
+      500.0,
+      (values.reduce(math.max) / 500).ceil() * 500.0,
+    );
     final height = size.height - 24;
     final width = size.width - 48;
     for (var i = 0; i <= 2; i++) {

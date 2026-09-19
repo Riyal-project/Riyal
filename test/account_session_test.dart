@@ -9,8 +9,11 @@ import 'package:riyal/data/device_id_store.dart';
 import 'package:riyal/data/home_data.dart';
 import 'package:riyal/data/notifications_store.dart';
 import 'package:riyal/data/people_store.dart';
+import 'package:riyal/data/subscription.dart';
 import 'package:riyal/data/subscriptions_store.dart';
+import 'package:riyal/data/tracked_item.dart';
 import 'package:riyal/data/utilities_store.dart';
+import 'package:riyal/data/utility_categories.dart';
 import 'package:riyal/l10n/app_locale.dart';
 import 'package:riyal/l10n/strings.dart';
 import 'package:riyal/screens/home_screen.dart';
@@ -27,6 +30,7 @@ void main() {
   });
 
   test('demo login is seeded with the same prices as the mock database', () {
+    SubscriptionsStore.instance.subscriptions.value = [];
     expect(PeopleStore.instance.items.value.map((i) => i.amount), [
       2200,
       1800,
@@ -95,6 +99,9 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     DemoMode.enabled = false;
+    PeopleStore.reset();
+    UtilitiesStore.reset();
+    SubscriptionsStore.instance.subscriptions.value = [];
     await tester.pumpWidget(
       MaterialApp(
         theme: buildAppTheme(),
@@ -107,5 +114,46 @@ void main() {
     await tester.pump();
     expect(find.text(Strings.t('analytics_empty')), findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('a card added later shows up on Home and in Analytics', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(375, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    DemoMode.enabled = false;
+    PeopleStore.reset();
+    UtilitiesStore.reset();
+    SubscriptionsStore.instance.subscriptions.value = [];
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        home: const Scaffold(body: HomeBody()),
+      ),
+    );
+    await tester.pump();
+    expect(find.text('⃁0'), findsNWidgets(4)); // total + 3 categories
+
+    UtilitiesStore.instance.add(
+      TrackedItem(
+        id: 'u1',
+        name: 'Saudi Electricity Company',
+        amount: 640,
+        cycle: BillingCycle.monthly,
+        nextBillingDate: DateTime.now().add(const Duration(days: 5)),
+        category: UtilityCategories.electricity,
+      ),
+    );
+    await tester.pump();
+    expect(find.text('⃁640'), findsNWidgets(2)); // total + Utilities
+    expect(overview[1].amount, 640);
+
+    await tester.tap(find.text(Strings.t('analytics_tab')));
+    await tester.pump();
+    expect(find.text(Strings.t('analytics_empty')), findsNothing);
+    expect(analyticsItems.map((i) => i.name), ['Saudi Electricity Company']);
+    expect(analyticsHistory['Utilities']!.last, 640);
+    expect(analyticsHistory['Utilities']!.first, 0);
   });
 }

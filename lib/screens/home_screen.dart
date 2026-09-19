@@ -519,7 +519,12 @@ class _SpendingCard extends StatelessWidget {
   const _SpendingCard();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: dashboardChanges,
+    builder: (context, _) => _content(context),
+  );
+
+  Widget _content(BuildContext context) {
     final total = overview.fold<double>(0, (sum, item) => sum + item.amount);
     final previous = analyticsHistory.values.fold<double>(
       0,
@@ -622,7 +627,12 @@ class _OverviewBar extends StatelessWidget {
   const _OverviewBar();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: dashboardChanges,
+    builder: (context, _) => _content(context),
+  );
+
+  Widget _content(BuildContext context) {
     final total = overview.fold<double>(0, (sum, c) => sum + c.amount);
     if (total == 0) {
       return ClipRRect(
@@ -656,7 +666,12 @@ class _OverviewStats extends StatelessWidget {
   const _OverviewStats();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: dashboardChanges,
+    builder: (context, _) => _content(context),
+  );
+
+  Widget _content(BuildContext context) {
     return Row(
       children: overview
           .map(

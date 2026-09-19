@@ -6,10 +6,14 @@ import 'package:riyal/data/budget_store.dart';
 import 'package:riyal/data/demo_mode.dart';
 import 'package:riyal/data/item_status.dart';
 import 'package:riyal/data/notifications_store.dart';
+import 'package:riyal/data/subscription_category.dart';
+import 'package:riyal/data/people_categories.dart';
 import 'package:riyal/data/people_store.dart';
 import 'package:riyal/data/subscription.dart';
+import 'package:riyal/data/tracked_item.dart';
 import 'package:riyal/data/subscriptions_store.dart';
 import 'package:riyal/data/utilities_store.dart';
+import 'package:riyal/data/utility_categories.dart';
 import 'package:riyal/l10n/app_locale.dart';
 import 'package:riyal/l10n/strings.dart';
 import 'package:riyal/screens/budget_setup_screen.dart';
@@ -264,6 +268,39 @@ void main() {
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
       AppLocale.locale.value = const Locale('ar');
+      // Analytics only draws its charts once its category has a card.
+      final due = DateTime.now().add(const Duration(days: 5));
+      SubscriptionsStore.instance.subscriptions.value = [
+        Subscription(
+          id: 's1',
+          name: 'Netflix',
+          logoAsset: null,
+          amount: 45,
+          cycle: BillingCycle.monthly,
+          nextBillingDate: due,
+          category: SubscriptionCategories.entertainment,
+        ),
+      ];
+      UtilitiesStore.instance.add(
+        TrackedItem(
+          id: 'u1',
+          name: 'Water',
+          amount: 100,
+          cycle: BillingCycle.monthly,
+          nextBillingDate: due,
+          category: UtilityCategories.water,
+        ),
+      );
+      PeopleStore.instance.add(
+        TrackedItem(
+          id: 'p1',
+          name: 'Driver',
+          amount: 2000,
+          cycle: BillingCycle.monthly,
+          nextBillingDate: due,
+          category: PeopleCategories.driving,
+        ),
+      );
       await tester.runAsync(() => store.save(limits(100)));
       await tester.pumpWidget(
         MaterialApp(

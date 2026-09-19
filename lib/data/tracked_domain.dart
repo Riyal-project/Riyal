@@ -24,7 +24,7 @@ class TrackedDomain {
   /// domain's noun/title translations — never itself shown on screen.
   final String nounKey;
 
-  /// English key matching [analyticsBudgets]/[analyticsHistory] and each
+  /// English key matching [analyticsHistory] and each
   /// [AnalyticsItem.category] ('Utilities' / 'People') — used for lookups
   /// and equality, not for display.
   final String analyticsCategoryKey;

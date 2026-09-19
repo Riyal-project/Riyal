@@ -172,7 +172,10 @@ class Strings {
 
   /// Display text for analytics demo "group" names (finer-grained than the
   /// three top-level categories, e.g. 'Streaming', 'Fitness').
-  static String groupDisplay(String group) => t('group_${_slug(group)}');
+  static String groupDisplay(String group) {
+    final key = 'group_${_slug(group)}';
+    return _en.containsKey(key) ? t(key) : group;
+  }
 
   static String _slug(String s) => s.toLowerCase().replaceAll(' ', '_');
 
@@ -328,7 +331,8 @@ class Strings {
     'group_household': 'Household',
     'group_transport': 'Transport',
     'group_mobile': 'Mobile',
-    'analytics_empty': 'No spending data yet. Add a subscription, utility or person to see your analytics.',
+    'analytics_empty':
+        'No spending data yet. Add a subscription, utility or person to see your analytics.',
 
     // Domain nouns (Utilities / People)
     'noun_singular_utility_bill': 'utility bill',
@@ -618,8 +622,7 @@ class Strings {
     'cancel_subscription_action': 'Cancel subscription',
     'delete_action': 'Delete',
     'delete_confirm_title': 'Delete this?',
-    'delete_confirm_message':
-        'Are you sure? You won\'t be able to recover it.',
+    'delete_confirm_message': 'Are you sure? You won\'t be able to recover it.',
     'delete_account_menu_item': 'Delete account',
     'delete_account_action': 'Delete account',
     'delete_account_confirm_title': 'Delete your account?',
@@ -784,7 +787,8 @@ class Strings {
     'group_household': 'المنزل',
     'group_transport': 'المواصلات',
     'group_mobile': 'الجوال',
-    'analytics_empty': 'لا توجد بيانات إنفاق بعد. أضف اشتراكاً أو فاتورة أو شخصاً لعرض التحليلات.',
+    'analytics_empty':
+        'لا توجد بيانات إنفاق بعد. أضف اشتراكاً أو فاتورة أو شخصاً لعرض التحليلات.',
 
     'noun_singular_utility_bill': 'فاتورة مرافق',
     'noun_plural_utility_bill': 'فواتير المرافق',
