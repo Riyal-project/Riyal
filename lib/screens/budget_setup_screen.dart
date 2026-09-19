@@ -16,7 +16,7 @@ class _BudgetSetupScreenState extends State<BudgetSetupScreen> {
   static const _defaultLimits = {
     BudgetDomain.subscriptions: 1000.0,
     BudgetDomain.utilities: 2000.0,
-    BudgetDomain.people: 300.0,
+    BudgetDomain.people: 8000.0,
   };
 
   final _formKey = GlobalKey<FormState>();

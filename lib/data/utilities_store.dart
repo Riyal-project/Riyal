@@ -16,7 +16,7 @@ class UtilitiesStore {
         name: 'Saudi Electricity Company',
         logoAsset:
             'lib/assets/logos/1696007538-89-saudi-electricity-company.jpg',
-        amount: 150,
+        amount: 883,
         cycle: BillingCycle.monthly,
         nextBillingDate: now.add(const Duration(days: 5)),
         category: UtilityCategories.electricity,
@@ -34,7 +34,7 @@ class UtilitiesStore {
         id: IdGenerator.uuidV4(),
         name: 'National Water Company',
         logoAsset: 'lib/assets/logos/saudi water comp.png',
-        amount: 70,
+        amount: 194,
         cycle: BillingCycle.monthly,
         nextBillingDate: now.add(const Duration(days: 20)),
         category: UtilityCategories.water,

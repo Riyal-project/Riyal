@@ -18,6 +18,6 @@ const subscriptionsBudget = 2000.0;
 // can be a plain data file.
 const overview = [
   SpendingCategory(label: 'Subscriptions', amount: 950, color: 0xFFCBA960),
-  SpendingCategory(label: 'Utilities', amount: 620, color: 0xFF2CB3B3),
-  SpendingCategory(label: 'People', amount: 770, color: 0xFFBD7D60),
+  SpendingCategory(label: 'Utilities', amount: 1623, color: 0xFF2CB3B3),
+  SpendingCategory(label: 'People', amount: 7000, color: 0xFFBD7D60),
 ];
