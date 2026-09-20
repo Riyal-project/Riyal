@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -16,6 +17,9 @@ class AppTypography {
   AppTypography._();
 
   static const generalSansFamily = 'GeneralSans';
+  static const List<String>? webSymbolFallback = kIsWeb
+      ? ['RiyalSymbol']
+      : null;
 
   /// The brand wordmark / large app-name display text (splash, login,
   /// signup, onboarding). Always General Sans, regardless of locale —
@@ -77,6 +81,6 @@ class AppTypography {
       color: color,
       height: height,
       letterSpacing: letterSpacing,
-    );
+    ).copyWith(fontFamilyFallback: webSymbolFallback);
   }
 }

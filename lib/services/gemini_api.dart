@@ -39,7 +39,8 @@ class GeminiMessage {
 /// system instruction on every message (it is not stored in the history).
 class GeminiApi {
   GeminiApi({
-    required String apiKey,
+    String apiKey = '',
+    this.endpoint,
     required this.model,
     this.systemInstruction =
         'You are Riyal assistant. Reply in the user language. '
@@ -52,7 +53,9 @@ class GeminiApi {
   }) : _apiKey = apiKey.trim(),
        _client = client ?? http.Client(),
        _ownsClient = client == null {
-    if (_apiKey.isEmpty) throw ArgumentError('Gemini API key is required.');
+    if (endpoint == null && _apiKey.isEmpty) {
+      throw ArgumentError('A Gemini endpoint or API key is required.');
+    }
     if (!RegExp(r'^[a-zA-Z0-9._-]+$').hasMatch(model)) {
       throw ArgumentError('Pass a model ID without the models/ prefix.');
     }
@@ -62,6 +65,7 @@ class GeminiApi {
   }
 
   final String _apiKey;
+  final Uri? endpoint;
   final String model;
   final String systemInstruction;
   final Future<String> Function()? contextProvider;
@@ -85,9 +89,11 @@ class GeminiApi {
     _busy = true;
     try {
       var system = systemInstruction;
+      var userContext = '';
       if (contextProvider != null) {
         try {
           final context = (await contextProvider!()).trim();
+          userContext = context;
           if (context.isNotEmpty) system = '$system\n\n$context';
         } catch (_) {
           // Answer without the snapshot rather than failing the message.
@@ -95,20 +101,26 @@ class GeminiApi {
       }
       final response = await _client
           .post(
-            Uri.https(
-              'generativelanguage.googleapis.com',
-              '/v1beta/models/$model:generateContent',
-            ),
+            endpoint ??
+                Uri.https(
+                  'generativelanguage.googleapis.com',
+                  '/v1beta/models/$model:generateContent',
+                ),
             headers: {
               'Content-Type': 'application/json',
-              'x-goog-api-key': _apiKey,
+              if (endpoint == null) 'x-goog-api-key': _apiKey,
             },
             body: jsonEncode({
               'contents': [
-                ..._history.map((m) => m.toJson()),
+                ...(_history.length > 40 && endpoint != null
+                        ? _history.sublist(_history.length - 40)
+                        : _history)
+                    .map((m) => m.toJson()),
                 GeminiMessage.user(text).toJson(),
               ],
-              if (system.trim().isNotEmpty)
+              if (endpoint != null && userContext.isNotEmpty)
+                'context': userContext,
+              if (endpoint == null && system.trim().isNotEmpty)
                 'systemInstruction': {
                   'parts': [
                     {'text': system},

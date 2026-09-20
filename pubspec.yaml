@@ -33,8 +33,11 @@ flutter:
     - assets/icons/
     - assets/icon/
     - lib/assets/logos/
-    - .env
+    - assets/config/public.env
   fonts:
+    - family: RiyalSymbol
+      fonts:
+        - asset: assets/fonts/RiyalSymbol/RiyalSymbol.ttf
     - family: GeneralSans
       fonts:
         - asset: assets/fonts/GeneralSans/GeneralSans-Semibold.ttf

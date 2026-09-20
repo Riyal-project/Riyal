@@ -83,6 +83,7 @@ ThemeData buildAppTheme({String languageCode = 'en'}) {
   final textTheme = AppTypography.textTheme(languageCode, baseTextTheme).apply(
     bodyColor: AppColors.textPrimary,
     displayColor: AppColors.textPrimary,
+    fontFamilyFallback: AppTypography.webSymbolFallback,
   );
 
   return ThemeData(
@@ -90,6 +91,7 @@ ThemeData buildAppTheme({String languageCode = 'en'}) {
     scaffoldBackgroundColor: AppColors.background,
     brightness: Brightness.dark,
     fontFamily: textTheme.bodyMedium?.fontFamily,
+    fontFamilyFallback: AppTypography.webSymbolFallback,
     colorScheme: ColorScheme.fromSeed(
       seedColor: AppColors.gold,
       brightness: Brightness.dark,

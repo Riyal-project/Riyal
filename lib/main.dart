@@ -13,13 +13,14 @@ import 'data/user_bank_accounts_store.dart';
 import 'data/notifications_store.dart';
 import 'l10n/app_locale.dart';
 import 'widgets/rebuild_all.dart';
+import 'widgets/web_app_frame.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
-    await dotenv.load();
+    await dotenv.load(fileName: 'assets/config/public.env');
   } catch (error) {
-    debugPrint('.env load failed: $error');
+    debugPrint('Public configuration load failed: $error');
   }
   try {
     await AppSettings.instance.load().timeout(const Duration(seconds: 3));
@@ -72,6 +73,7 @@ class MainApp extends StatelessWidget {
       builder: (context, locale, _) => MaterialApp(
         title: 'Riyal',
         debugShowCheckedModeBanner: false,
+        builder: (context, child) => WebAppFrame(child: child!),
         theme: buildAppTheme(languageCode: locale.languageCode),
         locale: locale,
         supportedLocales: const [Locale('en'), Locale('ar')],

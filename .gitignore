@@ -1,5 +1,9 @@
 ﻿# Environment / secrets
 .env
+assets/config/public.env
+.vercel/
+.tools/
+node_modules/
 
 # Miscellaneous
 *.class
