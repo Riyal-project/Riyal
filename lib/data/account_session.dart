@@ -72,6 +72,32 @@ class AccountSession {
   /// Set on accounts created by older builds, which seeded sample data.
   String _oldSeedsKey(String email) => 'riyal.account_demo.v1.${_email(email)}';
 
+  /// The email that is signed in, kept so the app can reopen it on launch.
+  static const _sessionKey = 'riyal.active_session.v1';
+
+  /// Reopens the account that was signed in when the app last closed, so a
+  /// returning user goes straight to the app. Returns false — leaving them
+  /// to sign in — when nobody was signed in or that account no longer exists.
+  Future<bool> restore() async {
+    final saved = await _prefs.getString(_sessionKey);
+    if (saved == null) return false;
+    final id = await _prefs.getString(_nsKey(saved));
+    if (id == null || await _prefs.getString(_credKey(saved)) == null) {
+      await _prefs.remove(_sessionKey);
+      return false;
+    }
+    await _enter(id, saved, fresh: false, tolerateOffline: true);
+    await BudgetStore.instance.activate(saved);
+    return true;
+  }
+
+  /// Ends the session, so the next launch asks for a login again. The
+  /// account and its data stay on the device.
+  Future<void> signOut() async {
+    _activeEmail = null;
+    await _prefs.remove(_sessionKey);
+  }
+
   /// Registers a new account and opens it, empty.
   Future<void> signUp(String email, String password) async {
     if (await _prefs.getString(_credKey(email)) != null) {
@@ -116,6 +142,7 @@ class AccountSession {
       _nsKey(email),
       _credKey(email),
       _oldSeedsKey(email),
+      _sessionKey,
       '${ProfileStore.storageKey}.$id',
       '${MonthlyReviewStore.storageKey}.$id',
       '${PeopleStore.instance.storageKey}.$id',
@@ -133,7 +160,15 @@ class AccountSession {
     NotificationsStore.instance.reset();
   }
 
-  Future<void> _enter(String id, String email, {required bool fresh}) async {
+  /// [tolerateOffline] is for reopening a saved session: the account's
+  /// Supabase data is skipped when it can't be reached, rather than failing
+  /// and signing the user out because of a slow or missing connection.
+  Future<void> _enter(
+    String id,
+    String email, {
+    required bool fresh,
+    bool tolerateOffline = false,
+  }) async {
     await _open(id);
     _activeEmail = email.trim().toLowerCase();
     if (fresh) {
@@ -146,10 +181,26 @@ class AccountSession {
       if (await _prefs.getBool(_oldSeedsKey(email)) ?? false) {
         await _removeOldSeeds(id, email);
       }
+      await _loadRemote(tolerateOffline: tolerateOffline);
+    }
+    // Only once the account has fully opened, so a failed login isn't
+    // remembered as a signed-in session.
+    await _prefs.setString(_sessionKey, _activeEmail!);
+    NotificationsStore.instance.reset();
+  }
+
+  Future<void> _loadRemote({required bool tolerateOffline}) async {
+    Future<void> load() async {
       await SubscriptionsStore.instance.load();
       await UserBankAccountsStore.instance.load();
     }
-    NotificationsStore.instance.reset();
+
+    if (!tolerateOffline) return load();
+    try {
+      await load().timeout(const Duration(seconds: 5));
+    } catch (error) {
+      debugPrint('Reopening the session without Supabase data: $error');
+    }
   }
 
   Future<void> _storeCredential(String email, String password) async {

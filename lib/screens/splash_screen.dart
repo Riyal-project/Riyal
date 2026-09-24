@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../data/account_session.dart';
 import '../theme/app_theme.dart';
 import '../theme/app_typography.dart';
 import '../l10n/strings.dart';
 import '../widgets/hero_tags.dart';
+import 'main_shell.dart';
 import 'onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -17,9 +19,13 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
+  /// Reopening a saved login runs while the splash animation plays.
+  late final Future<bool> _signedIn;
+
   @override
   void initState() {
     super.initState();
+    _signedIn = _restoreSession();
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 2200),
@@ -29,12 +35,23 @@ class _SplashScreenState extends State<SplashScreen>
     });
   }
 
+  Future<bool> _restoreSession() async {
+    try {
+      return await AccountSession.instance.restore();
+    } catch (error) {
+      debugPrint('Restoring the saved session failed: $error');
+      return false;
+    }
+  }
+
   Future<void> _continueFromSplash() async {
     await Future.delayed(const Duration(milliseconds: 350));
+    final signedIn = await _signedIn;
     if (!mounted) return;
-    // Always shows onboarding (including the language-choice screen) on
-    // every launch, regardless of AppSettings.onboardingCompleted.
-    const next = OnboardingScreen();
+    // Someone already logged in goes straight to the app. Everyone else
+    // always sees onboarding (including the language-choice screen) on every
+    // launch, regardless of AppSettings.onboardingCompleted.
+    final Widget next = signedIn ? const MainShell() : const OnboardingScreen();
     Navigator.of(context).pushReplacement(
       PageRouteBuilder<void>(
         transitionDuration: const Duration(milliseconds: 550),
@@ -127,8 +144,11 @@ class _SplashScreenState extends State<SplashScreen>
                   Semantics(
                     label: 'RIYAL',
                     child: ExcludeSemantics(
+                      // The wordmark is Latin: pin it to LTR so an RTL (Arabic)
+                      // locale doesn't lay the letters out in reverse.
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
+                        textDirection: TextDirection.ltr,
                         children: List.generate(5, (index) {
                           final letterT = Interval(
                             index * 0.12,

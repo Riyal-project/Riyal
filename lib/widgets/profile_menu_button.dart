@@ -1,5 +1,6 @@
 import 'action_confirmation.dart';
 import 'package:flutter/material.dart';
+import '../data/account_session.dart';
 import '../data/auth_store.dart';
 import '../data/user_bank_accounts_store.dart';
 import '../l10n/strings.dart';
@@ -182,6 +183,7 @@ class ProfileMenuButton extends StatelessWidget {
       );
       if (confirmed != true || !context.mounted) return;
       await AuthStore.instance.signOut();
+      await AccountSession.instance.signOut();
       UserBankAccountsStore.instance.clear();
       if (!context.mounted) return;
       Navigator.of(context).pushAndRemoveUntil(

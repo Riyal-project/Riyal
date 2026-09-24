@@ -187,6 +187,54 @@ void main() {
     expect(UtilitiesStore.instance.items.value, isEmpty);
   });
 
+  test(
+    'a signed-in account is reopened on launch until it signs out',
+    () async {
+      List<String> utilities() =>
+          UtilitiesStore.instance.items.value.map((i) => i.name).toList();
+
+      // Nobody has signed in yet.
+      expect(await AccountSession.instance.restore(), isFalse);
+
+      await AccountSession.instance.signUp('back@x.com', pw);
+      await ProfileStore.instance.save('Full name', 'Back');
+      UtilitiesStore.instance.add(card('Back water', UtilityCategories.water));
+      await UtilitiesStore.instance.flush();
+
+      // A relaunch: nothing is in memory, and Supabase can't be reached — the
+      // user must stay signed in with their local data.
+      ProfileStore.instance.reset();
+      UtilitiesStore.reset();
+      expect(await AccountSession.instance.restore(), isTrue);
+      expect(ProfileStore.instance.values['Full name'], 'Back');
+      expect(utilities(), ['Back water']);
+
+      // Signing out means the next launch asks for a login, but the account
+      // itself is still there to log back in to.
+      await AccountSession.instance.signOut();
+      expect(await AccountSession.instance.restore(), isFalse);
+      // A login that fails part-way (here, Supabase is unreachable) isn't
+      // remembered as a signed-in session.
+      await logIn('back@x.com');
+      expect(await AccountSession.instance.restore(), isFalse);
+    },
+  );
+
+  test('a deleted account is not reopened on launch', () async {
+    await AccountSession.instance.signUp('gone@x.com', pw);
+    await AccountSession.instance.deleteActiveAccount();
+    expect(await AccountSession.instance.restore(), isFalse);
+
+    // A remembered session whose account no longer exists is dropped.
+    await AccountSession.instance.signUp('stale@x.com', pw);
+    final prefs = SharedPreferencesAsync();
+    await prefs.remove(
+      'riyal.account_cred.v1.${base64Url.encode(utf8.encode('stale@x.com'))}',
+    );
+    expect(await AccountSession.instance.restore(), isFalse);
+    expect(await prefs.getString('riyal.active_session.v1'), isNull);
+  });
+
   testWidgets('home renders for an account with nothing spent yet', (
     tester,
   ) async {
